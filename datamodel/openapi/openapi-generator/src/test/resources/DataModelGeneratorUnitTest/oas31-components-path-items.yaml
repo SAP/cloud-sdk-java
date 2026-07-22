@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: OAS 3.1 Gap 6 - components/pathItems schema references
+  title: OAS 3.1 components/pathItems schema references
   version: 1.0.0
 
 paths:
@@ -16,7 +16,7 @@ paths:
                 $ref: '#/components/schemas/Soda'
 
 components:
-  # Gap 6: OAS 3.1 adds components/pathItems — schemas referenced here must not be removed
+  # OAS 3.1 adds components/pathItems — schemas referenced here must not be removed
   pathItems:
     sodaItem:
       get:

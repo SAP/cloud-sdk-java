@@ -391,12 +391,12 @@ class DataModelGeneratorUnitTest
     }
 
     /**
-     * Gap 6: OAS 3.1 adds {@code components/pathItems}. When {@code removeUnusedComponents} is enabled, schemas
-     * referenced only from {@code components/pathItems} (not from {@code paths}) must not be deleted.
+     * OAS 3.1 adds {@code components/pathItems}. When {@code removeUnusedComponents} is enabled, schemas referenced
+     * only from {@code components/pathItems} (not from {@code paths}) must not be deleted.
      */
     @Test
     @SneakyThrows
-    void testGap6RemoveUnusedComponentsKeepsSchemasReferencedFromComponentsPathItems()
+    void testRemoveUnusedComponentsKeepsSchemasReferencedFromComponentsPathItems()
     {
         final GenerationConfiguration configuration =
             GenerationConfiguration
@@ -419,7 +419,7 @@ class DataModelGeneratorUnitTest
 
         // Soda is referenced from paths — must be kept
         assertThat(generatedFileNames).anyMatch(name -> name.equals("Soda.java"));
-        // SodaDetail is only referenced from components/pathItems — must also be kept (Gap 6 fix)
+        // SodaDetail is only referenced from components/pathItems — must also be kept
         assertThat(generatedFileNames).anyMatch(name -> name.equals("SodaDetail.java"));
         // UnusedSchema is not referenced from anywhere — must be removed
         assertThat(generatedFileNames).noneMatch(name -> name.equals("UnusedSchema.java"));

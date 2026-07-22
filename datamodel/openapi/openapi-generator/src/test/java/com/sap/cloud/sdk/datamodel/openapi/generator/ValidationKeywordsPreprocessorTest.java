@@ -122,7 +122,7 @@ class ValidationKeywordsPreprocessorTest
     void testOas31NullUnionAnyOfInPaths_isAllowed()
         throws IOException
     {
-        // Gap 10: anyOf: [{$ref: "..."}, {type: "null"}] in a path request body is the OAS 3.1
+        // anyOf: [{$ref: "..."}, {type: "null"}] in a path request body is the OAS 3.1
         // canonical nullable-$ref pattern and must be allowed even when oneOf/anyOf generation
         // is otherwise disabled.
         final Path inputFilePath =

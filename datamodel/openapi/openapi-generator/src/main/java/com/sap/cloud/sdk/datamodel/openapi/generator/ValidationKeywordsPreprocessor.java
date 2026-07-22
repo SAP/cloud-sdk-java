@@ -23,7 +23,7 @@ class ValidationKeywordsPreprocessor implements PreprocessingStep
     {
         final JsonNode pathsNode = input.path(PATHS_NODE);
 
-        // Gap 5: OAS 3.1 documents may omit `paths` and use only `webhooks` or `components`.
+        // OAS 3.1 documents may omit `paths` and use only `webhooks` or `components`.
         // Webhook client generation is not yet supported; emit a clear error so the user knows why.
         if( pathsNode.isMissingNode() ) {
             final JsonNode webhooksNode = input.path(WEBHOOKS_NODE);
@@ -48,7 +48,7 @@ class ValidationKeywordsPreprocessor implements PreprocessingStep
     private void checkForValidatorsInPaths( final JsonNode pathsNode )
     {
         for( final String field : POTENTIALLY_UNSUPPORTED_VALIDATION_KEYWORDS ) {
-            // Gap 10: allow the OAS 3.1 canonical null-union pattern:
+            // allow the OAS 3.1 canonical null-union pattern:
             //   anyOf/oneOf: [{$ref: "..."}, {type: "null"}]
             // Only block occurrences that are NOT null-union patterns.
             final boolean isUnsupported =
@@ -68,7 +68,7 @@ class ValidationKeywordsPreprocessor implements PreprocessingStep
         for( final String field : POTENTIALLY_UNSUPPORTED_VALIDATION_KEYWORDS ) {
             for( final JsonNode schema : schemasNode ) {
                 for( final JsonNode schemaChild : schema ) {
-                    // Gap 10: allow the OAS 3.1 canonical null-union pattern.
+                    // allow the OAS 3.1 canonical null-union pattern.
                     final boolean isUnsupported =
                         schemaChild.findValues(field).stream().anyMatch(node -> !isNullUnionPattern(node));
                     if( isUnsupported ) {

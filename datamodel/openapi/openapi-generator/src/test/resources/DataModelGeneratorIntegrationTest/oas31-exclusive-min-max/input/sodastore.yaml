@@ -23,7 +23,7 @@ components:
         name:
           type: string
         rating:
-          # Gap 2: numeric exclusiveMinimum/exclusiveMaximum as direct values
+          # numeric exclusiveMinimum/exclusiveMaximum as direct values
           type: number
           exclusiveMinimum: 0
           exclusiveMaximum: 5

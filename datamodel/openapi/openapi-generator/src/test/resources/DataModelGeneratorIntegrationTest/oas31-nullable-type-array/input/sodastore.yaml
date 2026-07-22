@@ -23,7 +23,7 @@ components:
         name:
           type: string
         brand:
-          # Gap 1: nullable via type array instead of nullable: true
+          # nullable via type array instead of nullable: true
           type:
             - string
             - "null"

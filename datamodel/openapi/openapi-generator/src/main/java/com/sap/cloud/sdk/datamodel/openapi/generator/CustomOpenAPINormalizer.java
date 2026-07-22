@@ -52,7 +52,7 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
             LOGGER.warn("Type(s) cleared (set to null) given $ref is set to {}.", schema.get$ref());
         }
 
-        // Gap 1: warn when deprecated nullable: true is used in an OAS 3.1 spec
+        // warn when deprecated nullable: true is used in an OAS 3.1 spec
         if( isOas31 && schema.getNullable() != null ) {
             LOGGER
                 .warn(
@@ -68,10 +68,10 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
             || schema.getDeprecated() != null
             || schema.getMaximum() != null
             || schema.getMinimum() != null
-            // Gap 2: OAS 3.0 boolean exclusiveMaximum/exclusiveMinimum
+            // OAS 3.0 boolean exclusiveMaximum/exclusiveMinimum
             || schema.getExclusiveMaximum() != null
             || schema.getExclusiveMinimum() != null
-            // Gap 2: OAS 3.1 numeric exclusiveMaximumValue/exclusiveMinimumValue
+            // OAS 3.1 numeric exclusiveMaximumValue/exclusiveMinimumValue
             || schema.getExclusiveMaximumValue() != null
             || schema.getExclusiveMinimumValue() != null
             || schema.getMaxItems() != null
@@ -84,7 +84,7 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
             || schema.getReadOnly() != null
             || schema.getExample() != null
             || (schema.getExamples() != null && !schema.getExamples().isEmpty())
-            // Gap 4: OAS 3.1 const keyword as $ref sibling
+            // OAS 3.1 const keyword as $ref sibling
             || schema.getConst() != null
             || schema.getMultipleOf() != null
             || schema.getPattern() != null
@@ -112,8 +112,8 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
     /**
      * Normalizes any schema (not just $ref schemas). Adds OAS 3.1 specific mappings:
      * <ul>
-     * <li>Gap 7: warn on deprecated singular {@code example} keyword in OAS 3.1 schemas</li>
-     * <li>Gap 8: map {@code contentEncoding}/{@code contentMediaType} to {@code format} for binary file uploads</li>
+     * <li>warn on deprecated singular {@code example} keyword in OAS 3.1 schemas</li>
+     * <li>map {@code contentEncoding}/{@code contentMediaType} to {@code format} for binary file uploads</li>
      * </ul>
      */
     @Override
@@ -121,7 +121,7 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
     @SuppressWarnings( { "rawtypes" } )
     public Schema normalizeSchema( final @Nonnull Schema schema, final @Nonnull Set<Schema> visitedSchemas )
     {
-        // Gap 7: warn on deprecated singular `example` in OAS 3.1 Schema Objects
+        // warn on deprecated singular `example` in OAS 3.1 Schema Objects
         if( isOas31 && schema.getExample() != null ) {
             LOGGER
                 .warn(
@@ -129,7 +129,7 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
                         + "Use 'examples: [...]' (array form) instead.");
         }
 
-        // Gap 8: map OAS 3.1 contentEncoding/contentMediaType to legacy format keyword
+        // map OAS 3.1 contentEncoding/contentMediaType to legacy format keyword
         // so that downstream type-mapping (File -> byte[]) continues to work.
         if( schema.getFormat() == null ) {
             if( "base64".equalsIgnoreCase(schema.getContentEncoding()) ) {

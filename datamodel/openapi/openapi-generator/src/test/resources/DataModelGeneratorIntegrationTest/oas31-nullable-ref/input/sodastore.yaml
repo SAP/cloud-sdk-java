@@ -29,7 +29,7 @@ components:
         name:
           type: string
         category:
-          # Gap 10: nullable $ref using anyOf with null type
+          # nullable $ref using anyOf with null type
           anyOf:
             - $ref: '#/components/schemas/SodaCategory'
             - type: "null"
