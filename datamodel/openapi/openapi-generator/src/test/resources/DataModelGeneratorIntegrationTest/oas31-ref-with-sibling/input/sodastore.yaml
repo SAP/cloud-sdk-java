@@ -19,6 +19,7 @@ components:
   schemas:
     SodaDescription:
       type: string
+      description: Soda description
 
     Soda:
       type: object
@@ -28,6 +29,6 @@ components:
         description:
           # $ref with a sibling property — valid in OAS 3.1
           $ref: '#/components/schemas/SodaDescription'
-          description: Human-readable description override
+          description: Soda description as part of the Soda object
       required:
         - name

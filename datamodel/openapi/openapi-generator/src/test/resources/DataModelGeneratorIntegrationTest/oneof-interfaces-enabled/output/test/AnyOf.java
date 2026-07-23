@@ -74,7 +74,7 @@ public class AnyOf
    * Get sodaType
    * @return sodaType  The sodaType of this {@link AnyOf} instance.
    */
-  @Nonnull
+  @Nullable
   public String getSodaType() {
     return sodaType;
   }
@@ -103,7 +103,7 @@ public class AnyOf
    * Get barCode
    * @return barCode  The barCode of this {@link AnyOf} instance.
    */
-  @Nonnull
+  @Nullable
   public ColaBarCode getBarCode() {
     return barCode;
   }
@@ -132,7 +132,7 @@ public class AnyOf
    * Get flavor
    * @return flavor  The flavor of this {@link AnyOf} instance.
    */
-  @Nonnull
+  @Nullable
   public FantaFlavor getFlavor() {
     return flavor;
   }

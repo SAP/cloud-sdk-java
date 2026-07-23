@@ -63,7 +63,7 @@ public class NotFound
    * Get message
    * @return message  The message of this {@link NotFound} instance.
    */
-  @Nonnull
+  @Nullable
   public String getMessage() {
     return message;
   }

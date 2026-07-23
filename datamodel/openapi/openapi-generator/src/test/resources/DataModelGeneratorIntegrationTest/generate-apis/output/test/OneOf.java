@@ -65,7 +65,7 @@ public class OneOf
    * Get sodaType
    * @return sodaType  The sodaType of this {@link OneOf} instance.
    */
-  @Nonnull
+  @Nullable
   public String getSodaType() {
     return sodaType;
   }

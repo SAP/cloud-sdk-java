@@ -71,7 +71,7 @@ public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscrimina
    * Get sodaType
    * @return sodaType  The sodaType of this {@link Fanta} instance.
    */
-  @Nonnull
+  @Nullable
   public String getSodaType() {
     return sodaType;
   }
@@ -100,7 +100,7 @@ public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscrimina
    * Get flavor
    * @return flavor  The flavor of this {@link Fanta} instance.
    */
-  @Nonnull
+  @Nullable
   public FantaFlavor getFlavor() {
     return flavor;
   }
