@@ -221,6 +221,17 @@ class DataModelGeneratorIntegrationTest
             2,
             Map.of(),
             Map.of()),
+        OAS31_COMPONENTS_PATH_ITEMS(
+            "oas31-components-path-items",
+            "sodastore.yaml",
+            "com.sap.cloud.sdk.datamodel.rest.test.api",
+            "com.sap.cloud.sdk.datamodel.rest.test.model",
+            ApiMaturity.RELEASED,
+            false,
+            true,
+            3,
+            Map.of("removeUnusedComponents", "true"),
+            Map.of()),
         FILE_HANDLING(
             "file-handling",
             "file-handling.yaml",

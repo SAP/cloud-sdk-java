@@ -390,38 +390,4 @@ class DataModelGeneratorUnitTest
         assertThat(outputDirectory.toFile().exists()).isTrue();
     }
 
-    /**
-     * OAS 3.1 adds {@code components/pathItems}. When {@code removeUnusedComponents} is enabled, schemas referenced
-     * only from {@code components/pathItems} (not from {@code paths}) must not be deleted.
-     */
-    @Test
-    @SneakyThrows
-    void testRemoveUnusedComponentsKeepsSchemasReferencedFromComponentsPathItems()
-    {
-        final GenerationConfiguration configuration =
-            GenerationConfiguration
-                .builder()
-                .inputSpec(
-                    "src/test/resources/"
-                        + DataModelGeneratorUnitTest.class.getSimpleName()
-                        + "/oas31-components-path-items.yaml")
-                .modelPackage("model")
-                .apiPackage("api")
-                .outputDirectory(outputDirectory.toAbsolutePath().toString())
-                .additionalProperty("removeUnusedComponents", "true")
-                .build();
-
-        final Try<GenerationResult> result = new DataModelGenerator().generateDataModel(configuration);
-
-        assertThat(result.isSuccess()).isTrue();
-
-        final var generatedFileNames = result.get().getGeneratedFiles().stream().map(File::getName).toList();
-
-        // Soda is referenced from paths — must be kept
-        assertThat(generatedFileNames).anyMatch(name -> name.equals("Soda.java"));
-        // SodaDetail is only referenced from components/pathItems — must also be kept
-        assertThat(generatedFileNames).anyMatch(name -> name.equals("SodaDetail.java"));
-        // UnusedSchema is not referenced from anywhere — must be removed
-        assertThat(generatedFileNames).noneMatch(name -> name.equals("UnusedSchema.java"));
-    }
 }
