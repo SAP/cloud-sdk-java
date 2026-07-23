@@ -103,7 +103,7 @@ public class Soda
    * maximum: 5 (exclusive)
    * @return rating  The rating of this {@link Soda} instance.
    */
-  @Nonnull
+  @Nullable
   public BigDecimal getRating() {
     return rating;
   }
@@ -138,7 +138,7 @@ public class Soda
    * maximum: 100
    * @return score  The score of this {@link Soda} instance.
    */
-  @Nonnull
+  @Nullable
   public BigDecimal getScore() {
     return score;
   }
