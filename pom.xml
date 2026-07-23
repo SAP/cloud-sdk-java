@@ -91,7 +91,7 @@
 		<jackson.version>2.22.1</jackson.version>
 		<jackson.annotations.version>2.22</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
-		<json.version>20260522</json.version>
+		<json.version>20260719</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
 		<!--  End of non-essential dependencies  -->
 		<!--  Fully internal (test) dependencies  -->
@@ -113,7 +113,7 @@
 		<maven-plugin-annotations.version>3.15.2</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.5.1</maven-plugin-testing.version>
 		<caffeine.version>3.2.4</caffeine.version>
-		<openapi-generator.version>7.23.0</openapi-generator.version>
+		<openapi-generator.version>7.24.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.52</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.45</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
