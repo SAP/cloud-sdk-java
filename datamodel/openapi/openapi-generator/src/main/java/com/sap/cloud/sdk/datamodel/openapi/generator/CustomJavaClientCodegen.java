@@ -24,6 +24,7 @@ import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
+import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.model.OperationsMap;
 
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
@@ -38,6 +39,8 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 {
     private final GenerationConfiguration config;
     private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
+    // schemaName -> (propertyName -> sibling description) captured before normalization strips $ref context
+    private final Map<String, Map<String, String>> siblingDescriptions = new java.util.HashMap<>();
 
     public CustomJavaClientCodegen( @Nonnull final GenerationConfiguration config )
     {
@@ -47,6 +50,9 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     @Override
     public void preprocessOpenAPI( @Nonnull final OpenAPI openAPI )
     {
+        // Capture sibling descriptions on $ref property schemas before normalization resolves them away.
+        captureSiblingDescriptions(openAPI);
+
         if( USE_EXCLUDE_PROPERTIES.isEnabled(config) ) {
             final String[] exclusions = USE_EXCLUDE_PROPERTIES.getValue(config).trim().split("[,\\s]+");
             for( final String exclusion : exclusions ) {
@@ -135,6 +141,54 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 
         if( USE_ONE_OF_CREATORS.isEnabled(config) ) {
             new CreatorForInterfaceSubtypesFeature(m, config).apply();
+        }
+    }
+
+    @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+    @Override
+    @Nonnull
+    public Map<String, ModelsMap> postProcessAllModels( @Nonnull final Map<String, ModelsMap> objs )
+    {
+        final Map<String, ModelsMap> result = super.postProcessAllModels(objs);
+
+        // Restore sibling descriptions lost during $ref resolution for primitive-typed properties.
+        for( final var schemaEntry : siblingDescriptions.entrySet() ) {
+            final ModelsMap modelsMap = result.get(schemaEntry.getKey());
+            if( modelsMap == null ) {
+                continue;
+            }
+            for( final ModelMap modelMap : modelsMap.getModels() ) {
+                for( final CodegenProperty prop : modelMap.getModel().vars ) {
+                    final String siblingDesc = schemaEntry.getValue().get(prop.baseName);
+                    if( siblingDesc != null ) {
+                        prop.description = escapeText(siblingDesc);
+                        prop.unescapedDescription = siblingDesc;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @SuppressWarnings( { "rawtypes", "unchecked" } )
+    private void captureSiblingDescriptions( @Nonnull final OpenAPI openAPI )
+    {
+        if( openAPI.getComponents() == null || openAPI.getComponents().getSchemas() == null ) {
+            return;
+        }
+        for( final var schemaEntry : openAPI.getComponents().getSchemas().entrySet() ) {
+            final Schema modelSchema = schemaEntry.getValue();
+            if( modelSchema.getProperties() == null ) {
+                continue;
+            }
+            for( final var propEntry : ((Map<String, Schema>) modelSchema.getProperties()).entrySet() ) {
+                final Schema propSchema = propEntry.getValue();
+                if( propSchema.get$ref() != null && propSchema.getDescription() != null ) {
+                    siblingDescriptions
+                        .computeIfAbsent(schemaEntry.getKey(), k -> new java.util.HashMap<>())
+                        .put(propEntry.getKey(), propSchema.getDescription());
+                }
+            }
         }
     }
 
