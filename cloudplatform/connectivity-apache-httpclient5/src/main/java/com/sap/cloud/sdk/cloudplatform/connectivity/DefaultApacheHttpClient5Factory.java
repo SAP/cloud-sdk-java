@@ -5,6 +5,7 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -104,7 +105,12 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             builder.addRequestInterceptorFirst(requestInterceptor);
         }
 
-        return builder.build();
+        final AtomicReference<CloseableHttpClient> holder = new AtomicReference<>();
+        builder
+            .addRequestInterceptorLast(
+                ( req, entity, ctx ) -> new CsrfTokenInterceptor(holder.get()).process(req, entity, ctx));
+        holder.set(builder.build());
+        return holder.get();
     }
 
     @Nonnull

@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- 
+- [OData Client] Introduced a new module `datamodel/odata-client-apache-httpclient5` to enable the use of the OData Client with Apache's Http Client 5.
 
 ### 📈 Improvements
 
