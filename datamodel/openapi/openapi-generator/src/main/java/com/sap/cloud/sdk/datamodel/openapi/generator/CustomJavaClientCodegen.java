@@ -202,7 +202,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
      * @param propertyName
      *            The name of the property to remove.
      */
-    @SuppressWarnings( { "rawtypes", "unchecked", "ReplaceInefficientStreamCount" } )
+    @SuppressWarnings( { "rawtypes", "unchecked" } )
     private void preprocessRemoveProperty(
         @Nonnull final OpenAPI openAPI,
         @Nonnull final String schemaName,
@@ -216,7 +216,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         boolean removed = false;
 
         final Predicate<Schema> remove =
-            s -> s != null && s.getProperties() != null && s.getProperties().remove(propertyName) != null;
+            s -> s.getProperties() != null && s.getProperties().remove(propertyName) != null;
         final var schemasQueued = new LinkedList<Schema>();
         final var schemasDone = new HashSet<Schema>();
         schemasQueued.add(schema);
