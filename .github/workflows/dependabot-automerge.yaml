@@ -29,6 +29,10 @@ jobs:
           permission-contents: write
           permission-pull-requests: write
 
+      - name: Checkout
+        uses: actions/checkout@v7
+
+
       - name: 'Approve and Merge PRs'
         run: |
           PRS=$(gh pr list --app "dependabot" --state "open" --json number,title)
