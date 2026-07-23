@@ -348,8 +348,7 @@ class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    //This is a known limitation of excluding header providers in the equality check of destinations
-    void testGetClientReturnsSameClientForDestinationsWithOnlyDifferentHeaderProviders()
+    void testGetClientReturnsDifferentClientForDestinationsWithDifferentHeaderProviders()
     {
         final Header header1 = new Header("foo", "bar");
         final Header header2 = new Header("foo1", "bar1");
@@ -362,9 +361,12 @@ class DefaultApacheHttpClient5CacheTest
 
         final DefaultHttpDestination secondDestination =
             DefaultHttpDestination
-                .fromDestination(firstDestination)
+                .builder("http://some-uri")
                 .headerProviders(( any ) -> Collections.singletonList(header2))
                 .build();
+
+        // Verify that destinations with different header providers are not equal
+        assertThat(firstDestination).isNotEqualTo(secondDestination);
 
         final ApacheHttpClient5Wrapper client1 =
             (ApacheHttpClient5Wrapper) sut.tryGetHttpClient(firstDestination, FACTORY).get();
@@ -374,6 +376,9 @@ class DefaultApacheHttpClient5CacheTest
         assertThat(client1.getDestination()).isSameAs(firstDestination);
         assertThat(client2.getDestination()).isSameAs(secondDestination);
 
+        // Each client should be a distinct instance now
+        assertThat(client1).isNotSameAs(client2);
+
         final ClassicHttpRequest request1 = client1.wrapRequest(new HttpGet("/"));
         final ClassicHttpRequest request2 = client2.wrapRequest(new HttpGet("/"));
 
@@ -382,15 +387,13 @@ class DefaultApacheHttpClient5CacheTest
         request1.headerIterator().forEachRemaining(headersRequest1::add);
         request2.headerIterator().forEachRemaining(headersRequest2::add);
 
-        // recursive comparison because BasicHeader doesn't implement equals/hashCode
+        // Each destination's header provider should only add its own headers
         assertThat(headersRequest1)
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new BasicHeader(header1.getName(), header1.getValue()));
         assertThat(headersRequest2)
             .usingRecursiveFieldByFieldElementComparator()
-            .containsExactly(
-                new BasicHeader(header1.getName(), header1.getValue()),
-                new BasicHeader(header2.getName(), header2.getValue()));
+            .containsExactly(new BasicHeader(header2.getName(), header2.getValue()));
     }
 
     @Test

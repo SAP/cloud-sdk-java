@@ -22,9 +22,13 @@ class HttpClientWrapperTest
         final DefaultHttpDestination thirdDestination = DefaultHttpDestination.builder("http://bar.com").build();
         final HttpClientWrapper sut = new HttpClientWrapper(mock(CloseableHttpClient.class), firstDestination);
 
+        // withDestination returns the same wrapper instance when the destination reference is identical
         assertThat(sut.withDestination(firstDestination)).isSameAs(sut);
-        assertThat(sut.withDestination(firstDestination)).isNotSameAs(sut.withDestination(secondDestination));
 
+        // withDestination throws an exception when destinations are not equal (different header providers)
+        assertThatThrownBy(() -> sut.withDestination(secondDestination)).isInstanceOf(ShouldNotHappenException.class);
+
+        // withDestination throws an exception when destinations have different URIs
         assertThatThrownBy(() -> sut.withDestination(thirdDestination)).isInstanceOf(ShouldNotHappenException.class);
     }
 }

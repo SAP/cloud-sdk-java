@@ -511,8 +511,7 @@ public final class DefaultHttpDestination implements HttpDestination
             .getPropertyNames()
             .forEach(propertyName -> builder.property(propertyName, destination.get(propertyName).get()));
 
-        if( destination instanceof DefaultHttpDestination ) {
-            final DefaultHttpDestination httpDestination = (DefaultHttpDestination) destination;
+        if( destination instanceof DefaultHttpDestination httpDestination ) {
             builder.headers(httpDestination.customHeaders);
             builder
                 .headerProviders(httpDestination.getCustomHeaderProviders().toArray(new DestinationHeaderProvider[0]));
@@ -543,6 +542,7 @@ public final class DefaultHttpDestination implements HttpDestination
                 resolveCertificatesOnly(keyStoreSupplier.get().getOrNull()),
                 resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
             .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore))
+            .append(customHeaderProviders, that.customHeaderProviders)
             .isEquals();
     }
 
@@ -554,7 +554,26 @@ public final class DefaultHttpDestination implements HttpDestination
             .append(customHeaders)
             .append(resolveKeyStoreHashCode(keyStoreSupplier.get().getOrNull()))
             .append(resolveKeyStoreHashCode(trustStore))
+            .append(computeHeaderProvidersHashCode(customHeaderProviders))
             .toHashCode();
+    }
+
+    /**
+     * Computes a hash code for the custom header providers list. Since header providers can be lambda functions that
+     * don't have meaningful equals/hashCode implementations, we use the identity hash code of each provider to uniquely
+     * identify them.
+     *
+     * @param providers
+     *            the list of header providers
+     * @return a hash code based on the identity of each provider
+     */
+    private static int computeHeaderProvidersHashCode( @Nonnull final List<DestinationHeaderProvider> providers )
+    {
+        int result = 0;
+        for( final DestinationHeaderProvider provider : providers ) {
+            result = 31 * result + System.identityHashCode(provider);
+        }
+        return result;
     }
 
     /**

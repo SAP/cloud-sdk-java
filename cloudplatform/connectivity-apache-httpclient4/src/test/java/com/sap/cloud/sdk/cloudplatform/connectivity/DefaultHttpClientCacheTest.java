@@ -28,6 +28,8 @@ import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.testutil.TestContext;
 
+import lombok.SneakyThrows;
+
 @Isolated
 class DefaultHttpClientCacheTest
 {
@@ -179,8 +181,7 @@ class DefaultHttpClientCacheTest
     }
 
     @Test
-    //This is a known limitation of excluding header providers in the equality check of destinations
-    void testGetClientReturnsSameClientForDestinationsWithOnlyDifferentHeaderProviders()
+    void testGetClientReturnsDifferentClientForDestinationsWithDifferentHeaderProviders()
     {
         final Header header1 = new Header("foo", "bar");
         final Header header2 = new Header("foo1", "bar1");
@@ -193,9 +194,12 @@ class DefaultHttpClientCacheTest
 
         final DefaultHttpDestination secondDestination =
             DefaultHttpDestination
-                .fromDestination(firstDestination)
+                .builder("http://some-uri")
                 .headerProviders(( any ) -> Collections.singletonList(header2))
                 .build();
+
+        // Verify that destinations with different header providers are not equal
+        assertThat(firstDestination).isNotEqualTo(secondDestination);
 
         final HttpClientWrapper client1 = (HttpClientWrapper) sut.tryGetHttpClient(firstDestination, FACTORY).get();
         final HttpClientWrapper client2 = (HttpClientWrapper) sut.tryGetHttpClient(secondDestination, FACTORY).get();
@@ -203,15 +207,15 @@ class DefaultHttpClientCacheTest
         assertThat(client1.getDestination()).isSameAs(firstDestination);
         assertThat(client2.getDestination()).isSameAs(secondDestination);
 
+        // Each client should be a distinct instance now
+        assertThat(client1).isNotSameAs(client2);
+
         final HttpUriRequest request1 = client1.wrapRequest(new HttpGet());
         final HttpUriRequest request2 = client2.wrapRequest(new HttpGet());
 
-        // This behavior is to be improved by https://github.com/SAP/cloud-sdk-java-backlog/issues/396
+        // Each destination's header provider should only add its own headers
         assertThat(request1.getAllHeaders()).containsExactly(new HttpClientWrapper.ApacheHttpHeader(header1));
-        assertThat(request2.getAllHeaders())
-            .containsExactly(
-                new HttpClientWrapper.ApacheHttpHeader(header1),
-                new HttpClientWrapper.ApacheHttpHeader(header2));
+        assertThat(request2.getAllHeaders()).containsExactly(new HttpClientWrapper.ApacheHttpHeader(header2));
     }
 
     @Test
@@ -355,6 +359,41 @@ class DefaultHttpClientCacheTest
         assertThat(unclearedClientWithDestination)
             .isSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
+    }
+
+    @SneakyThrows
+    @Test
+    void testCachedEqualHttpClientsClosingBehavior()
+    {
+        final DefaultHttpDestination destination1 = DefaultHttpDestination.builder("http://foo.com").build();
+        final HttpClient client1 = sut.tryGetHttpClient(destination1, FACTORY).get();
+        assertThat(((HttpClientWrapper) client1).getDestination()).isSameAs(destination1);
+
+        final DefaultHttpDestination destination2 =
+            DefaultHttpDestination
+                .builder("http://foo.com")
+                .headerProviders(c -> List.of(new Header("Authorization", "Bearer foo")))
+                .build();
+        final HttpClient client2 = sut.tryGetHttpClient(destination2, FACTORY).get();
+        assertThat(((HttpClientWrapper) client2).getDestination()).isSameAs(destination2);
+
+        // Verify the destinations are not equal due to different header providers
+        assertThat(destination1).isNotEqualTo(destination2); // header providers are now included in the equality check
+        assertThat(destination1).isNotSameAs(destination2);
+
+        // Http clients are distinct instances, since the cache key contains the destination reference and not its content
+        assertThat(client1).isNotSameAs(client2);
+
+        // When using the exact same destination object, the same http-client wrapper should be returned
+        final HttpClient client1Again = sut.tryGetHttpClient(destination1, FACTORY).get();
+        assertThat(client1Again).isSameAs(client1);
+        assertThat(((HttpClientWrapper) client1Again).getDestination()).isSameAs(destination1);
+
+        // simulate garbage collection on client1
+        ((HttpClientWrapper) client1).close();
+
+        // since client1 did not inherit client2 connection manager, client2 is not shut down
+        client2.execute(new HttpGet());
     }
 
     @Test
