@@ -83,7 +83,7 @@ public class Soda
   /**
    * Set the description of this {@link Soda} instance and return the same instance.
    *
-   * @param description  Soda description as part of the Soda object
+   * @param description  The description of this {@link Soda}
    * @return The same instance of this {@link Soda} class
    */
   @Nonnull public Soda description( @Nullable final String description) {
@@ -92,10 +92,10 @@ public class Soda
   }
 
   /**
-   * Soda description as part of the Soda object
+   * Get description
    * @return description  The description of this {@link Soda} instance.
    */
-  @Nullable
+  @Nonnull
   public String getDescription() {
     return description;
   }
@@ -103,7 +103,7 @@ public class Soda
   /**
    * Set the description of this {@link Soda} instance.
    *
-   * @param description  Soda description as part of the Soda object
+   * @param description  The description of this {@link Soda}
    */
   public void setDescription( @Nullable final String description) {
     this.description = description;

@@ -207,7 +207,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
   @Nullable
 {{/isNullable}}
 {{^isNullable}}
-  {{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}
+  @Nonnull
 {{/isNullable}}
 {{#jsonb}}
   @JsonbProperty("{{baseName}}")

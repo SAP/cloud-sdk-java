@@ -147,7 +147,7 @@ public class Soda
    * Get id
    * @return id  The id of this {@link Soda} instance.
    */
-  @Nullable
+  @Nonnull
   public Long getId() {
     return id;
   }
@@ -234,7 +234,7 @@ public class Soda
    * Get isAvailable
    * @return isAvailable  The isAvailable of this {@link Soda} instance.
    */
-  @Nullable
+  @Nonnull
   public Boolean isAvailable() {
     return isAvailable;
   }

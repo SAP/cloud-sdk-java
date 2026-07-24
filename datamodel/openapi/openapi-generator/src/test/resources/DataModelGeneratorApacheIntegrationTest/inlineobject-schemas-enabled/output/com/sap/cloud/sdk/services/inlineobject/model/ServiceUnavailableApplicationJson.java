@@ -63,7 +63,7 @@ public class ServiceUnavailableApplicationJson
    * Get message
    * @return message  The message of this {@link ServiceUnavailableApplicationJson} instance.
    */
-  @Nullable
+  @Nonnull
   public String getMessage() {
     return message;
   }
