@@ -123,6 +123,8 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.2</wiremock.version>
+		<handlebars.version>4.5.3</handlebars.version>
+		<commons-text.version>1.15.0</commons-text.version>
 		<checkstyle.version>12.3.1</checkstyle.version>
 		<byte-buddy.version>1.18.11</byte-buddy.version>
 		<snakeyaml.version>2.6</snakeyaml.version>
@@ -326,6 +328,18 @@
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
 				<version>${commons-beanutils.version}</version>
+			</dependency>
+			<!-- resolve vulnerability CVE-2026-55760 (handlebars is used transitively via wiremock) -->
+			<dependency>
+				<groupId>com.github.jknack</groupId>
+				<artifactId>handlebars</artifactId>
+				<version>${handlebars.version}</version>
+			</dependency>
+			<!-- align commons-text version pulled transitively by handlebars and openapi-generator -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-text</artifactId>
+				<version>${commons-text.version}</version>
 			</dependency>
 			<!--Dependencies with test scope-->
 			<dependency>
