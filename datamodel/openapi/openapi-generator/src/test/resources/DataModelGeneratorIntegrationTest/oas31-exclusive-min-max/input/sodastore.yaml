@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: OAS 3.1 Numeric exclusiveMinimum and exclusiveMaximum
+  version: 1.0.0
+
+paths:
+  /sodas:
+    get:
+      operationId: getSodas
+      responses:
+        '200':
+          description: A soda
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Soda'
+
+components:
+  schemas:
+    Soda:
+      type: object
+      properties:
+        name:
+          type: string
+        rating:
+          # numeric exclusiveMinimum/exclusiveMaximum as direct values
+          type: number
+          exclusiveMinimum: 0
+          exclusiveMaximum: 5
+        score:
+          # OAS 3.1: non-exclusive minimum/maximum (plain numeric values)
+          type: number
+          minimum: 0
+          maximum: 100
+        temperature:
+          # OAS 3.1: mixed — inclusive minimum alongside exclusive maximum
+          type: number
+          minimum: 0
+          exclusiveMaximum: 100
+        combo:
+          # OAS 3.1: both minimum (inclusive) and exclusiveMinimum (exclusive numeric) present;
+          # exclusiveMinimum: 3 is stricter than minimum: 2, so effective constraint is > 3
+          type: number
+          minimum: 2
+          exclusiveMinimum: 3
+      required:
+        - name

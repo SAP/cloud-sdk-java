@@ -115,6 +115,7 @@ class GenerationConfigurationConverter
             log.warn("Parsing the specification yielded the following messages: {}", spec.getMessages());
         }
         final var result = spec.getOpenAPI();
+        log.info("Detected OpenAPI specification version {}.", result.getOpenapi());
         preprocessSpecification(result, config);
         return result;
     }

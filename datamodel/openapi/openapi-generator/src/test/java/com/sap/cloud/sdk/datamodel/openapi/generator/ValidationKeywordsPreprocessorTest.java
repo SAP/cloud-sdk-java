@@ -116,4 +116,72 @@ class ValidationKeywordsPreprocessorTest
         assertThat(result.getJsonNode()).isEqualTo(jsonNode);
     }
 
+    // --- OAS 3.1 tests ---
+
+    @Test
+    void testOas31NullUnionAnyOfInPaths_isAllowed()
+        throws IOException
+    {
+        // anyOf: [{$ref: "..."}, {type: "null"}] in a path request body is the OAS 3.1
+        // canonical nullable-$ref pattern and must be allowed even when oneOf/anyOf generation
+        // is otherwise disabled.
+        final Path inputFilePath =
+            Paths
+                .get(
+                    "src/test/resources/"
+                        + ValidationKeywordsPreprocessorTest.class.getSimpleName()
+                        + "/sodastore-31-nullable.json");
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final JsonNode jsonNode = objectMapper.readTree(inputFilePath.toFile());
+
+        final PreprocessingStep.PreprocessingStepResult result =
+            new ValidationKeywordsPreprocessor().execute(jsonNode, objectMapper);
+
+        assertThat(result.changesApplied()).isFalse();
+        assertThat(result.getJsonNode()).isEqualTo(jsonNode);
+    }
+
+    @Test
+    void testOas31NullUnionAnyOfInSchemas_isAllowed()
+        throws IOException
+    {
+        // The sodastore-31-nullable.json fixture also contains null-union anyOf in component schemas.
+        final Path inputFilePath =
+            Paths
+                .get(
+                    "src/test/resources/"
+                        + ValidationKeywordsPreprocessorTest.class.getSimpleName()
+                        + "/sodastore-31-nullable.json");
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final JsonNode jsonNode = objectMapper.readTree(inputFilePath.toFile());
+
+        // Must not throw — null-union patterns in schemas are allowed
+        final PreprocessingStep.PreprocessingStepResult result =
+            new ValidationKeywordsPreprocessor().execute(jsonNode, objectMapper);
+
+        assertThat(result.changesApplied()).isFalse();
+    }
+
+    @Test
+    void testNonNullUnionOneOfInPaths_isBlocked()
+        throws IOException
+    {
+        // A oneOf with two $ref items (no null type) in a path must still be blocked
+        // when oneOf/anyOf generation is disabled.
+        final Path inputFilePath =
+            Paths
+                .get(
+                    "src/test/resources/"
+                        + ValidationKeywordsPreprocessorTest.class.getSimpleName()
+                        + "/AggregatorInPathSchema.json");
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final JsonNode jsonNode = objectMapper.readTree(inputFilePath.toFile());
+
+        assertThatThrownBy(() -> new ValidationKeywordsPreprocessor().execute(jsonNode, objectMapper))
+            .isInstanceOf(OpenApiGeneratorException.class);
+    }
+
 }

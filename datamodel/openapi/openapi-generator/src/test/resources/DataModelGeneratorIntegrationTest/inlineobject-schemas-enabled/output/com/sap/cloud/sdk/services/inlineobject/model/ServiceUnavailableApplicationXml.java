@@ -63,7 +63,7 @@ public class ServiceUnavailableApplicationXml
    * Get message
    * @return message  The message of this {@link ServiceUnavailableApplicationXml} instance.
    */
-  @Nonnull
+  @Nullable
   public String getMessage() {
     return message;
   }

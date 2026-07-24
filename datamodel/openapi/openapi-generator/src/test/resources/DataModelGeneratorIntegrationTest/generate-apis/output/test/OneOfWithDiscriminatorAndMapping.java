@@ -73,7 +73,7 @@ public class OneOfWithDiscriminatorAndMapping
    * Get sodaType
    * @return sodaType  The sodaType of this {@link OneOfWithDiscriminatorAndMapping} instance.
    */
-  @Nonnull
+  @Nullable
   public String getSodaType() {
     return sodaType;
   }

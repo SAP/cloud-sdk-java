@@ -24,6 +24,7 @@ import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
+import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.model.OperationsMap;
 
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
@@ -38,6 +39,8 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 {
     private final GenerationConfiguration config;
     private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
+    // schemaName -> (propertyName -> sibling description) captured before normalization strips $ref context
+    private final Map<String, Map<String, String>> siblingDescriptions = new java.util.HashMap<>();
 
     public CustomJavaClientCodegen( @Nonnull final GenerationConfiguration config )
     {
@@ -47,6 +50,9 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     @Override
     public void preprocessOpenAPI( @Nonnull final OpenAPI openAPI )
     {
+        // Capture sibling descriptions on $ref property schemas before normalization resolves them away.
+        captureSiblingDescriptions(openAPI);
+
         if( USE_EXCLUDE_PROPERTIES.isEnabled(config) ) {
             final String[] exclusions = USE_EXCLUDE_PROPERTIES.getValue(config).trim().split("[,\\s]+");
             for( final String exclusion : exclusions ) {
@@ -55,11 +61,12 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             }
         }
 
+        // OAS 3.1 documents may have no paths (webhooks-only or components-only).
         if( USE_EXCLUDE_PATHS.isEnabled(config) ) {
             final String[] exclusions = USE_EXCLUDE_PATHS.getValue(config).trim().split("[,\\s]+");
-            for( final String exclusion : exclusions ) {
-                if( !openAPI.getPaths().keySet().remove(exclusion) ) {
-                    log.error("Could not remove path {}", exclusion);
+            if( openAPI.getPaths() != null ) {
+                for( final String exclusion : exclusions ) {
+                    openAPI.getPaths().remove(exclusion);
                 }
             }
         }
@@ -137,6 +144,54 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         }
     }
 
+    @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+    @Override
+    @Nonnull
+    public Map<String, ModelsMap> postProcessAllModels( @Nonnull final Map<String, ModelsMap> objs )
+    {
+        final Map<String, ModelsMap> result = super.postProcessAllModels(objs);
+
+        // Restore sibling descriptions lost during $ref resolution for primitive-typed properties.
+        for( final var schemaEntry : siblingDescriptions.entrySet() ) {
+            final ModelsMap modelsMap = result.get(schemaEntry.getKey());
+            if( modelsMap == null ) {
+                continue;
+            }
+            for( final ModelMap modelMap : modelsMap.getModels() ) {
+                for( final CodegenProperty prop : modelMap.getModel().vars ) {
+                    final String siblingDesc = schemaEntry.getValue().get(prop.baseName);
+                    if( siblingDesc != null ) {
+                        prop.description = escapeText(siblingDesc);
+                        prop.unescapedDescription = siblingDesc;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @SuppressWarnings( { "rawtypes", "unchecked" } )
+    private void captureSiblingDescriptions( @Nonnull final OpenAPI openAPI )
+    {
+        if( openAPI.getComponents() == null || openAPI.getComponents().getSchemas() == null ) {
+            return;
+        }
+        for( final var schemaEntry : openAPI.getComponents().getSchemas().entrySet() ) {
+            final Schema modelSchema = schemaEntry.getValue();
+            if( modelSchema.getProperties() == null ) {
+                continue;
+            }
+            for( final var propEntry : ((Map<String, Schema>) modelSchema.getProperties()).entrySet() ) {
+                final Schema propSchema = propEntry.getValue();
+                if( propSchema.get$ref() != null && propSchema.getDescription() != null ) {
+                    siblingDescriptions
+                        .computeIfAbsent(schemaEntry.getKey(), k -> new java.util.HashMap<>())
+                        .put(propEntry.getKey(), propSchema.getDescription());
+                }
+            }
+        }
+    }
+
     /**
      * Remove property from specification.
      *
@@ -147,7 +202,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
      * @param propertyName
      *            The name of the property to remove.
      */
-    @SuppressWarnings( { "rawtypes", "unchecked", "ReplaceInefficientStreamCount" } )
+    @SuppressWarnings( { "rawtypes", "unchecked" } )
     private void preprocessRemoveProperty(
         @Nonnull final OpenAPI openAPI,
         @Nonnull final String schemaName,
@@ -161,7 +216,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         boolean removed = false;
 
         final Predicate<Schema> remove =
-            s -> s != null && s.getProperties() != null && s.getProperties().remove(propertyName) != null;
+            s -> s.getProperties() != null && s.getProperties().remove(propertyName) != null;
         final var schemasQueued = new LinkedList<Schema>();
         final var schemasDone = new HashSet<Schema>();
         schemasQueued.add(schema);
@@ -200,6 +255,11 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         final var refs = new LinkedHashSet<String>();
         final var pattern = Pattern.compile("\\$ref: #/components/schemas/(\\w+)");
 
+        // OAS 3.1 documents may have no paths (webhooks-only or components-only).
+        if( openAPI.getPaths() == null || openAPI.getPaths().isEmpty() ) {
+            return;
+        }
+
         // find and queue schemas nested in paths
         for( final var path : openAPI.getPaths().values() ) {
             final var m = pattern.matcher(path.toString());
@@ -208,6 +268,20 @@ class CustomJavaClientCodegen extends JavaClientCodegen
                 final var schema = openAPI.getComponents().getSchemas().get(name);
                 queue.add(schema);
                 refs.add(m.group(0).split(" ")[1]);
+            }
+        }
+
+        // OAS 3.1 adds components/pathItems — traverse them for schema references too
+        final var pathItems = openAPI.getComponents() != null ? openAPI.getComponents().getPathItems() : null;
+        if( pathItems != null ) {
+            for( final var pathItem : pathItems.values() ) {
+                final var m = pattern.matcher(pathItem.toString());
+                while( m.find() ) {
+                    final var name = m.group(1);
+                    final var schema = openAPI.getComponents().getSchemas().get(name);
+                    queue.add(schema);
+                    refs.add(m.group(0).split(" ")[1]);
+                }
             }
         }
 

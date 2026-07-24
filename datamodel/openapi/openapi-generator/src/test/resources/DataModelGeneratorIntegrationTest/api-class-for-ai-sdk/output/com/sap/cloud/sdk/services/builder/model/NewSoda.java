@@ -137,7 +137,7 @@ public class NewSoda
    * Get zero
    * @return zero  The zero of this {@link NewSoda} instance.
    */
-  @Nonnull
+  @Nullable
   public Boolean isZero() {
     return zero;
   }
@@ -166,7 +166,7 @@ public class NewSoda
    * Get since
    * @return since  The since of this {@link NewSoda} instance.
    */
-  @Nonnull
+  @Nullable
   public LocalDate getSince() {
     return since;
   }

@@ -63,7 +63,7 @@ public class Cola
    * Get sodaType
    * @return sodaType  The sodaType of this {@link Cola} instance.
    */
-  @Nonnull
+  @Nullable
   public String getSodaType() {
     return sodaType;
   }
