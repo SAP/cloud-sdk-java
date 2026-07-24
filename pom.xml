@@ -334,7 +334,6 @@
 				<groupId>com.github.jknack</groupId>
 				<artifactId>handlebars</artifactId>
 				<version>${handlebars.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<!-- align commons-text version pulled transitively by handlebars and openapi-generator -->
 			<dependency>
@@ -802,7 +801,6 @@
 						<ignoredUnusedDeclaredDependency>org.junit.jupiter:junit-jupiter-engine</ignoredUnusedDeclaredDependency>
 						<!-- Transitive dependencies explicitly declared to fic CVEs-->
 						<ignoredUnusedDeclaredDependency>commons-beanutils:commons-beanutils</ignoredUnusedDeclaredDependency>
-						<ignoredUnusedDeclaredDependency>com.github.jknack:handlebars</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 				</configuration>
 				<executions>
