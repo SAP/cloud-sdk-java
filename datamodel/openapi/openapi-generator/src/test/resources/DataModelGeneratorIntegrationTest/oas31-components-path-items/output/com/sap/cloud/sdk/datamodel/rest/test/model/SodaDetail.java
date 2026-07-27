@@ -63,7 +63,7 @@ public class SodaDetail
    * Get description
    * @return description  The description of this {@link SodaDetail} instance.
    */
-  @Nullable
+  @Nonnull
   public String getDescription() {
     return description;
   }

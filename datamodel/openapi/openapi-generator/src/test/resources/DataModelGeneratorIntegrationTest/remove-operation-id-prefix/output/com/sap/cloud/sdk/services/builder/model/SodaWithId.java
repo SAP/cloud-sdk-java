@@ -224,7 +224,7 @@ public class SodaWithId
    * Get packaging
    * @return packaging  The packaging of this {@link SodaWithId} instance.
    */
-  @Nullable
+  @Nonnull
   public PackagingEnum getPackaging() {
     return packaging;
   }
@@ -282,7 +282,7 @@ public class SodaWithId
    * Get id
    * @return id  The id of this {@link SodaWithId} instance.
    */
-  @Nullable
+  @Nonnull
   public Long getId() {
     return id;
   }

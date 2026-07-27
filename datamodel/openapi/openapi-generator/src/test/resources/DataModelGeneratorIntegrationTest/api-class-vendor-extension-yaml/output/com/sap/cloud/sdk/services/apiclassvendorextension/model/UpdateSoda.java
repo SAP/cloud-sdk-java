@@ -72,7 +72,7 @@ public class UpdateSoda
    * Get name
    * @return name  The name of this {@link UpdateSoda} instance.
    */
-  @Nullable
+  @Nonnull
   public String getName() {
     return name;
   }
@@ -101,7 +101,7 @@ public class UpdateSoda
    * Get brand
    * @return brand  The brand of this {@link UpdateSoda} instance.
    */
-  @Nullable
+  @Nonnull
   public String getBrand() {
     return brand;
   }
@@ -130,7 +130,7 @@ public class UpdateSoda
    * Get flavor
    * @return flavor  The flavor of this {@link UpdateSoda} instance.
    */
-  @Nullable
+  @Nonnull
   public String getFlavor() {
     return flavor;
   }
@@ -159,7 +159,7 @@ public class UpdateSoda
    * Get price
    * @return price  The price of this {@link UpdateSoda} instance.
    */
-  @Nullable
+  @Nonnull
   public Float getPrice() {
     return price;
   }

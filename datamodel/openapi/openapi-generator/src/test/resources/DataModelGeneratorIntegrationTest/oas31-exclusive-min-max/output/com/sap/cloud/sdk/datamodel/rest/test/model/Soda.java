@@ -109,7 +109,7 @@ public class Soda
    * maximum: 5 (exclusive)
    * @return rating  The rating of this {@link Soda} instance.
    */
-  @Nullable
+  @Nonnull
   public BigDecimal getRating() {
     return rating;
   }
@@ -144,7 +144,7 @@ public class Soda
    * maximum: 100
    * @return score  The score of this {@link Soda} instance.
    */
-  @Nullable
+  @Nonnull
   public BigDecimal getScore() {
     return score;
   }
@@ -179,7 +179,7 @@ public class Soda
    * maximum: 100 (exclusive)
    * @return temperature  The temperature of this {@link Soda} instance.
    */
-  @Nullable
+  @Nonnull
   public BigDecimal getTemperature() {
     return temperature;
   }
@@ -212,7 +212,7 @@ public class Soda
    * minimum: 3 (exclusive)
    * @return combo  The combo of this {@link Soda} instance.
    */
-  @Nullable
+  @Nonnull
   public BigDecimal getCombo() {
     return combo;
   }

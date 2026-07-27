@@ -63,7 +63,7 @@ public class AllOf
    * Get sodaType
    * @return sodaType  The sodaType of this {@link AllOf} instance.
    */
-  @Nullable
+  @Nonnull
   public String getSodaType() {
     return sodaType;
   }

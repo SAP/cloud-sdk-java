@@ -63,7 +63,7 @@ public class Soda
    * Get name
    * @return name  The name of this {@link Soda} instance.
    */
-  @Nullable
+  @Nonnull
   public String getName() {
     return name;
   }

@@ -76,7 +76,7 @@ public class UpdateSoda
    * Get name
    * @return name  The name of this {@link UpdateSoda} instance.
    */
-  @Nullable
+  @Nonnull
   public String getName() {
     return name;
   }
@@ -105,7 +105,7 @@ public class UpdateSoda
    * Get zero
    * @return zero  The zero of this {@link UpdateSoda} instance.
    */
-  @Nullable
+  @Nonnull
   public Boolean isZero() {
     return zero;
   }
@@ -134,7 +134,7 @@ public class UpdateSoda
    * Get since
    * @return since  The since of this {@link UpdateSoda} instance.
    */
-  @Nullable
+  @Nonnull
   public LocalDate getSince() {
     return since;
   }
@@ -163,7 +163,7 @@ public class UpdateSoda
    * Get brand
    * @return brand  The brand of this {@link UpdateSoda} instance.
    */
-  @Nullable
+  @Nonnull
   public String getBrand() {
     return brand;
   }
@@ -192,7 +192,7 @@ public class UpdateSoda
    * Get price
    * @return price  The price of this {@link UpdateSoda} instance.
    */
-  @Nullable
+  @Nonnull
   public Float getPrice() {
     return price;
   }

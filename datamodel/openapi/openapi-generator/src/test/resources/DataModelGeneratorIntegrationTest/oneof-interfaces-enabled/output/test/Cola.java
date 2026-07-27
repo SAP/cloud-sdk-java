@@ -71,7 +71,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
    * Get sodaType
    * @return sodaType  The sodaType of this {@link Cola} instance.
    */
-  @Nullable
+  @Nonnull
   public String getSodaType() {
     return sodaType;
   }
@@ -100,7 +100,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
    * Get barCode
    * @return barCode  The barCode of this {@link Cola} instance.
    */
-  @Nullable
+  @Nonnull
   public ColaBarCode getBarCode() {
     return barCode;
   }
