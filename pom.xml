@@ -335,6 +335,7 @@
 				<artifactId>handlebars</artifactId>
 				<version>${handlebars.version}</version>
 				<exclusions>
+					<!-- nashorn is not needed and violates Blackduck guidelines	-->
 					<exclusion>
 						<groupId>org.openjdk.nashorn</groupId>
 						<artifactId>nashorn-core</artifactId>
