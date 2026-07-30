@@ -5,10 +5,8 @@
 package com.sap.cloud.sdk.datamodel.odatav4.sample.namespaces.sdkgrocerystore;
 
 import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.Maps;
@@ -16,7 +14,6 @@ import com.google.gson.annotations.JsonAdapter;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataEntityKey;
 import com.sap.cloud.sdk.datamodel.odatav4.core.VdmComplex;
 import com.sap.cloud.sdk.result.ElementName;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,68 +22,56 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 /**
- * <p>
- * Original complex type name from the Odata EDM: <b>ProductCount</b>
- * </p>
- *
+ * <p>Original complex type name from the Odata EDM: <b>ProductCount</b></p>
+ * 
  */
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString( doNotUseGetters = true, callSuper = true )
-@EqualsAndHashCode( doNotUseGetters = true, callSuper = true )
-@JsonAdapter( com.sap.cloud.sdk.datamodel.odatav4.adapter.GsonVdmAdapterFactory.class )
-@JsonSerialize( using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectSerializer.class )
-@JsonDeserialize( using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectDeserializer.class )
-public class ProductCount extends VdmComplex<ProductCount>
+@ToString(doNotUseGetters = true, callSuper = true)
+@EqualsAndHashCode(doNotUseGetters = true, callSuper = true)
+@JsonAdapter(com.sap.cloud.sdk.datamodel.odatav4.adapter.GsonVdmAdapterFactory.class)
+@JsonSerialize(using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectSerializer.class)
+@JsonDeserialize(using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectDeserializer.class)
+public class ProductCount
+    extends VdmComplex<ProductCount>
 {
 
     @Getter
     private final String odataType = "com.sap.cloud.sdk.store.grocery.ProductCount";
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>ProductId</b>
-     * </p>
-     *
-     * @return The productId contained in this {@link VdmComplex}.
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>ProductId</b></p>
+     * 
+     * @return
+     *     The productId contained in this {@link VdmComplex}.
      */
     @Nullable
-    @ElementName( "ProductId" )
+    @ElementName("ProductId")
     private Integer productId;
-    public final static com.sap.cloud.sdk.datamodel.odatav4.core.SimpleProperty.NumericInteger<ProductCount> PRODUCT_ID =
-        new com.sap.cloud.sdk.datamodel.odatav4.core.SimpleProperty.NumericInteger<ProductCount>(
-            ProductCount.class,
-            "ProductId");
+    public final static com.sap.cloud.sdk.datamodel.odatav4.core.SimpleProperty.NumericInteger<ProductCount> PRODUCT_ID = new com.sap.cloud.sdk.datamodel.odatav4.core.SimpleProperty.NumericInteger<ProductCount>(ProductCount.class, "ProductId");
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>Quantity</b>
-     * </p>
-     *
-     * @return The quantity contained in this {@link VdmComplex}.
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>Quantity</b></p>
+     * 
+     * @return
+     *     The quantity contained in this {@link VdmComplex}.
      */
     @Nullable
-    @ElementName( "Quantity" )
+    @ElementName("Quantity")
     private Integer quantity;
-    public final static com.sap.cloud.sdk.datamodel.odatav4.core.SimpleProperty.NumericInteger<ProductCount> QUANTITY =
-        new com.sap.cloud.sdk.datamodel.odatav4.core.SimpleProperty.NumericInteger<ProductCount>(
-            ProductCount.class,
-            "Quantity");
+    public final static com.sap.cloud.sdk.datamodel.odatav4.core.SimpleProperty.NumericInteger<ProductCount> QUANTITY = new com.sap.cloud.sdk.datamodel.odatav4.core.SimpleProperty.NumericInteger<ProductCount>(ProductCount.class, "Quantity");
 
     @Nonnull
     @Override
-    public Class<ProductCount> getType()
-    {
+    public Class<ProductCount> getType() {
         return ProductCount.class;
     }
 
     @Nonnull
     @Override
-    protected Map<String, Object> toMapOfFields()
-    {
+    protected Map<String, Object> toMapOfFields() {
         final Map<String, Object> cloudSdkValues = super.toMapOfFields();
         cloudSdkValues.put("ProductId", getProductId());
         cloudSdkValues.put("Quantity", getQuantity());
@@ -94,20 +79,19 @@ public class ProductCount extends VdmComplex<ProductCount>
     }
 
     @Override
-    protected void fromMap( final Map<String, Object> inputValues )
-    {
+    protected void fromMap(final Map<String, Object> inputValues) {
         final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if( cloudSdkValues.containsKey("ProductId") ) {
+            if (cloudSdkValues.containsKey("ProductId")) {
                 final Object cloudSdkValue = cloudSdkValues.remove("ProductId");
-                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getProductId())) ) {
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getProductId()))) {
                     setProductId(((Integer) cloudSdkValue));
                 }
             }
-            if( cloudSdkValues.containsKey("Quantity") ) {
+            if (cloudSdkValues.containsKey("Quantity")) {
                 final Object cloudSdkValue = cloudSdkValues.remove("Quantity");
-                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getQuantity())) ) {
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getQuantity()))) {
                     setQuantity(((Integer) cloudSdkValue));
                 }
             }
@@ -123,38 +107,33 @@ public class ProductCount extends VdmComplex<ProductCount>
 
     @Nonnull
     @Override
-    protected ODataEntityKey getKey()
-    {
+    protected ODataEntityKey getKey() {
         final ODataEntityKey entityKey = super.getKey();
         return entityKey;
     }
 
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>ProductId</b>
-     * </p>
-     *
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>ProductId</b></p>
+     * 
      * @param productId
-     *            The productId to set.
+     *     The productId to set.
      */
-    public void setProductId( @Nullable final Integer productId )
-    {
+    public void setProductId(
+        @Nullable
+        final Integer productId) {
         rememberChangedField("ProductId", this.productId);
         this.productId = productId;
     }
 
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>Quantity</b>
-     * </p>
-     *
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>Quantity</b></p>
+     * 
      * @param quantity
-     *            The quantity to set.
+     *     The quantity to set.
      */
-    public void setQuantity( @Nullable final Integer quantity )
-    {
+    public void setQuantity(
+        @Nullable
+        final Integer quantity) {
         rememberChangedField("Quantity", this.quantity);
         this.quantity = quantity;
     }

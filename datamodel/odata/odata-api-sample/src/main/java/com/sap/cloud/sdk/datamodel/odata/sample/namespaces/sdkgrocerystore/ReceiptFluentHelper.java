@@ -5,36 +5,38 @@
 package com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore;
 
 import javax.annotation.Nonnull;
-
 import com.sap.cloud.sdk.datamodel.odata.helper.FluentHelperRead;
 import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.selectable.ReceiptSelectable;
 
+
 /**
- * Fluent helper to fetch multiple {@link com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Receipt
- * Receipt} entities. This fluent helper allows methods which modify the underlying query to be called before executing
- * the query itself.
- *
+ * Fluent helper to fetch multiple {@link com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Receipt Receipt} entities. This fluent helper allows methods which modify the underlying query to be called before executing the query itself. 
+ * 
  */
-public class ReceiptFluentHelper extends FluentHelperRead<ReceiptFluentHelper, Receipt, ReceiptSelectable>
+public class ReceiptFluentHelper
+    extends FluentHelperRead<ReceiptFluentHelper, Receipt, ReceiptSelectable>
 {
+
 
     /**
      * Creates a fluent helper using the specified service path and entity collection to send the read requests.
-     *
+     * 
      * @param entityCollection
-     *            The entity collection to direct the requests to.
+     *     The entity collection to direct the requests to.
      * @param servicePath
-     *            The service path to direct the read requests to.
+     *     The service path to direct the read requests to.
      */
-    public ReceiptFluentHelper( @Nonnull final String servicePath, @Nonnull final String entityCollection )
-    {
+    public ReceiptFluentHelper(
+        @Nonnull
+        final String servicePath,
+        @Nonnull
+        final String entityCollection) {
         super(servicePath, entityCollection);
     }
 
     @Override
     @Nonnull
-    protected Class<Receipt> getEntityClass()
-    {
+    protected Class<Receipt> getEntityClass() {
         return Receipt.class;
     }
 

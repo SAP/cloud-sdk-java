@@ -7,10 +7,8 @@ package com.sap.cloud.sdk.datamodel.odatav4.sample.namespaces.sdkgrocerystore;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.Maps;
@@ -21,7 +19,6 @@ import com.sap.cloud.sdk.datamodel.odatav4.core.VdmEntity;
 import com.sap.cloud.sdk.datamodel.odatav4.core.VdmEntitySet;
 import com.sap.cloud.sdk.datamodel.odatav4.sample.services.SdkGroceryStoreService;
 import com.sap.cloud.sdk.result.ElementName;
-
 import io.vavr.control.Option;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,221 +30,184 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+
 /**
- * <p>
- * Original entity name from the Odata EDM: <b>Receipt</b>
- * </p>
- *
+ * <p>Original entity name from the Odata EDM: <b>Receipt</b></p>
+ * 
  */
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString( doNotUseGetters = true, callSuper = true )
-@EqualsAndHashCode( doNotUseGetters = true, callSuper = true )
-@JsonAdapter( com.sap.cloud.sdk.datamodel.odatav4.adapter.GsonVdmAdapterFactory.class )
-@JsonSerialize( using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectSerializer.class )
-@JsonDeserialize( using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectDeserializer.class )
-public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
+@ToString(doNotUseGetters = true, callSuper = true)
+@EqualsAndHashCode(doNotUseGetters = true, callSuper = true)
+@JsonAdapter(com.sap.cloud.sdk.datamodel.odatav4.adapter.GsonVdmAdapterFactory.class)
+@JsonSerialize(using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectSerializer.class)
+@JsonDeserialize(using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectDeserializer.class)
+public class Receipt
+    extends VdmEntity<Receipt>
+    implements VdmEntitySet
 {
 
     @Getter
     private final String odataType = "com.sap.cloud.sdk.store.grocery.Receipt";
     /**
      * Selector for all available fields of Receipt.
-     *
+     * 
      */
     public final static SimpleProperty<Receipt> ALL_FIELDS = all();
     /**
-     * (Key Field) Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>Id</b>
-     * </p>
-     *
-     * @return ID of the receipt.
+     * (Key Field) Constraints: Not nullable<p>Original property name from the Odata EDM: <b>Id</b></p>
+     * 
+     * @return
+     *     ID of the receipt.
      */
     @Nullable
-    @ElementName( "Id" )
+    @ElementName("Id")
     private Integer id;
-    public final static SimpleProperty.NumericInteger<Receipt> ID =
-        new SimpleProperty.NumericInteger<Receipt>(Receipt.class, "Id");
+    public final static SimpleProperty.NumericInteger<Receipt> ID = new SimpleProperty.NumericInteger<Receipt>(Receipt.class, "Id");
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>CustomerId</b>
-     * </p>
-     *
-     * @return ID of the customer.
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>CustomerId</b></p>
+     * 
+     * @return
+     *     ID of the customer.
      */
     @Nullable
-    @ElementName( "CustomerId" )
+    @ElementName("CustomerId")
     private Integer customerId;
-    public final static SimpleProperty.NumericInteger<Receipt> CUSTOMER_ID =
-        new SimpleProperty.NumericInteger<Receipt>(Receipt.class, "CustomerId");
+    public final static SimpleProperty.NumericInteger<Receipt> CUSTOMER_ID = new SimpleProperty.NumericInteger<Receipt>(Receipt.class, "CustomerId");
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>TotalAmount</b>
-     * </p>
-     *
-     * @return Total amount of the receipt.
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>TotalAmount</b></p>
+     * 
+     * @return
+     *     Total amount of the receipt.
      */
     @Nullable
-    @ElementName( "TotalAmount" )
+    @ElementName("TotalAmount")
     private BigDecimal totalAmount;
-    public final static SimpleProperty.NumericDecimal<Receipt> TOTAL_AMOUNT =
-        new SimpleProperty.NumericDecimal<Receipt>(Receipt.class, "TotalAmount");
+    public final static SimpleProperty.NumericDecimal<Receipt> TOTAL_AMOUNT = new SimpleProperty.NumericDecimal<Receipt>(Receipt.class, "TotalAmount");
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>ProductCounts</b>
-     * </p>
-     *
-     * @return List of products and quantities associated with the receipt.
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>ProductCounts</b></p>
+     * 
+     * @return
+     *     List of products and quantities associated with the receipt.
      */
     @Nullable
-    @ElementName( "ProductCounts" )
+    @ElementName("ProductCounts")
     private java.util.Collection<ProductCount> productCounts;
     /**
      * Use with available request builders to apply the <b>ProductCounts</b> complex property to query operations.
-     *
+     * 
      */
-    public final static com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount> PRODUCT_COUNTS =
-        new com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount>(
-            Receipt.class,
-            "ProductCounts",
-            ProductCount.class);
+    public final static com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount> PRODUCT_COUNTS = new com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount>(Receipt.class, "ProductCounts", ProductCount.class);
     /**
-     * Constraints: Nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>properties</b>
-     * </p>
-     *
-     * @return The properties contained in this {@link VdmEntity}.
+     * Constraints: Nullable<p>Original property name from the Odata EDM: <b>properties</b></p>
+     * 
+     * @return
+     *     The properties contained in this {@link VdmEntity}.
      */
     @Nullable
-    @ElementName( "properties" )
+    @ElementName("properties")
     private java.util.Collection<ProductCount> properties;
     /**
      * Use with available request builders to apply the <b>properties</b> complex property to query operations.
-     *
+     * 
      */
-    public final static com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount> PROPERTIES =
-        new com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount>(
-            Receipt.class,
-            "properties",
-            ProductCount.class);
+    public final static com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount> PROPERTIES = new com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount>(Receipt.class, "properties", ProductCount.class);
     /**
      * Navigation property <b>Customer</b> for <b>Receipt</b> to single <b>Customer</b>.
-     *
+     * 
      */
-    @ElementName( "Customer" )
+    @ElementName("Customer")
     @Nullable
-    @Getter( AccessLevel.NONE )
-    @Setter( AccessLevel.NONE )
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private Customer toCustomer;
     /**
      * Use with available request builders to apply the <b>Customer</b> navigation property to query operations.
-     *
+     * 
      */
-    public final static com.sap.cloud.sdk.datamodel.odatav4.core.NavigationProperty.Single<Receipt, Customer> TO_CUSTOMER =
-        new com.sap.cloud.sdk.datamodel.odatav4.core.NavigationProperty.Single<Receipt, Customer>(
-            Receipt.class,
-            "Customer",
-            Customer.class);
+    public final static com.sap.cloud.sdk.datamodel.odatav4.core.NavigationProperty.Single<Receipt, Customer> TO_CUSTOMER = new com.sap.cloud.sdk.datamodel.odatav4.core.NavigationProperty.Single<Receipt, Customer>(Receipt.class, "Customer", Customer.class);
 
     @Nonnull
     @Override
-    public Class<Receipt> getType()
-    {
+    public Class<Receipt> getType() {
         return Receipt.class;
     }
 
     /**
-     * (Key Field) Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>Id</b>
-     * </p>
-     *
+     * (Key Field) Constraints: Not nullable<p>Original property name from the Odata EDM: <b>Id</b></p>
+     * 
      * @param id
-     *            ID of the receipt.
+     *     ID of the receipt.
      */
-    public void setId( @Nullable final Integer id )
-    {
+    public void setId(
+        @Nullable
+        final Integer id) {
         rememberChangedField("Id", this.id);
         this.id = id;
     }
 
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>CustomerId</b>
-     * </p>
-     *
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>CustomerId</b></p>
+     * 
      * @param customerId
-     *            ID of the customer.
+     *     ID of the customer.
      */
-    public void setCustomerId( @Nullable final Integer customerId )
-    {
+    public void setCustomerId(
+        @Nullable
+        final Integer customerId) {
         rememberChangedField("CustomerId", this.customerId);
         this.customerId = customerId;
     }
 
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>TotalAmount</b>
-     * </p>
-     *
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>TotalAmount</b></p>
+     * 
      * @param totalAmount
-     *            Total amount of the receipt.
+     *     Total amount of the receipt.
      */
-    public void setTotalAmount( @Nullable final BigDecimal totalAmount )
-    {
+    public void setTotalAmount(
+        @Nullable
+        final BigDecimal totalAmount) {
         rememberChangedField("TotalAmount", this.totalAmount);
         this.totalAmount = totalAmount;
     }
 
     /**
-     * Constraints: Not nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>ProductCounts</b>
-     * </p>
-     *
+     * Constraints: Not nullable<p>Original property name from the Odata EDM: <b>ProductCounts</b></p>
+     * 
      * @param productCounts
-     *            List of products and quantities associated with the receipt.
+     *     List of products and quantities associated with the receipt.
      */
-    public void setProductCounts( @Nullable final java.util.Collection<ProductCount> productCounts )
-    {
+    public void setProductCounts(
+        @Nullable
+        final java.util.Collection<ProductCount> productCounts) {
         rememberChangedField("ProductCounts", this.productCounts);
         this.productCounts = productCounts;
     }
 
     /**
-     * Constraints: Nullable
-     * <p>
-     * Original property name from the Odata EDM: <b>properties</b>
-     * </p>
-     *
+     * Constraints: Nullable<p>Original property name from the Odata EDM: <b>properties</b></p>
+     * 
      * @param properties
-     *            The properties to set.
+     *     The properties to set.
      */
-    public void setProperties( @Nullable final java.util.Collection<ProductCount> properties )
-    {
+    public void setProperties(
+        @Nullable
+        final java.util.Collection<ProductCount> properties) {
         rememberChangedField("properties", this.properties);
         this.properties = properties;
     }
 
     @Override
-    protected String getEntityCollection()
-    {
+    protected String getEntityCollection() {
         return "Receipts";
     }
 
     @Nonnull
     @Override
-    protected ODataEntityKey getKey()
-    {
+    protected ODataEntityKey getKey() {
         final ODataEntityKey entityKey = super.getKey();
         entityKey.addKeyProperty("Id", getId());
         return entityKey;
@@ -255,8 +215,7 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
 
     @Nonnull
     @Override
-    protected Map<String, Object> toMapOfFields()
-    {
+    protected Map<String, Object> toMapOfFields() {
         final Map<String, Object> cloudSdkValues = super.toMapOfFields();
         cloudSdkValues.put("Id", getId());
         cloudSdkValues.put("CustomerId", getCustomerId());
@@ -267,81 +226,80 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
     }
 
     @Override
-    protected void fromMap( final Map<String, Object> inputValues )
-    {
+    protected void fromMap(final Map<String, Object> inputValues) {
         final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if( cloudSdkValues.containsKey("Id") ) {
+            if (cloudSdkValues.containsKey("Id")) {
                 final Object cloudSdkValue = cloudSdkValues.remove("Id");
-                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getId())) ) {
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getId()))) {
                     setId(((Integer) cloudSdkValue));
                 }
             }
-            if( cloudSdkValues.containsKey("CustomerId") ) {
+            if (cloudSdkValues.containsKey("CustomerId")) {
                 final Object cloudSdkValue = cloudSdkValues.remove("CustomerId");
-                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getCustomerId())) ) {
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getCustomerId()))) {
                     setCustomerId(((Integer) cloudSdkValue));
                 }
             }
-            if( cloudSdkValues.containsKey("TotalAmount") ) {
+            if (cloudSdkValues.containsKey("TotalAmount")) {
                 final Object cloudSdkValue = cloudSdkValues.remove("TotalAmount");
-                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getTotalAmount())) ) {
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getTotalAmount()))) {
                     setTotalAmount(((BigDecimal) cloudSdkValue));
                 }
             }
         }
         // structured properties
         {
-            if( cloudSdkValues.containsKey("ProductCounts") ) {
+            if (cloudSdkValues.containsKey("ProductCounts")) {
                 final Object cloudSdkValue = cloudSdkValues.remove("ProductCounts");
-                if( cloudSdkValue instanceof Iterable ) {
+                if (cloudSdkValue instanceof Iterable) {
                     final LinkedList<ProductCount> productCounts = new LinkedList<ProductCount>();
-                    for( Object cloudSdkProperties : ((Iterable<?>) cloudSdkValue) ) {
-                        if( cloudSdkProperties instanceof Map ) {
+                    for (Object cloudSdkProperties: ((Iterable<?> ) cloudSdkValue)) {
+                        if (cloudSdkProperties instanceof Map) {
                             final ProductCount cloudSdkItem = new ProductCount();
-                            @SuppressWarnings( "unchecked" )
-                            final Map<String, Object> inputMap = ((Map<String, Object>) cloudSdkValue);
+                            @SuppressWarnings("unchecked")
+                            final Map<String, Object> inputMap = ((Map<String, Object> ) cloudSdkValue);
                             cloudSdkItem.fromMap(inputMap);
                             productCounts.add(cloudSdkItem);
                         }
                     }
                     setProductCounts(productCounts);
                 }
-                if( (cloudSdkValue == null) && (getProductCounts() != null) ) {
+                if ((cloudSdkValue == null)&&(getProductCounts()!= null)) {
                     setProductCounts(null);
                 }
             }
-            if( cloudSdkValues.containsKey("properties") ) {
+            if (cloudSdkValues.containsKey("properties")) {
                 final Object cloudSdkValue = cloudSdkValues.remove("properties");
-                if( cloudSdkValue instanceof Iterable ) {
+                if (cloudSdkValue instanceof Iterable) {
                     final LinkedList<ProductCount> properties = new LinkedList<ProductCount>();
-                    for( Object cloudSdkProperties : ((Iterable<?>) cloudSdkValue) ) {
-                        if( cloudSdkProperties instanceof Map ) {
+                    for (Object cloudSdkProperties: ((Iterable<?> ) cloudSdkValue)) {
+                        if (cloudSdkProperties instanceof Map) {
                             final ProductCount cloudSdkItem = new ProductCount();
-                            @SuppressWarnings( "unchecked" )
-                            final Map<String, Object> inputMap = ((Map<String, Object>) cloudSdkValue);
+                            @SuppressWarnings("unchecked")
+                            final Map<String, Object> inputMap = ((Map<String, Object> ) cloudSdkValue);
                             cloudSdkItem.fromMap(inputMap);
                             properties.add(cloudSdkItem);
                         }
                     }
                     setProperties(properties);
                 }
-                if( (cloudSdkValue == null) && (getProperties() != null) ) {
+                if ((cloudSdkValue == null)&&(getProperties()!= null)) {
                     setProperties(null);
                 }
             }
         }
         // navigation properties
         {
-            if( (cloudSdkValues).containsKey("Customer") ) {
+            if ((cloudSdkValues).containsKey("Customer")) {
                 final Object cloudSdkValue = (cloudSdkValues).remove("Customer");
-                if( cloudSdkValue instanceof Map ) {
-                    if( toCustomer == null ) {
+                if (cloudSdkValue instanceof Map) {
+                    if (toCustomer == null) {
                         toCustomer = new Customer();
                     }
-                    @SuppressWarnings( "unchecked" )
-                    final Map<String, Object> inputMap = ((Map<String, Object>) cloudSdkValue);
+                    @SuppressWarnings("unchecked")
+                    final Map<String, Object> inputMap = ((Map<String, Object> ) cloudSdkValue);
                     toCustomer.fromMap(inputMap);
                 }
             }
@@ -350,74 +308,67 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
     }
 
     @Override
-    protected String getDefaultServicePath()
-    {
+    protected String getDefaultServicePath() {
         return SdkGroceryStoreService.DEFAULT_SERVICE_PATH;
     }
 
     @Nonnull
     @Override
-    protected Map<String, Object> toMapOfNavigationProperties()
-    {
+    protected Map<String, Object> toMapOfNavigationProperties() {
         final Map<String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
-        if( toCustomer != null ) {
+        if (toCustomer!= null) {
             (cloudSdkValues).put("Customer", toCustomer);
         }
         return cloudSdkValues;
     }
 
     /**
-     * Retrieval of associated <b>Customer</b> entity (one to one). This corresponds to the OData navigation property
-     * <b>Customer</b>.
+     * Retrieval of associated <b>Customer</b> entity (one to one). This corresponds to the OData navigation property <b>Customer</b>.
      * <p>
-     * If the navigation property for an entity <b>Receipt</b> has not been resolved yet, this method will <b>not
-     * query</b> further information. Instead its <code>Option</code> result state will be <code>empty</code>.
-     *
-     * @return If the information for navigation property <b>Customer</b> is already loaded, the result will contain the
-     *         <b>Customer</b> entity. If not, an <code>Option</code> with result state <code>empty</code> is returned.
+     * If the navigation property for an entity <b>Receipt</b> has not been resolved yet, this method will <b>not query</b> further information. Instead its <code>Option</code> result state will be <code>empty</code>.
+     * 
+     * @return
+     *     If the information for navigation property <b>Customer</b> is already loaded, the result will contain the <b>Customer</b> entity. If not, an <code>Option</code> with result state <code>empty</code> is returned.
      */
     @Nonnull
-    public Option<Customer> getCustomerIfPresent()
-    {
+    public Option<Customer> getCustomerIfPresent() {
         return Option.of(toCustomer);
     }
 
     /**
      * Overwrites the associated <b>Customer</b> entity for the loaded navigation property <b>Customer</b>.
-     *
+     * 
      * @param cloudSdkValue
-     *            New <b>Customer</b> entity.
+     *     New <b>Customer</b> entity.
      */
-    public void setCustomer( final Customer cloudSdkValue )
-    {
+    public void setCustomer(final Customer cloudSdkValue) {
         toCustomer = cloudSdkValue;
     }
 
+
     /**
      * Helper class to allow for fluent creation of Receipt instances.
-     *
+     * 
      */
-    public final static class ReceiptBuilder
-    {
+    public final static class ReceiptBuilder {
 
         private Customer toCustomer;
 
-        private Receipt.ReceiptBuilder toCustomer( final Customer cloudSdkValue )
-        {
+        private Receipt.ReceiptBuilder toCustomer(final Customer cloudSdkValue) {
             toCustomer = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Customer</b> for <b>Receipt</b> to single <b>Customer</b>.
-         *
+         * 
          * @param cloudSdkValue
-         *            The Customer to build this Receipt with.
-         * @return This Builder to allow for a fluent interface.
+         *     The Customer to build this Receipt with.
+         * @return
+         *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Receipt.ReceiptBuilder customer( final Customer cloudSdkValue )
-        {
+        public Receipt.ReceiptBuilder customer(final Customer cloudSdkValue) {
             return toCustomer(cloudSdkValue);
         }
 
