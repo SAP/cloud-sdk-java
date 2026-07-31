@@ -61,8 +61,8 @@
 			<artifactId>openapi-generator</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-simple</artifactId>
+					<groupId>org.slf4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -91,8 +91,8 @@
 			<artifactId>guava</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>org.checkerframework</groupId>
 					<artifactId>checker-qual</artifactId>
+					<groupId>org.checkerframework</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -167,12 +167,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<resources>
-			<resource>
-				<filtering>true</filtering>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -180,21 +174,21 @@
 				<configuration>
 					<ignoredUnusedDeclaredDependencies>
 						<!-- Ensure correct jackson dependency versions are present -->
-						<!-- When Maven runs a plugin it will ignore its dependencyManagement
-                        section -->
-						<ignoredUnusedDeclaredDependency>
-							com.fasterxml.jackson.core:jackson-annotations</ignoredUnusedDeclaredDependency>
-						<ignoredUnusedDeclaredDependency>
-							com.fasterxml.jackson.dataformat:jackson-dataformat-xml</ignoredUnusedDeclaredDependency>
-						<ignoredUnusedDeclaredDependency>
-							com.fasterxml.jackson.datatype:jackson-datatype-joda</ignoredUnusedDeclaredDependency>
-						<ignoredUnusedDeclaredDependency>
-							com.fasterxml.jackson.datatype:jackson-datatype-guava</ignoredUnusedDeclaredDependency>
-						<ignoredUnusedDeclaredDependency>
-							com.fasterxml.jackson.datatype:jackson-datatype-jsr310</ignoredUnusedDeclaredDependency>
+						<!-- When Maven runs a plugin it will ignore its dependencyManagement section -->
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.core:jackson-annotations</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.dataformat:jackson-dataformat-xml</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.datatype:jackson-datatype-joda</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.datatype:jackson-datatype-guava</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.datatype:jackson-datatype-jsr310</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 				</configuration>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 	</build>
 </project>
