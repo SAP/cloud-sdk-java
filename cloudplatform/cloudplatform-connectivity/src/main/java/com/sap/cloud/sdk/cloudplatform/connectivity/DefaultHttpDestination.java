@@ -50,19 +50,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class DefaultHttpDestination implements HttpDestination
 {
-    /**
-     * Cached header providers from class loading. These are loaded once at class initialization time and reused across
-     * all destination instances to ensure stable identities for cache key generation. This ensures that two
-     * destinations with identical configurations will have the same header provider instances, enabling proper HTTP
-     * client caching.
-     */
-    @Nonnull
-    private static final ImmutableList<DestinationHeaderProvider> CACHED_HEADER_PROVIDERS_FROM_CLASS_LOADING =
-        ImmutableList
-            .<DestinationHeaderProvider> builder()
-            .addAll(FacadeLocator.getFacades(DestinationHeaderProvider.class))
-            .build();
-
     @Delegate
     private final DestinationProperties baseProperties;
 
@@ -79,6 +66,9 @@ public final class DefaultHttpDestination implements HttpDestination
     @Getter( AccessLevel.PACKAGE )
     private final ImmutableList<DestinationHeaderProvider> customHeaderProviders;
 
+    @Nonnull
+    private final ImmutableList<DestinationHeaderProvider> headerProvidersFromClassLoading;
+
     // the following 'cached' fields are ALWAYS derived from the baseProperties and stored in the corresponding fields
     // to avoid additional computation at runtime ONLY.
     // this is why we are calling them 'cached'.
@@ -87,12 +77,6 @@ public final class DefaultHttpDestination implements HttpDestination
     // in other words: caching the values is safe and will not lead to any inconsistencies.
     // furthermore, it is safe to exclude these fields from the equals and hashCode methods because their values are
     // purely derived from the baseProperties, which are included in the equals and hashCode methods.
-    //
-    // NOTE: customHeaderProviders and headerProvidersFromClassLoading are intentionally excluded from equals() and hashCode()
-    // because header providers are called at request time to generate dynamic headers. Two destinations with identical
-    // configurations but different provider instances should still share the same HTTP client, as the providers generate
-    // headers when the client executes the request. By caching header providers globally (see CACHED_HEADER_PROVIDERS_FROM_CLASS_LOADING),
-    // we ensure that identical destinations will have the same provider instances anyway.
     @Nonnull
     private final Option<ProxyConfiguration> cachedProxyConfiguration;
 
@@ -129,6 +113,11 @@ public final class DefaultHttpDestination implements HttpDestination
 
         this.customHeaders =
             customHeaders != null ? ImmutableList.<Header> builder().addAll(customHeaders).build() : ImmutableList.of();
+
+        final Collection<DestinationHeaderProvider> headerProvidersFromClassLoading =
+            FacadeLocator.getFacades(DestinationHeaderProvider.class);
+        this.headerProvidersFromClassLoading =
+            ImmutableList.<DestinationHeaderProvider> builder().addAll(headerProvidersFromClassLoading).build();
 
         this.customHeaderProviders =
             customHeaderProviders != null
@@ -187,7 +176,7 @@ public final class DefaultHttpDestination implements HttpDestination
                     this,
                     requestUri,
                     customHeaderProviders,
-                    CACHED_HEADER_PROVIDERS_FROM_CLASS_LOADING));
+                    headerProvidersFromClassLoading));
         allHeaders.addAll(cachedHeadersFromProperties);
         if( allHeaders.stream().noneMatch(header -> header.getName().equalsIgnoreCase(HttpHeaders.AUTHORIZATION)) ) {
             allHeaders.addAll(getHeadersForAuthType());
@@ -549,6 +538,8 @@ public final class DefaultHttpDestination implements HttpDestination
         return new EqualsBuilder()
             .append(baseProperties, that.baseProperties)
             .append(customHeaders, that.customHeaders)
+            .append(customHeaderProviders, that.customHeaderProviders)
+            .append(headerProvidersFromClassLoading, that.headerProvidersFromClassLoading)
             .append(
                 resolveCertificatesOnly(keyStoreSupplier.get().getOrNull()),
                 resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
@@ -562,6 +553,8 @@ public final class DefaultHttpDestination implements HttpDestination
         return new HashCodeBuilder(17, 37)
             .append(baseProperties)
             .append(customHeaders)
+            .append(customHeaderProviders)
+            .append(headerProvidersFromClassLoading)
             .append(resolveKeyStoreHashCode(keyStoreSupplier.get().getOrNull()))
             .append(resolveKeyStoreHashCode(trustStore))
             .toHashCode();

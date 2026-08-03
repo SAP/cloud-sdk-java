@@ -363,15 +363,19 @@ class DefaultHttpClientCacheTest
     @Test
     void testCachedEqualHttpClientsClosingBehavior()
     {
-        final DefaultHttpDestination destination1 = DefaultHttpDestination.builder("http://foo.com").build();
-        final HttpClient client1 = sut.tryGetHttpClient(destination1, FACTORY).get();
-        assertThat(((HttpClientWrapper) client1).getDestination()).isSameAs(destination1);
-
+        final DefaultHttpDestination destination1 =
+            DefaultHttpDestination
+                .builder("http://foo.com")
+                .headerProviders(c -> List.of(new Header("Authorization", "Bearer old")))
+                .build();
         final DefaultHttpDestination destination2 =
             DefaultHttpDestination
                 .builder("http://foo.com")
-                .headerProviders(c -> List.of(new Header("Authorization", "Bearer foo")))
+                .headerProviders(c -> List.of(new Header("Authorization", "Bearer new")))
                 .build();
+
+        final HttpClient client1 = sut.tryGetHttpClient(destination1, FACTORY).get();
+        assertThat(((HttpClientWrapper) client1).getDestination()).isSameAs(destination1);
         final HttpClient client2 = sut.tryGetHttpClient(destination2, FACTORY).get();
         assertThat(((HttpClientWrapper) client2).getDestination()).isSameAs(destination2);
 
