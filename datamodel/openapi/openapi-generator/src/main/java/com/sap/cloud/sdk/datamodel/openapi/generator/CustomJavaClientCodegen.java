@@ -8,6 +8,7 @@ import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomPrope
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -40,7 +41,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     private final GenerationConfiguration config;
     private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
     // schemaName -> (propertyName -> sibling description) captured before normalization strips $ref context
-    private final Map<String, Map<String, String>> siblingDescriptions = new java.util.HashMap<>();
+    private final Map<String, Map<String, String>> siblingDescriptions = new HashMap<>();
 
     public CustomJavaClientCodegen( @Nonnull final GenerationConfiguration config )
     {
@@ -144,7 +145,6 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         }
     }
 
-    @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
     @Override
     @Nonnull
     public Map<String, ModelsMap> postProcessAllModels( @Nonnull final Map<String, ModelsMap> objs )
@@ -185,7 +185,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
                 final Schema propSchema = propEntry.getValue();
                 if( propSchema.get$ref() != null && propSchema.getDescription() != null ) {
                     siblingDescriptions
-                        .computeIfAbsent(schemaEntry.getKey(), k -> new java.util.HashMap<>())
+                        .computeIfAbsent(schemaEntry.getKey(), k -> new HashMap<>())
                         .put(propEntry.getKey(), propSchema.getDescription());
                 }
             }
