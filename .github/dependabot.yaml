@@ -29,6 +29,8 @@ updates:
           - "*-plugin"
       test:
         dependency-type: "development"
+    cooldown:
+      default-days: 4
     ignore:
       - dependency-name: "org.springframework.boot:*"
         versions: [ ">=4.0.0" ]
