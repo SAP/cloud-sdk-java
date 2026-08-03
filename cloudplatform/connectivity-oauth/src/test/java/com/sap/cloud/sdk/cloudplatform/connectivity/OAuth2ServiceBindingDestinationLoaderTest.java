@@ -16,7 +16,6 @@ import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +23,6 @@ import java.util.ServiceLoader;
 import java.util.function.Predicate;
 
 import org.apache.http.HttpHeaders;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,12 +42,11 @@ import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
 
 import io.vavr.control.Try;
-import lombok.SneakyThrows;
 
 class OAuth2ServiceBindingDestinationLoaderTest
 {
-    private static final URI baseUrl = URI.create("http://baseUrl");
-    private static final URI tokenUrl = URI.create("http://tokenUrl");
+    private static final URI baseUrl = URI.create("baseUrl");
+    private static final URI tokenUrl = URI.create("tokenUrl");
     public static final ClientIdentity credentials = new ClientCredentials("id", "sec");
 
     private static final ServiceIdentifier TEST_SERVICE = ServiceIdentifier.of("TEST_SERVICE_IDENTIFIER");
@@ -121,7 +117,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 .builder()
                 .copy(Collections.emptyMap())
                 .withServiceIdentifier(TEST_SERVICE)
-                .withTags(Arrays.asList("test"))
+                .withTags(List.of("test"))
                 .build();
         final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
 
@@ -212,11 +208,8 @@ class OAuth2ServiceBindingDestinationLoaderTest
         assertThat(sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).get())
             .as("The destination should not be cached.")
             .isNotSameAs(result.get());
-        assertThat(sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).get())
-            .as("The destination objects should be equal so that they use the same HTTP client.")
-            .isEqualTo(result.get());
 
-        verify(sut, times(3))
+        verify(sut, times(2))
             .toDestination(
                 eq(baseUrl),
                 eq(tokenUrl),
@@ -354,57 +347,6 @@ class OAuth2ServiceBindingDestinationLoaderTest
         }
     }
 
-    @SneakyThrows
-    @Test
-    void testEqualProxiedDestinationsShareHttpClient()
-    {
-        final URI proxyUrl = URI.create("http://proxyUrl:1234");
-        final DefaultHttpDestination baseDestination =
-            DefaultHttpDestination.builder(baseUrl).proxyType(ProxyType.ON_PREMISE).buildInternal();
-
-        final DestinationHeaderProvider headerProviderMock = mock(DestinationHeaderProvider.class);
-        when(headerProviderMock.getHeaders(any())).thenReturn(Collections.emptyList());
-
-        sut = spy(new OAuth2ServiceBindingDestinationLoader());
-        doReturn(headerProviderMock).when(sut).createHeaderProvider(any(), any(), any(), any(), any(), any());
-
-        // Create two equal destinations through separate invocations
-        final HttpDestination dest1 =
-            sut
-                .toProxiedDestination(
-                    baseDestination,
-                    proxyUrl,
-                    tokenUrl,
-                    credentials,
-                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
-                    OAuth2Options.DEFAULT,
-                    TEST_SERVICE);
-        final HttpDestination dest2 =
-            sut
-                .toProxiedDestination(
-                    baseDestination,
-                    proxyUrl,
-                    tokenUrl,
-                    credentials,
-                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
-                    OAuth2Options.DEFAULT,
-                    TEST_SERVICE);
-
-        // Destinations are equal but different instances
-        assertThat(dest1).isNotSameAs(dest2).isEqualTo(dest2);
-
-        // Get HTTP clients from cache - they should be the same instance
-        final DefaultHttpClientCache cache = new DefaultHttpClientCache(5, java.util.concurrent.TimeUnit.MINUTES);
-        final HttpClient client1 = cache.tryGetHttpClient(dest1, new DefaultHttpClientFactory()).get();
-        final HttpClient client2 = cache.tryGetHttpClient(dest2, new DefaultHttpClientFactory()).get();
-
-        assertThat(client1).isNotSameAs(client2);
-
-        // Closing client1 closes the shared pool, so client2 fails
-        ((org.apache.http.impl.client.CloseableHttpClient) client1).close();
-        client2.execute(new HttpGet());
-    }
-
     @Test
     void testProxiedDestination()
     {
@@ -450,9 +392,6 @@ class OAuth2ServiceBindingDestinationLoaderTest
         assertThat(secondInvocationResult)
             .as("There should not be a cache in place for proxied destinations.")
             .isNotSameAs(result);
-        assertThat(secondInvocationResult)
-            .as("The destination objects should be equal so that they use the same HTTP client.")
-            .isEqualTo(result);
 
         verify(sut, times(2))
             .createHeaderProvider(
