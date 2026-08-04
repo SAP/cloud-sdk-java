@@ -1,5 +1,13 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -12,9 +20,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -31,6 +41,7 @@ import com.sap.cloud.sdk.testutil.TestContext;
 import lombok.SneakyThrows;
 
 @Isolated
+@WireMockTest
 class DefaultHttpClientCacheTest
 {
     private static final HttpDestination DESTINATION = DefaultHttpDestination.builder("https://url1").build();
@@ -359,18 +370,22 @@ class DefaultHttpClientCacheTest
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
     }
 
-    @SneakyThrows
     @Test
+    @SneakyThrows
     void testCachedEqualHttpClientsClosingBehavior()
     {
+        String url = "https://url1";
+
+        stubFor(get(url).willReturn(ok()));
+
         final DefaultHttpDestination destination1 =
             DefaultHttpDestination
-                .builder("http://foo.com")
+                .builder(url)
                 .headerProviders(c -> List.of(new Header("Authorization", "Bearer old")))
                 .build();
         final DefaultHttpDestination destination2 =
             DefaultHttpDestination
-                .builder("http://foo.com")
+                .builder(url)
                 .headerProviders(c -> List.of(new Header("Authorization", "Bearer new")))
                 .build();
 
@@ -397,6 +412,49 @@ class DefaultHttpClientCacheTest
 
         // since client1 did not inherit client2 connection manager, client2 is not shut down
         client2.execute(new HttpGet());
+        verify(1, getRequestedFor(anyUrl()));
+    }
+
+    @Test
+    @SneakyThrows
+    void testCachedDestinationIsReused()
+    {
+        stubFor(
+            get(anyUrl())
+                .withHeader("Authorization", equalTo("Bearer token1"))
+                .inScenario("Refreshing token")
+                .whenScenarioStateIs(STARTED)
+                .willReturn(ok())
+                .willSetStateTo("First token sent"));
+        stubFor(
+            get(anyUrl())
+                .withHeader("Authorization", equalTo("Bearer token2"))
+                .inScenario("Refreshing token")
+                .whenScenarioStateIs("First token sent")
+                .willReturn(ok()));
+
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination.builder("https://url1").headerProviders(c -> getHeaders()).build();
+
+        // token1 is sent
+        final HttpClient client1 = sut.tryGetHttpClient(destination, FACTORY).get();
+        client1.execute(new HttpGet());
+
+        // token2 is sent, and, since the destination is cached, the same client is reused
+        final HttpClient client2 = sut.tryGetHttpClient(destination, FACTORY).get();
+        client2.execute(new HttpGet());
+
+        assertThat(client1).isSameAs(client2);
+
+        verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token1")));
+        verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token2")));
+    }
+
+    private int count = 1;
+
+    private @NonNull List<Header> getHeaders()
+    {
+        return List.of(new Header("Authorization", "Bearer token" + count++));
     }
 
     @Test
