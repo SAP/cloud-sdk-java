@@ -441,15 +441,15 @@ class DefaultHttpClientCacheTest
         // token1 is sent
         final HttpClient client1 = sut.tryGetHttpClient(destination, FACTORY).get();
         client1.execute(new HttpGet());
+        WIRE_MOCK_SERVER.verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token1")));
 
-        // token2 is sent, and, since the destination is cached, the same client is reused
+        // token2 is sent
         final HttpClient client2 = sut.tryGetHttpClient(destination, FACTORY).get();
         client2.execute(new HttpGet());
-
-        assertThat(client1).isSameAs(client2);
-
-        WIRE_MOCK_SERVER.verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token1")));
         WIRE_MOCK_SERVER.verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token2")));
+
+        // Because the destination is cached, the same client is reused
+        assertThat(client1).isSameAs(client2);
     }
 
     private int count = 1;
