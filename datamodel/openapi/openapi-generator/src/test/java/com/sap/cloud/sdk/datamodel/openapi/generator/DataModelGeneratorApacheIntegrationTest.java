@@ -30,7 +30,13 @@ class DataModelGeneratorApacheIntegrationTest extends DataModelGeneratorIntegrat
             "ONE_OF_INTERFACES_DISABLED",
             "ONE_OF_INTERFACES_ENABLED",
             "INPUT_SPEC_WITH_BUILDER",
-            "GENERATE_APIS" } )
+            "GENERATE_APIS",
+            "OAS31_NULLABLE_TYPE_ARRAY",
+            "OAS31_EXCLUSIVE_MIN_MAX",
+            "OAS31_REF_WITH_SIBLING",
+            "OAS31_NULLABLE_REF",
+            "OAS30_EXCLUSIVE_MIN_MAX",
+            "OAS31_COMPONENTS_PATH_ITEMS" } )
     void integrationTests( final TestCase testCase, @TempDir final Path path )
         throws Throwable
     {
@@ -79,7 +85,13 @@ class DataModelGeneratorApacheIntegrationTest extends DataModelGeneratorIntegrat
     //          "ONE_OF_INTERFACES_DISABLED",
     //          "ONE_OF_INTERFACES_ENABLED",
     //          "INPUT_SPEC_WITH_BUILDER",
-    //          "GENERATE_APIS"
+    //          "GENERATE_APIS",
+    //          "OAS31_NULLABLE_TYPE_ARRAY",
+    //          "OAS31_EXCLUSIVE_MIN_MAX",
+    //          "OAS31_REF_WITH_SIBLING",
+    //          "OAS31_NULLABLE_REF",
+    //          "OAS30_EXCLUSIVE_MIN_MAX",
+    //          "OAS31_COMPONENTS_PATH_ITEMS"
     //      })
     // @EnumSource( value = TestCase.class, names = { "API_CLASS_VENDOR_EXTENSION_YAML" } ) // ...and this one to only generate specific ones
     @Override

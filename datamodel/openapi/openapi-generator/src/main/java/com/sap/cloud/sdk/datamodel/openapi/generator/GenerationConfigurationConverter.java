@@ -115,6 +115,10 @@ class GenerationConfigurationConverter
             log.warn("Parsing the specification yielded the following messages: {}", spec.getMessages());
         }
         final var result = spec.getOpenAPI();
+        log.info("Detected OpenAPI specification version {}.", result.getOpenapi());
+        if( OasVersionUtil.isOas31(result) ) {
+            log.warn("The input specification uses OpenAPI 3.1, which is an experimental feature. Use with caution.");
+        }
         preprocessSpecification(result, config);
         return result;
     }

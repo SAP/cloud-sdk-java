@@ -1,0 +1,37 @@
+openapi: 3.1.0
+info:
+  title: OAS 3.1 Nullable $ref via anyOf
+  version: 1.0.0
+
+paths:
+  /sodas:
+    get:
+      operationId: getSodas
+      responses:
+        '200':
+          description: A soda
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Soda'
+
+components:
+  schemas:
+    SodaCategory:
+      type: object
+      properties:
+        name:
+          type: string
+
+    Soda:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          # nullable $ref using anyOf with null type
+          anyOf:
+            - $ref: '#/components/schemas/SodaCategory'
+            - type: "null"
+      required:
+        - name
