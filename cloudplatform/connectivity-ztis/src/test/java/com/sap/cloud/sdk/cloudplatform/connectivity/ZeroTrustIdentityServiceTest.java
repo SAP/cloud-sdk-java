@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -155,28 +156,22 @@ class ZeroTrustIdentityServiceTest
     }
 
     @Test
-    void testPickSvidSelectsMatchingSvid()
+    void testSvidPickerIsWiredAndSelectsMatchingSvid()
     {
         final SpiffeId expected = SpiffeId.parse("spiffe://example.org/my-app");
         final X509Svid own = mockSvidWithSpiffeId(expected);
         final X509Svid other = mockSvidWithSpiffeId(SpiffeId.parse("spiffe://example.org/other-app"));
 
-        assertThat(ZeroTrustIdentityService.pickSvid(List.of(own), expected)).isSameAs(own);
-        assertThat(ZeroTrustIdentityService.pickSvid(List.of(other, own), expected)).isSameAs(own);
-        assertThat(ZeroTrustIdentityService.pickSvid(List.of(own, other), expected)).isSameAs(own);
-    }
+        final Function<List<X509Svid>, X509Svid> picker =
+            sut.buildX509SourceOptions("unix:///tmp/test.sock", expected).getSvidPicker();
 
-    @Test
-    void testPickSvidThrowsWhenNoMatch()
-    {
-        final SpiffeId expected = SpiffeId.parse("spiffe://example.org/my-app");
-        final X509Svid other = mockSvidWithSpiffeId(SpiffeId.parse("spiffe://example.org/other-app"));
-
-        assertThatThrownBy(() -> ZeroTrustIdentityService.pickSvid(List.of(other), expected))
+        assertThat(picker).isNotNull();
+        assertThat(picker.apply(List.of(own))).isSameAs(own);
+        assertThat(picker.apply(List.of(other, own))).isSameAs(own);
+        assertThatThrownBy(() -> picker.apply(List.of(other)))
             .isInstanceOf(CloudPlatformException.class)
             .hasMessageContaining("spiffe://example.org/my-app");
-        assertThatThrownBy(() -> ZeroTrustIdentityService.pickSvid(List.of(), expected))
-            .isInstanceOf(CloudPlatformException.class);
+        assertThatThrownBy(() -> picker.apply(List.of())).isInstanceOf(CloudPlatformException.class);
     }
 
     private void mockSvid( Instant notAfter )

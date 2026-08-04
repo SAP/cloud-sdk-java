@@ -117,22 +117,27 @@ public class ZeroTrustIdentityService
         final SpiffeId expectedSpiffeId;
         try {
             expectedSpiffeId = SpiffeId.parse(mapView.getMapView("workload").getString("spiffeID"));
-        } catch (Exception e) {
+        }
+        catch( Exception e ) {
             throw new CloudPlatformException("Invalid SPIFFE ID in Zero Trust Identity Service binding.", e);
         }
-        final X509SourceOptions options =
-            X509SourceOptions
-                .builder()
-                .spiffeSocketPath(socketPath)
-                .initTimeout(DEFAULT_SOCKET_TIMEOUT)
-                .svidPicker(svids -> pickSvid(svids, expectedSpiffeId))
-                .build();
         try {
-            return DefaultX509Source.newSource(options);
+            return DefaultX509Source.newSource(buildX509SourceOptions(socketPath, expectedSpiffeId));
         }
         catch( final Exception e ) {
             throw new CloudPlatformException("Failed to load the certificate from the unix socket: " + socketPath, e);
         }
+    }
+
+    X509SourceOptions
+        buildX509SourceOptions( @Nonnull final String socketPath, @Nonnull final SpiffeId expectedSpiffeId )
+    {
+        return X509SourceOptions
+            .builder()
+            .spiffeSocketPath(socketPath)
+            .initTimeout(DEFAULT_SOCKET_TIMEOUT)
+            .svidPicker(svids -> pickSvid(svids, expectedSpiffeId))
+            .build();
     }
 
     /**
