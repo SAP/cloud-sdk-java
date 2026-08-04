@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 
+import lombok.val;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -535,29 +536,47 @@ public final class DefaultHttpDestination implements HttpDestination
         }
 
         final DefaultHttpDestination that = (DefaultHttpDestination) o;
-        return new EqualsBuilder()
-            .append(baseProperties, that.baseProperties)
-            .append(customHeaders, that.customHeaders)
-            .append(customHeaderProviders, that.customHeaderProviders)
-            .append(headerProvidersFromClassLoading, that.headerProvidersFromClassLoading)
-            .append(
-                resolveCertificatesOnly(keyStoreSupplier.get().getOrNull()),
-                resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
-            .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore))
-            .isEquals();
+
+        if( headerProvidersFromClassLoading.size() != that.headerProvidersFromClassLoading.size()
+            || customHeaderProviders.size() != that.customHeaderProviders.size() ) {
+            return false;
+        }
+
+        val builder =
+            new EqualsBuilder()
+                .append(baseProperties, that.baseProperties)
+                .append(customHeaders, that.customHeaders)
+                .append(
+                    resolveCertificatesOnly(keyStoreSupplier.get().getOrNull()),
+                    resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
+                .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore));
+
+        customHeaderProviders
+            .forEach(
+                provider -> builder
+                    .append(provider, that.customHeaderProviders.get(customHeaderProviders.indexOf(provider))));
+        headerProvidersFromClassLoading
+            .forEach(
+                provider -> builder
+                    .append(
+                        provider,
+                        that.headerProvidersFromClassLoading.get(headerProvidersFromClassLoading.indexOf(provider))));
+        return builder.isEquals();
     }
 
     @Override
     public int hashCode()
     {
-        return new HashCodeBuilder(17, 37)
-            .append(baseProperties)
-            .append(customHeaders)
-            .append(customHeaderProviders)
-            .append(headerProvidersFromClassLoading)
-            .append(resolveKeyStoreHashCode(keyStoreSupplier.get().getOrNull()))
-            .append(resolveKeyStoreHashCode(trustStore))
-            .toHashCode();
+        val builder =
+            new HashCodeBuilder(17, 37)
+                .append(baseProperties)
+                .append(customHeaders)
+                .append(resolveKeyStoreHashCode(keyStoreSupplier.get().getOrNull()))
+                .append(resolveKeyStoreHashCode(trustStore));
+
+        customHeaderProviders.forEach(builder::append);
+        headerProvidersFromClassLoading.forEach(builder::append);
+        return builder.toHashCode();
     }
 
     /**
