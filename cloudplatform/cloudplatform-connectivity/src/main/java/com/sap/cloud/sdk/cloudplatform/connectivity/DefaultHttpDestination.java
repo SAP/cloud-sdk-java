@@ -19,7 +19,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 
-import lombok.val;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -44,6 +43,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Immutable default implementation of the {@link HttpDestination} interface.
@@ -68,9 +68,8 @@ public final class DefaultHttpDestination implements HttpDestination
     private final ImmutableList<DestinationHeaderProvider> customHeaderProviders;
 
     /**
-     * Lazily initialized and cached header providers loaded via FacadeLocator.
-     * This ensures the same instances are shared across all DefaultHttpDestination instances.
-     * Uses volatile to ensure visibility of changes across threads.
+     * Lazily initialized and cached header providers loaded via FacadeLocator. This ensures the same instances are
+     * shared across all DefaultHttpDestination instances. Uses volatile to ensure visibility of changes across threads.
      */
     @Nullable
     private static volatile ImmutableList<DestinationHeaderProvider> cachedHeaderProvidersFromClassLoading;
@@ -151,8 +150,8 @@ public final class DefaultHttpDestination implements HttpDestination
     }
 
     /**
-     * Lazily initializes and returns the cached header providers from class loading.
-     * Uses double-checked locking to ensure thread-safe lazy initialization while minimizing synchronization overhead.
+     * Lazily initializes and returns the cached header providers from class loading. Uses double-checked locking to
+     * ensure thread-safe lazy initialization while minimizing synchronization overhead.
      *
      * @return The immutable list of header providers loaded via FacadeLocator.
      */
@@ -161,13 +160,14 @@ public final class DefaultHttpDestination implements HttpDestination
     {
         ImmutableList<DestinationHeaderProvider> cached = cachedHeaderProvidersFromClassLoading;
         if( cached == null ) {
-            synchronized (DefaultHttpDestination.class) {
+            synchronized( DefaultHttpDestination.class ) {
                 cached = cachedHeaderProvidersFromClassLoading;
                 if( cached == null ) {
-                    cached = ImmutableList
-                        .<DestinationHeaderProvider> builder()
-                        .addAll(FacadeLocator.getFacades(DestinationHeaderProvider.class))
-                        .build();
+                    cached =
+                        ImmutableList
+                            .<DestinationHeaderProvider> builder()
+                            .addAll(FacadeLocator.getFacades(DestinationHeaderProvider.class))
+                            .build();
                     cachedHeaderProvidersFromClassLoading = cached;
                 }
             }

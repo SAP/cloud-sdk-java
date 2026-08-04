@@ -18,16 +18,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import lombok.SneakyThrows;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
@@ -35,6 +33,8 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.testutil.TestContext;
+
+import lombok.SneakyThrows;
 
 class DefaultApacheHttpClient5CacheTest
 {
@@ -441,7 +441,7 @@ class DefaultApacheHttpClient5CacheTest
 
     private int count = 1;
 
-    private @NonNull List<Header> getHeaders()
+    private List<Header> getHeaders()
     {
         return List.of(new Header("Authorization", "Bearer token" + count++));
     }

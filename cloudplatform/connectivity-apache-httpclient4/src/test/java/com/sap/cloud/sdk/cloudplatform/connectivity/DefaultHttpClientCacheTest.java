@@ -19,16 +19,15 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
@@ -454,7 +453,7 @@ class DefaultHttpClientCacheTest
 
     private int count = 1;
 
-    private @NonNull List<Header> getHeaders()
+    private List<Header> getHeaders()
     {
         return List.of(new Header("Authorization", "Bearer token" + count++));
     }
