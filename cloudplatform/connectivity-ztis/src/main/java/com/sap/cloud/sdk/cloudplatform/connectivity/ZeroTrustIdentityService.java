@@ -114,7 +114,12 @@ public class ZeroTrustIdentityService
         // The SPIRE agent may return multiple SVIDs when overlapping registration selectors exist
         // (e.g. a second service key on the same ZTIS instance, or a co-located workload). We must pick
         // the one whose SPIFFE ID matches our binding — see pickSvid.
-        final SpiffeId expectedSpiffeId = SpiffeId.parse(mapView.getMapView("workload").getString("spiffeID"));
+        final SpiffeId expectedSpiffeId;
+        try {
+            expectedSpiffeId = SpiffeId.parse(mapView.getMapView("workload").getString("spiffeID"));
+        } catch (Exception e) {
+            throw new CloudPlatformException("Invalid SPIFFE ID in Zero Trust Identity Service binding.", e);
+        }
         final X509SourceOptions options =
             X509SourceOptions
                 .builder()
