@@ -145,11 +145,11 @@ public class ZeroTrustIdentityService
             .findFirst()
             .orElseThrow(
                 () -> new CloudPlatformException(
-                    "No SVID matching SPIFFE ID '"
-                        + expectedSpiffeId
-                        + "' among "
-                        + svids.size()
-                        + " returned by the SPIRE agent."));
+                    String
+                        .format(
+                            "No SVID matching SPIFFE ID '%s' among %d returned by the SPIRE agent.",
+                            expectedSpiffeId,
+                            svids.size())));
     }
 
     @Nonnull
