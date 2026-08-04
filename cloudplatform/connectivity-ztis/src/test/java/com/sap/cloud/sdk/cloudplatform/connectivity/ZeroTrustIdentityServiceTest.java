@@ -15,6 +15,7 @@ import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,7 @@ import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
+import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.x509svid.X509Svid;
 
 class ZeroTrustIdentityServiceTest
@@ -152,6 +154,31 @@ class ZeroTrustIdentityServiceTest
             .isInstanceOf(IllegalStateException.class);
     }
 
+    @Test
+    void testPickSvidSelectsMatchingSvid()
+    {
+        final SpiffeId expected = SpiffeId.parse("spiffe://example.org/my-app");
+        final X509Svid own = mockSvidWithSpiffeId(expected);
+        final X509Svid other = mockSvidWithSpiffeId(SpiffeId.parse("spiffe://example.org/other-app"));
+
+        assertThat(ZeroTrustIdentityService.pickSvid(List.of(own), expected)).isSameAs(own);
+        assertThat(ZeroTrustIdentityService.pickSvid(List.of(other, own), expected)).isSameAs(own);
+        assertThat(ZeroTrustIdentityService.pickSvid(List.of(own, other), expected)).isSameAs(own);
+    }
+
+    @Test
+    void testPickSvidThrowsWhenNoMatch()
+    {
+        final SpiffeId expected = SpiffeId.parse("spiffe://example.org/my-app");
+        final X509Svid other = mockSvidWithSpiffeId(SpiffeId.parse("spiffe://example.org/other-app"));
+
+        assertThatThrownBy(() -> ZeroTrustIdentityService.pickSvid(List.of(other), expected))
+            .isInstanceOf(CloudPlatformException.class)
+            .hasMessageContaining("spiffe://example.org/my-app");
+        assertThatThrownBy(() -> ZeroTrustIdentityService.pickSvid(List.of(), expected))
+            .isInstanceOf(CloudPlatformException.class);
+    }
+
     private void mockSvid( Instant notAfter )
     {
         final X509Svid svid = mock(X509Svid.class);
@@ -160,6 +187,13 @@ class ZeroTrustIdentityServiceTest
         doReturn(certificate).when(svid).getLeaf();
         doReturn(svid).when(sut).getX509Svid();
         svidMock = svid;
+    }
+
+    private static X509Svid mockSvidWithSpiffeId( final SpiffeId spiffeId )
+    {
+        final X509Svid svid = mock(X509Svid.class);
+        doReturn(spiffeId).when(svid).getSpiffeId();
+        return svid;
     }
 
     private static ServiceBinding mockBinding()

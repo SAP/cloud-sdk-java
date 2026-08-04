@@ -10,6 +10,7 @@ import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -23,6 +24,7 @@ import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 import io.spiffe.bundle.x509bundle.X509Bundle;
 import io.spiffe.exception.X509SvidException;
+import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.spiffeid.TrustDomain;
 import io.spiffe.svid.x509svid.X509Svid;
 import io.spiffe.workloadapi.DefaultX509Source;
@@ -109,14 +111,45 @@ public class ZeroTrustIdentityService
         final String socketPath = Option.of(System.getenv(SOCKET_ENVIRONMENT_VARIABLE)).getOrElse(DEFAULT_SOCKET_PATH);
         log.info("Using socket path {} for ZTIS agent.", socketPath);
 
-        final X509SourceOptions x509SourceOptions =
-            X509SourceOptions.builder().spiffeSocketPath(socketPath).initTimeout(DEFAULT_SOCKET_TIMEOUT).build();
+        // The SPIRE agent may return multiple SVIDs when overlapping registration selectors exist
+        // (e.g. a second service key on the same ZTIS instance, or a co-located workload). We must pick
+        // the one whose SPIFFE ID matches our binding — see pickSvid.
+        final SpiffeId expectedSpiffeId = SpiffeId.parse(mapView.getMapView("workload").getString("spiffeID"));
+        final X509SourceOptions options =
+            X509SourceOptions
+                .builder()
+                .spiffeSocketPath(socketPath)
+                .initTimeout(DEFAULT_SOCKET_TIMEOUT)
+                .svidPicker(svids -> pickSvid(svids, expectedSpiffeId))
+                .build();
         try {
-            return DefaultX509Source.newSource(x509SourceOptions);
+            return DefaultX509Source.newSource(options);
         }
         catch( final Exception e ) {
             throw new CloudPlatformException("Failed to load the certificate from the unix socket: " + socketPath, e);
         }
+    }
+
+    /**
+     * Selects the {@link X509Svid} whose SPIFFE ID equals {@code expectedSpiffeId} from the given list. Used as the
+     * {@code svidPicker} for {@link DefaultX509Source} to avoid non-deterministic selection when the SPIRE agent
+     * returns multiple SVIDs (e.g. after a second service key is created for the same ZTIS instance).
+     */
+    @Nonnull
+    static X509Svid pickSvid( @Nonnull final List<X509Svid> svids, @Nonnull final SpiffeId expectedSpiffeId )
+    {
+        log.debug("SPIRE agent returned {} SVID(s); selecting the one matching '{}'.", svids.size(), expectedSpiffeId);
+        return svids
+            .stream()
+            .filter(svid -> expectedSpiffeId.equals(svid.getSpiffeId()))
+            .findFirst()
+            .orElseThrow(
+                () -> new CloudPlatformException(
+                    "No SVID matching SPIFFE ID '"
+                        + expectedSpiffeId
+                        + "' among "
+                        + svids.size()
+                        + " returned by the SPIRE agent."));
     }
 
     @Nonnull
