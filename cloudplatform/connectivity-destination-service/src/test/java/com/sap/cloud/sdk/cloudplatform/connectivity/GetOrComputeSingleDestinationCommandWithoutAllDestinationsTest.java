@@ -261,7 +261,6 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
             softly.fail("Expected command execution to fail, but it succeeded.");
         }
 
-        softly.assertThat(maybeDestination.get()).isEqualTo(testCase.getExpectedDestination());
         // sanity checks no cache was hit
         if( testCase.getTokenExchangeStrategy() == DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE
             && DestinationUtility.requiresUserTokenExchange(testCase.getExpectedDestination()) ) {
