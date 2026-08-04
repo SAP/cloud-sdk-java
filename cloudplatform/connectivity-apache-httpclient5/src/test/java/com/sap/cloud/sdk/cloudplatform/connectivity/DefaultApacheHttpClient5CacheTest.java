@@ -381,18 +381,12 @@ class DefaultApacheHttpClient5CacheTest
         final HttpClient client2 = sut.tryGetHttpClient(destination2, FACTORY).get();
         assertThat(((ApacheHttpClient5Wrapper) client2).getDestination()).isSameAs(destination2);
 
-        // Note: Destinations are now equal even with different header providers, since header providers
-        // are not part of the equality check. However, they are different instances, so they result in
-        // different HTTP clients due to the cache key being based on instance identity.
-        assertThat(destination1).isNotSameAs(destination2);
-
-        // Http clients are distinct instances, since the cache key contains the destination reference and not its content
         assertThat(client1).isNotSameAs(client2);
 
         // When using the exact same destination object, the same http-client wrapper should be returned
         final HttpClient client1Again = sut.tryGetHttpClient(destination1, FACTORY).get();
-        assertThat(client1Again).isSameAs(client1);
         assertThat(((ApacheHttpClient5Wrapper) client1Again).getDestination()).isSameAs(destination1);
+        assertThat(client1Again).isSameAs(client1);
 
         // simulate garbage collection on client1
         ((ApacheHttpClient5Wrapper) client1).close();
