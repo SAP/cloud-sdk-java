@@ -5,8 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,7 +19,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -41,9 +40,12 @@ import com.sap.cloud.sdk.testutil.TestContext;
 import lombok.SneakyThrows;
 
 @Isolated
-@WireMockTest
 class DefaultHttpClientCacheTest
 {
+    @RegisterExtension
+    static final WireMockExtension WIRE_MOCK_SERVER =
+        WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
+
     private static final HttpDestination DESTINATION = DefaultHttpDestination.builder("https://url1").build();
     private static final DefaultHttpDestination USER_TOKEN_EXCHANGE_DESTINATION =
         DefaultHttpDestination
@@ -374,18 +376,16 @@ class DefaultHttpClientCacheTest
     @SneakyThrows
     void testCachedEqualHttpClientsClosingBehavior()
     {
-        String url = "https://url1";
-
-        stubFor(get(url).willReturn(ok()));
+        WIRE_MOCK_SERVER.stubFor(get(anyUrl()).willReturn(ok()));
 
         final DefaultHttpDestination destination1 =
             DefaultHttpDestination
-                .builder(url)
+                .builder(WIRE_MOCK_SERVER.baseUrl())
                 .headerProviders(c -> List.of(new Header("Authorization", "Bearer old")))
                 .build();
         final DefaultHttpDestination destination2 =
             DefaultHttpDestination
-                .builder(url)
+                .builder(WIRE_MOCK_SERVER.baseUrl())
                 .headerProviders(c -> List.of(new Header("Authorization", "Bearer new")))
                 .build();
 
@@ -412,29 +412,31 @@ class DefaultHttpClientCacheTest
 
         // since client1 did not inherit client2 connection manager, client2 is not shut down
         client2.execute(new HttpGet());
-        verify(1, getRequestedFor(anyUrl()));
+        WIRE_MOCK_SERVER.verify(1, getRequestedFor(anyUrl()));
     }
 
     @Test
     @SneakyThrows
     void testCachedDestinationIsReused()
     {
-        stubFor(
-            get(anyUrl())
-                .withHeader("Authorization", equalTo("Bearer token1"))
-                .inScenario("Refreshing token")
-                .whenScenarioStateIs(STARTED)
-                .willReturn(ok())
-                .willSetStateTo("First token sent"));
-        stubFor(
-            get(anyUrl())
-                .withHeader("Authorization", equalTo("Bearer token2"))
-                .inScenario("Refreshing token")
-                .whenScenarioStateIs("First token sent")
-                .willReturn(ok()));
+        WIRE_MOCK_SERVER
+            .stubFor(
+                get(anyUrl())
+                    .withHeader("Authorization", equalTo("Bearer token1"))
+                    .inScenario("Refreshing token")
+                    .whenScenarioStateIs(STARTED)
+                    .willReturn(ok())
+                    .willSetStateTo("First token sent"));
+        WIRE_MOCK_SERVER
+            .stubFor(
+                get(anyUrl())
+                    .withHeader("Authorization", equalTo("Bearer token2"))
+                    .inScenario("Refreshing token")
+                    .whenScenarioStateIs("First token sent")
+                    .willReturn(ok()));
 
         final DefaultHttpDestination destination =
-            DefaultHttpDestination.builder("https://url1").headerProviders(c -> getHeaders()).build();
+            DefaultHttpDestination.builder(WIRE_MOCK_SERVER.baseUrl()).headerProviders(c -> getHeaders()).build();
 
         // token1 is sent
         final HttpClient client1 = sut.tryGetHttpClient(destination, FACTORY).get();
@@ -446,8 +448,8 @@ class DefaultHttpClientCacheTest
 
         assertThat(client1).isSameAs(client2);
 
-        verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token1")));
-        verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token2")));
+        WIRE_MOCK_SERVER.verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token1")));
+        WIRE_MOCK_SERVER.verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token2")));
     }
 
     private int count = 1;
