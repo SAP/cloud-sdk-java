@@ -8,7 +8,7 @@
 
 ### 🔧 Compatibility Notes
 
-- 
+- [Connectivity] Destination objects with different header providers are now considered not equal.
 
 ### ✨ New Functionality
 
@@ -16,7 +16,7 @@
 
 ### 📈 Improvements
 
-- 
+- [Connectivity] Fixed `Connection pool shut down` edge-case when closing a client with a destination that has a custom header provider.
 
 ### 🐛 Fixed Issues
 
