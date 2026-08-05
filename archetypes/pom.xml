@@ -32,6 +32,7 @@
 	</developers>
 	<modules>
 		<module>spring-boot3</module>
+		<module>spring-boot4</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>

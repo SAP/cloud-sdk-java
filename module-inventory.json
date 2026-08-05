@@ -22,6 +22,17 @@
     "excludeFromBlackDuckScan": false
   },
   {
+    "groupId": "com.sap.cloud.sdk.archetypes",
+    "artifactId": "spring-boot4",
+    "packaging": "maven-archetype",
+    "releaseAudience": "Public",
+    "releaseMaturity": "Stable",
+    "pomFile": "archetypes/spring-boot4/pom.xml",
+    "parentGroupId": "com.sap.cloud.sdk.archetypes",
+    "parentArtifactId": "archetypes-parent",
+    "excludeFromBlackDuckScan": false
+  },
+  {
     "groupId": "com.sap.cloud.sdk.cloudplatform",
     "artifactId": "caching",
     "packaging": "jar",
