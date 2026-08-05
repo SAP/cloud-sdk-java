@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- 
+- [OpenAPI] Added experimental support for generating clients from OpenAPI 3.1 specifications
 
 ### 📈 Improvements
 
