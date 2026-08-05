@@ -581,16 +581,12 @@ public final class DefaultHttpDestination implements HttpDestination
                     resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
                 .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore));
 
-        customHeaderProviders
-            .forEach(
-                provider -> builder
-                    .append(provider, that.customHeaderProviders.get(customHeaderProviders.indexOf(provider))));
-        headerProvidersFromClassLoading
-            .forEach(
-                provider -> builder
-                    .append(
-                        provider,
-                        that.headerProvidersFromClassLoading.get(headerProvidersFromClassLoading.indexOf(provider))));
+        for( int i = 0; i < customHeaderProviders.size(); i++ ) {
+            builder.append(customHeaderProviders.get(i), that.customHeaderProviders.get(i));
+        }
+        for( int i = 0; i < headerProvidersFromClassLoading.size(); i++ ) {
+            builder.append(headerProvidersFromClassLoading.get(i), that.headerProvidersFromClassLoading.get(i));
+        }
         return builder.isEquals();
     }
 
