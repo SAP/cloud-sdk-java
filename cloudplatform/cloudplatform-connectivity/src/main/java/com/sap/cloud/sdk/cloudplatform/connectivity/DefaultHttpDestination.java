@@ -43,6 +43,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Immutable default implementation of the {@link HttpDestination} interface.
@@ -65,6 +66,13 @@ public final class DefaultHttpDestination implements HttpDestination
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
     private final ImmutableList<DestinationHeaderProvider> customHeaderProviders;
+
+    /**
+     * Lazily initialized and cached header providers loaded via FacadeLocator. This ensures the same instances are
+     * shared across all DefaultHttpDestination instances. Uses volatile to ensure visibility of changes across threads.
+     */
+    @Nullable
+    private static volatile ImmutableList<DestinationHeaderProvider> cachedHeaderProvidersFromClassLoading;
 
     @Nonnull
     private final ImmutableList<DestinationHeaderProvider> headerProvidersFromClassLoading;
@@ -114,10 +122,7 @@ public final class DefaultHttpDestination implements HttpDestination
         this.customHeaders =
             customHeaders != null ? ImmutableList.<Header> builder().addAll(customHeaders).build() : ImmutableList.of();
 
-        final Collection<DestinationHeaderProvider> headerProvidersFromClassLoading =
-            FacadeLocator.getFacades(DestinationHeaderProvider.class);
-        this.headerProvidersFromClassLoading =
-            ImmutableList.<DestinationHeaderProvider> builder().addAll(headerProvidersFromClassLoading).build();
+        this.headerProvidersFromClassLoading = getCachedHeaderProvidersFromClassLoading();
 
         this.customHeaderProviders =
             customHeaderProviders != null
@@ -142,6 +147,32 @@ public final class DefaultHttpDestination implements HttpDestination
                 .<Header> builder()
                 .addAll(destinationPropertyFactory.getProxyAuthorizationHeaders(cachedProxyConfiguration))
                 .build();
+    }
+
+    /**
+     * Lazily initializes and returns the cached header providers from class loading. Uses double-checked locking to
+     * ensure thread-safe lazy initialization while minimizing synchronization overhead.
+     *
+     * @return The immutable list of header providers loaded via FacadeLocator.
+     */
+    @Nonnull
+    private static ImmutableList<DestinationHeaderProvider> getCachedHeaderProvidersFromClassLoading()
+    {
+        ImmutableList<DestinationHeaderProvider> cached = cachedHeaderProvidersFromClassLoading;
+        if( cached == null ) {
+            synchronized( DefaultHttpDestination.class ) {
+                cached = cachedHeaderProvidersFromClassLoading;
+                if( cached == null ) {
+                    cached =
+                        ImmutableList
+                            .<DestinationHeaderProvider> builder()
+                            .addAll(FacadeLocator.getFacades(DestinationHeaderProvider.class))
+                            .build();
+                    cachedHeaderProvidersFromClassLoading = cached;
+                }
+            }
+        }
+        return cached;
     }
 
     /**
@@ -511,8 +542,7 @@ public final class DefaultHttpDestination implements HttpDestination
             .getPropertyNames()
             .forEach(propertyName -> builder.property(propertyName, destination.get(propertyName).get()));
 
-        if( destination instanceof DefaultHttpDestination ) {
-            final DefaultHttpDestination httpDestination = (DefaultHttpDestination) destination;
+        if( destination instanceof DefaultHttpDestination httpDestination ) {
             builder.headers(httpDestination.customHeaders);
             builder
                 .headerProviders(httpDestination.getCustomHeaderProviders().toArray(new DestinationHeaderProvider[0]));
@@ -536,25 +566,43 @@ public final class DefaultHttpDestination implements HttpDestination
         }
 
         final DefaultHttpDestination that = (DefaultHttpDestination) o;
-        return new EqualsBuilder()
-            .append(baseProperties, that.baseProperties)
-            .append(customHeaders, that.customHeaders)
-            .append(
-                resolveCertificatesOnly(keyStoreSupplier.get().getOrNull()),
-                resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
-            .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore))
-            .isEquals();
+
+        if( headerProvidersFromClassLoading.size() != that.headerProvidersFromClassLoading.size()
+            || customHeaderProviders.size() != that.customHeaderProviders.size() ) {
+            return false;
+        }
+
+        val builder =
+            new EqualsBuilder()
+                .append(baseProperties, that.baseProperties)
+                .append(customHeaders, that.customHeaders)
+                .append(
+                    resolveCertificatesOnly(keyStoreSupplier.get().getOrNull()),
+                    resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
+                .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore));
+
+        for( int i = 0; i < customHeaderProviders.size(); i++ ) {
+            builder.append(customHeaderProviders.get(i), that.customHeaderProviders.get(i));
+        }
+        for( int i = 0; i < headerProvidersFromClassLoading.size(); i++ ) {
+            builder.append(headerProvidersFromClassLoading.get(i), that.headerProvidersFromClassLoading.get(i));
+        }
+        return builder.isEquals();
     }
 
     @Override
     public int hashCode()
     {
-        return new HashCodeBuilder(17, 37)
-            .append(baseProperties)
-            .append(customHeaders)
-            .append(resolveKeyStoreHashCode(keyStoreSupplier.get().getOrNull()))
-            .append(resolveKeyStoreHashCode(trustStore))
-            .toHashCode();
+        val builder =
+            new HashCodeBuilder(17, 37)
+                .append(baseProperties)
+                .append(customHeaders)
+                .append(resolveKeyStoreHashCode(keyStoreSupplier.get().getOrNull()))
+                .append(resolveKeyStoreHashCode(trustStore));
+
+        customHeaderProviders.forEach(builder::append);
+        headerProvidersFromClassLoading.forEach(builder::append);
+        return builder.toHashCode();
     }
 
     /**

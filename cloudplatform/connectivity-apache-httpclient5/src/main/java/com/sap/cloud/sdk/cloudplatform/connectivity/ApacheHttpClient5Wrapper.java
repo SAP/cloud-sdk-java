@@ -78,10 +78,7 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient implements Configurab
 
     ApacheHttpClient5Wrapper withDestination( final HttpDestinationProperties destination )
     {
-        // explicitly check the reference equality, since equals doesn't check header providers
-        // this is a slight improvement, avoiding unnecessary wrapper instantiation
-        // in cases where destination objects are reused / served from cache
-        if( !destination.equals(this.destination) ) {
+        if( !destination.getUri().equals(this.destination.getUri()) ) {
             throw new ShouldNotHappenException(
                 "This method must not be used outside of updating an instance of ApacheHttpClient5Wrapper for http clients served from the ApacheHttpClient5Cache.");
         }
