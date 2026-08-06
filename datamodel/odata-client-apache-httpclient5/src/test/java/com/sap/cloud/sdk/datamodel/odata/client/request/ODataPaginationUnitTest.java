@@ -31,8 +31,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException
 
 import lombok.SneakyThrows;
 
-class ODataPaginationUnitTest
-{
+class ODataPaginationUnitTest {
     // corresponds to https://services.odata.org/V4/Northwind/Northwind.svc/Customers?$select=CustomerID&$count=true
     private static final String page1 =
         "{\"@odata.context\":\"https://services.odata.org/V4/Northwind/Northwind.svc/$metadata#Customers(CustomerID)\",\"@odata.count\":91,\"value\":[{\"CustomerID\":\"ALFKI\"},{\"CustomerID\":\"ANATR\"},{\"CustomerID\":\"ANTON\"},{\"CustomerID\":\"AROUT\"},{\"CustomerID\":\"BERGS\"},{\"CustomerID\":\"BLAUS\"},{\"CustomerID\":\"BLONP\"},{\"CustomerID\":\"BOLID\"},{\"CustomerID\":\"BONAP\"},{\"CustomerID\":\"BOTTM\"},{\"CustomerID\":\"BSBEV\"},{\"CustomerID\":\"CACTU\"},{\"CustomerID\":\"CENTC\"},{\"CustomerID\":\"CHOPS\"},{\"CustomerID\":\"COMMI\"},{\"CustomerID\":\"CONSH\"},{\"CustomerID\":\"DRACD\"},{\"CustomerID\":\"DUMON\"},{\"CustomerID\":\"EASTC\"},{\"CustomerID\":\"ERNSH\"}],\"@odata.nextLink\":\"Customers?$count=true&$select=CustomerID&$skiptoken='ERNSH'\"}";
@@ -47,8 +46,7 @@ class ODataPaginationUnitTest
 
     @Test
     void testCountOverPages()
-        throws IOException
-    {
+        throws IOException {
         final HttpClient httpClient = mock(HttpClient.class);
         doReturn(
             createHttpResponse(page1),
@@ -75,7 +73,7 @@ class ODataPaginationUnitTest
         // critical code: iterate through pages and increment item count
         int countItems = 0;
         int countRequests = 1;
-        for( final List<Object> nextPage : initialResponse.iteratePages(Object.class) ) {
+        for (final List<Object> nextPage : initialResponse.iteratePages(Object.class)) {
             verify(httpClient, times(countRequests++)).executeOpen(isNull(), argThat(headerMatcher), isNull());
             countItems += nextPage.size();
         }
@@ -86,8 +84,7 @@ class ODataPaginationUnitTest
 
     @Test
     void testErrorForResponse()
-        throws IOException
-    {
+        throws IOException {
         final HttpClient httpClient = mock(HttpClient.class);
         doReturn(createHttpResponse(page1), createHttpResponse(page2), createHttpResponseError("Something went wrong!"))
             .when(httpClient)
@@ -99,7 +96,7 @@ class ODataPaginationUnitTest
         final ODataRequestResultGeneric result = request.execute(httpClient);
 
         assertThatExceptionOfType(ODataException.class).isThrownBy(() -> {
-            for( final List<Object> next : result.iteratePages(Object.class) ) {
+            for (final List<Object> next : result.iteratePages(Object.class)) {
                 // iterate
             }
         }).withCauseInstanceOf(ODataResponseException.class);
@@ -107,8 +104,7 @@ class ODataPaginationUnitTest
 
     @Test
     void testErrorForRequest()
-        throws IOException
-    {
+        throws IOException {
         final HttpClient httpClient = mock(HttpClient.class);
 
         when(httpClient.executeOpen(isNull(), any(HttpUriRequest.class), isNull()))
@@ -121,23 +117,21 @@ class ODataPaginationUnitTest
         final ODataRequestResultGeneric result = request.execute(httpClient);
 
         assertThatExceptionOfType(ODataException.class).isThrownBy(() -> {
-            for( final List<Object> next : result.iteratePages(Object.class) ) {
+            for (final List<Object> next : result.iteratePages(Object.class)) {
                 // iterate
             }
         }).withCauseInstanceOf(ODataRequestException.class);
     }
 
     @SneakyThrows
-    private BasicClassicHttpResponse createHttpResponse( final String message )
-    {
+    private BasicClassicHttpResponse createHttpResponse(final String message) {
         final BasicClassicHttpResponse page = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
         page.setEntity(new StringEntity(message));
         return page;
     }
 
     @SneakyThrows
-    private HttpResponse createHttpResponseError( final String message )
-    {
+    private HttpResponse createHttpResponseError(final String message) {
         final BasicClassicHttpResponse page = new BasicClassicHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
         page.setEntity(new StringEntity(message));
         return page;
