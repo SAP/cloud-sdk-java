@@ -12,8 +12,8 @@ import static org.mockito.Mockito.when;
 import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.Test;
