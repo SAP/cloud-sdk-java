@@ -49,13 +49,13 @@
 		<!-- HTTP stuff -->
 		<httpcore.version>4.4.16</httpcore.version>
 		<httpcore5.version>5.4.3</httpcore5.version>
-		<httpclient5.version>5.6.3</httpclient5.version>
+		<httpclient5.version>5.6.4</httpclient5.version>
 		<httpcomponents-client.version>4.5.14</httpcomponents-client.version>
 		<jakarta-servlet.version>6.1.0</jakarta-servlet.version>
 		<!-- XSUAA -->
 		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<scp-cf.xsuaa-client.version>4.0.8</scp-cf.xsuaa-client.version>
+		<scp-cf.xsuaa-client.version>4.1.0</scp-cf.xsuaa-client.version>
 		<java-jwt.version>4.6.0</java-jwt.version>
 		<!-- Utility stuff -->
 		<slf4j.version>2.0.18</slf4j.version>
@@ -279,7 +279,7 @@
 			<dependency>
 				<groupId>org.checkerframework</groupId>
 				<artifactId>checker-qual</artifactId>
-				<version>4.2.1</version>
+				<version>4.2.2</version>
 			</dependency>
 			<!--  2.10 by Caffeine and 2.11 by Guava  -->
 			<dependency>
