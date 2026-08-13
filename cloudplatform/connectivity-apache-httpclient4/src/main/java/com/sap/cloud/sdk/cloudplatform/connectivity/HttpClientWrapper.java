@@ -93,10 +93,7 @@ class HttpClientWrapper extends CloseableHttpClient implements UriQueryMerger
 
     HttpClientWrapper withDestination( final HttpDestinationProperties destination )
     {
-        // explicitly check the reference equality, since equals doesn't check header providers
-        // this is a slight improvement, avoiding unnecessary wrapper instantiation
-        // in cases where destination objects are reused / served from cache
-        if( !destination.equals(this.destination) ) {
+        if( !destination.getUri().equals(this.destination.getUri()) ) {
             throw new ShouldNotHappenException(
                 "This method must not be used outside of updating an instance of HttpClientWrapper for http clients served from the HttpClientCache.");
         }

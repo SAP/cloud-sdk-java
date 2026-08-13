@@ -38,6 +38,7 @@ import com.sap.cloud.sdk.cloudplatform.security.ClientCertificate;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
 import com.sap.cloud.sdk.cloudplatform.security.Credentials;
 
+import io.vavr.control.Option;
 import lombok.SneakyThrows;
 
 class DefaultHttpDestinationTest
@@ -155,11 +156,11 @@ class DefaultHttpDestinationTest
         final KeyPair keyPair = DestinationKeyStoreComparatorTest.generateKeyPair();
         final Certificate cert = DestinationKeyStoreComparatorTest.generateCertificate(keyPair, "a");
 
-        final KeyStore keystore1 = KeyStore.getInstance("JKS");
+        final KeyStore keystore1 = KeyStore.getInstance(KeyStore.getDefaultType());
         keystore1.load(null);
         keystore1.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
 
-        final KeyStore keystore2 = KeyStore.getInstance("JKS");
+        final KeyStore keystore2 = KeyStore.getInstance(KeyStore.getDefaultType());
         keystore2.load(null);
         keystore2.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
 
@@ -171,7 +172,7 @@ class DefaultHttpDestinationTest
         assertThat(dest1).hasSameHashCodeAs(dest2);
 
         // check for destination with empty key-store
-        final KeyStore keystore3 = KeyStore.getInstance("JKS");
+        final KeyStore keystore3 = KeyStore.getInstance(KeyStore.getDefaultType());
         keystore3.load(null);
 
         final DefaultHttpDestination dest3 = DefaultHttpDestination.builder(VALID_URI).keyStore(keystore3).build();
@@ -204,6 +205,22 @@ class DefaultHttpDestinationTest
 
         assertThat(defaultHttpDestination.getKeyStore().get()).isSameAs(keyStore);
         assertThat(defaultHttpDestination.getKeyStorePassword().get()).isEqualTo(keyStorePassword);
+    }
+
+    @Test
+    void testDynamicKeyStoreSupplierIsInvokedOnEachAccess()
+    {
+        final KeyStore keyStore1 = mock(KeyStore.class);
+        final KeyStore keyStore2 = mock(KeyStore.class);
+        final KeyStore[] current = { keyStore1 };
+
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination.builder("some-uri").keyStoreSupplier(() -> Option.of(current[0])).build();
+
+        assertThat(destination.getKeyStore().get()).isSameAs(keyStore1);
+
+        current[0] = keyStore2;
+        assertThat(destination.getKeyStore().get()).isSameAs(keyStore2);
     }
 
     @Test
@@ -706,7 +723,7 @@ class DefaultHttpDestinationTest
         assertThat(sut.get("bar", v -> (int) v)).containsExactly(42);
         assertThat(sut.headers).containsExactly(header);
         assertThat(sut.customHeaderProviders).containsExactly(headerProvider);
-        assertThat(sut.keyStore).isSameAs(keyStore);
+        assertThat(sut.keyStoreSupplier.get().getOrNull()).isSameAs(keyStore);
         assertThat(sut.trustStore).isSameAs(trustStore);
         assertThat(sut.get(DestinationProperty.TRUST_ALL)).containsExactly(true);
     }

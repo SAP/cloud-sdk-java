@@ -147,4 +147,23 @@ class OAuth2ServiceBuilderTest
         sut.withTokenUri("https://foo.bar").withIdentity(new ClientCredentials("id", "secret"));
         assertThat(sut.build().getResilienceConfiguration().timeLimiterConfiguration()).isSameAs(tl);
     }
+
+    @Test
+    void testBtpTenantApiUriIsStored()
+    {
+        final URI base = URI.create("https://api.authentication.eu12.hana.ondemand.com");
+        assertThat(OAuth2Service.builder().withBtpTenantApiUri(base).getBtpTenantApiUri()).isEqualTo(base);
+    }
+
+    @Test
+    void testBtpTenantApiUriIsNullWhenNotSet()
+    {
+        assertThat(OAuth2Service.builder().getBtpTenantApiUri()).isNull();
+    }
+
+    @Test
+    void testBtpTenantApiUriNullInputIsNoop()
+    {
+        assertThat(OAuth2Service.builder().withBtpTenantApiUri(null).getBtpTenantApiUri()).isNull();
+    }
 }

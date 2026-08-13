@@ -1,12 +1,13 @@
-name: dependabot merger
+name: 'Dependabot Auto-Merge'
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '13 10 * * Tue' # trigger every Tuesday at 10:13, as our dependabot is configured to raise PRs every Tuesday at 8:00 a.m.
+    - cron: '13 10 * * *' # trigger daily at 10:13
 
 env:
   DEPENDABOT_GROUPS: |
+    production-major group
     production-minor-patch group
     plugins group
     test group
@@ -14,10 +15,9 @@ env:
 jobs:
   review-prs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # all write operations use app token
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
       - name: 'Create GitHub App Token'
         id: app-token
         uses: actions/create-github-app-token@v3
@@ -29,7 +29,11 @@ jobs:
           permission-contents: write
           permission-pull-requests: write
 
-      - name: Approve and Merge PRs
+      - name: Checkout
+        uses: actions/checkout@v7
+
+
+      - name: 'Approve and Merge PRs'
         run: |
           PRS=$(gh pr list --app "dependabot" --state "open" --json number,title)
           PR_NUMBERS=
@@ -49,7 +53,7 @@ jobs:
             if [[ -z "$PR_NUMBER" ]]; then
               continue
             fi
-            
+
             echo "[DEBUG] Approving and Merging PR #$PR_NUMBER"
             gh pr merge "$PR_NUMBER" --auto --squash
             gh pr review "$PR_NUMBER" --approve

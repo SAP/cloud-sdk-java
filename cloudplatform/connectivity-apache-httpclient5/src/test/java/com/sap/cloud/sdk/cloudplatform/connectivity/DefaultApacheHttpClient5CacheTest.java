@@ -1,12 +1,18 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,12 +20,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
@@ -28,8 +34,14 @@ import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.testutil.TestContext;
 
+import lombok.SneakyThrows;
+
 class DefaultApacheHttpClient5CacheTest
 {
+    @RegisterExtension
+    static final WireMockExtension WIRE_MOCK_SERVER =
+        WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
+
     private static final List<Tenant> TENANTS =
         Arrays.asList(new DefaultTenant("tenant#1"), new DefaultTenant("tenant#2"), null);
     private static final List<Principal> PRINCIPALS =
@@ -348,52 +360,6 @@ class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    //This is a known limitation of excluding header providers in the equality check of destinations
-    void testGetClientReturnsSameClientForDestinationsWithOnlyDifferentHeaderProviders()
-    {
-        final Header header1 = new Header("foo", "bar");
-        final Header header2 = new Header("foo1", "bar1");
-
-        final DefaultHttpDestination firstDestination =
-            DefaultHttpDestination
-                .builder("http://some-uri")
-                .headerProviders(( any ) -> Collections.singletonList(header1))
-                .build();
-
-        final DefaultHttpDestination secondDestination =
-            DefaultHttpDestination
-                .fromDestination(firstDestination)
-                .headerProviders(( any ) -> Collections.singletonList(header2))
-                .build();
-
-        final ApacheHttpClient5Wrapper client1 =
-            (ApacheHttpClient5Wrapper) sut.tryGetHttpClient(firstDestination, FACTORY).get();
-        final ApacheHttpClient5Wrapper client2 =
-            (ApacheHttpClient5Wrapper) sut.tryGetHttpClient(secondDestination, FACTORY).get();
-
-        assertThat(client1.getDestination()).isSameAs(firstDestination);
-        assertThat(client2.getDestination()).isSameAs(secondDestination);
-
-        final ClassicHttpRequest request1 = client1.wrapRequest(new HttpGet("/"));
-        final ClassicHttpRequest request2 = client2.wrapRequest(new HttpGet("/"));
-
-        final List<org.apache.hc.core5.http.Header> headersRequest1 = new ArrayList<>();
-        final List<org.apache.hc.core5.http.Header> headersRequest2 = new ArrayList<>();
-        request1.headerIterator().forEachRemaining(headersRequest1::add);
-        request2.headerIterator().forEachRemaining(headersRequest2::add);
-
-        // recursive comparison because BasicHeader doesn't implement equals/hashCode
-        assertThat(headersRequest1)
-            .usingRecursiveFieldByFieldElementComparator()
-            .containsExactly(new BasicHeader(header1.getName(), header1.getValue()));
-        assertThat(headersRequest2)
-            .usingRecursiveFieldByFieldElementComparator()
-            .containsExactly(
-                new BasicHeader(header1.getName(), header1.getValue()),
-                new BasicHeader(header2.getName(), header2.getValue()));
-    }
-
-    @Test
     void testPrincipalPropagationIsPrincipalIsolated()
     {
         context.setTenant();
@@ -416,5 +382,86 @@ class DefaultApacheHttpClient5CacheTest
         assertThatThrownBy(() -> sut.tryGetHttpClient(destination, FACTORY).get())
             .describedAs("Without a principal http clients should not be cached for user based destinations")
             .isInstanceOf(HttpClientInstantiationException.class);
+    }
+
+    @Test
+    @SneakyThrows
+    void testCachedEqualHttpClientsClosingBehavior()
+    {
+        WIRE_MOCK_SERVER.stubFor(get(anyUrl()).willReturn(ok()));
+
+        final DefaultHttpDestination destination1 =
+            DefaultHttpDestination
+                .builder(WIRE_MOCK_SERVER.baseUrl())
+                .headerProviders(c -> List.of(new Header("Authorization", "Bearer old")))
+                .build();
+        final DefaultHttpDestination destination2 =
+            DefaultHttpDestination
+                .builder(WIRE_MOCK_SERVER.baseUrl())
+                .headerProviders(c -> List.of(new Header("Authorization", "Bearer new")))
+                .build();
+
+        final HttpClient client1 = sut.tryGetHttpClient(destination1, FACTORY).get();
+        assertThat(((ApacheHttpClient5Wrapper) client1).getDestination()).isSameAs(destination1);
+        final HttpClient client2 = sut.tryGetHttpClient(destination2, FACTORY).get();
+        assertThat(((ApacheHttpClient5Wrapper) client2).getDestination()).isSameAs(destination2);
+
+        assertThat(client1).isNotSameAs(client2);
+
+        // When using the exact same destination object, the same http-client wrapper should be returned
+        final HttpClient client1Again = sut.tryGetHttpClient(destination1, FACTORY).get();
+        assertThat(((ApacheHttpClient5Wrapper) client1Again).getDestination()).isSameAs(destination1);
+        assertThat(client1Again).isSameAs(client1);
+
+        // simulate garbage collection on client1
+        ((ApacheHttpClient5Wrapper) client1).close();
+
+        // since client1 did not inherit client2 connection manager, client2 is not shut down
+        client2.execute(new HttpGet("/"), new BasicHttpClientResponseHandler());
+        WIRE_MOCK_SERVER.verify(1, getRequestedFor(anyUrl()));
+    }
+
+    @Test
+    @SneakyThrows
+    void testCachedDestinationIsReused()
+    {
+        WIRE_MOCK_SERVER
+            .stubFor(
+                get(anyUrl())
+                    .withHeader("Authorization", equalTo("Bearer token1"))
+                    .inScenario("Refreshing token")
+                    .whenScenarioStateIs(STARTED)
+                    .willReturn(ok())
+                    .willSetStateTo("First token sent"));
+        WIRE_MOCK_SERVER
+            .stubFor(
+                get(anyUrl())
+                    .withHeader("Authorization", equalTo("Bearer token2"))
+                    .inScenario("Refreshing token")
+                    .whenScenarioStateIs("First token sent")
+                    .willReturn(ok()));
+
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination.builder(WIRE_MOCK_SERVER.baseUrl()).headerProviders(c -> getHeaders()).build();
+
+        // token1 is sent
+        final HttpClient client1 = sut.tryGetHttpClient(destination, FACTORY).get();
+        client1.execute(new HttpGet("/"), new BasicHttpClientResponseHandler());
+        WIRE_MOCK_SERVER.verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token1")));
+
+        // token2 is sent
+        final HttpClient client2 = sut.tryGetHttpClient(destination, FACTORY).get();
+        client2.execute(new HttpGet("/"), new BasicHttpClientResponseHandler());
+        WIRE_MOCK_SERVER.verify(1, getRequestedFor(anyUrl()).withHeader("Authorization", equalTo("Bearer token2")));
+
+        // Because the destination is cached, the same client is reused
+        assertThat(client1).isSameAs(client2);
+    }
+
+    private int count = 1;
+
+    private List<Header> getHeaders()
+    {
+        return List.of(new Header("Authorization", "Bearer token" + count++));
     }
 }

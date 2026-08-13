@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+---
+#-- The below configuration is enabled **only** when activating the 'local' profile for Spring Boot
+spring:
+  config:
+    activate:
+      on-profile:
+        - local
+
+#-- The following lines are required to run your application locally. Please refer to this documentation for further information:
+#-- https://github.com/SAP/cloud-security-xsuaa-integration/tree/main/spring-security#local-setup-fails-with-application-failed-to-start
+sap:
+  security:
+    services:
+      xsuaa:
+        xsappname: your-app-name
+        uaadomain: uaadomain
+        clientid: your-client-id
+        clientsecret: your-client-secret
+        url: https://yourdomain.uaadomain

@@ -16,7 +16,6 @@ import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -118,7 +117,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 .builder()
                 .copy(Collections.emptyMap())
                 .withServiceIdentifier(TEST_SERVICE)
-                .withTags(Arrays.asList("test"))
+                .withTags(List.of("test"))
                 .build();
         final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
 
@@ -209,11 +208,8 @@ class OAuth2ServiceBindingDestinationLoaderTest
         assertThat(sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).get())
             .as("The destination should not be cached.")
             .isNotSameAs(result.get());
-        assertThat(sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).get())
-            .as("The destination objects should be equal so that they use the same HTTP client.")
-            .isEqualTo(result.get());
 
-        verify(sut, times(3))
+        verify(sut, times(2))
             .toDestination(
                 eq(baseUrl),
                 eq(tokenUrl),
@@ -396,9 +392,6 @@ class OAuth2ServiceBindingDestinationLoaderTest
         assertThat(secondInvocationResult)
             .as("There should not be a cache in place for proxied destinations.")
             .isNotSameAs(result);
-        assertThat(secondInvocationResult)
-            .as("The destination objects should be equal so that they use the same HTTP client.")
-            .isEqualTo(result);
 
         verify(sut, times(2))
             .createHeaderProvider(

@@ -11,8 +11,10 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.AbstractMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -51,6 +53,20 @@ public interface ODataProtocol extends ODataResponseDescriptor, ODataLiteralSeri
      */
     @Nonnull
     Map.Entry<String, String> getQueryOptionInlineCount( boolean optionEnabled );
+
+    /**
+     * Check whether custom query parameter can be attached to a structured-query.
+     *
+     * @param isRoot
+     *            indicates whether the structured-query is the root query or a nested query.
+     * @param key
+     *            the key of the custom query parameter.
+     * @return true if the custom query parameter is allowed, false otherwise.
+     */
+    default boolean allowCustomQueryParameter( final boolean isRoot, @Nonnull final String key )
+    {
+        return isRoot;
+    }
 
     /**
      * OData protocol v2.
@@ -189,6 +205,14 @@ public interface ODataProtocol extends ODataResponseDescriptor, ODataLiteralSeri
         public String toString()
         {
             return "OData " + protocolVersion;
+        }
+
+        @Override
+        public boolean allowCustomQueryParameter( final boolean isRoot, @Nonnull final String key )
+        {
+            final Predicate<String> expandOption =
+                Set.of("$count", "$filter", "$orderby", "$search", "$skip", "$top")::contains;
+            return isRoot || expandOption.test(key);
         }
     }
 

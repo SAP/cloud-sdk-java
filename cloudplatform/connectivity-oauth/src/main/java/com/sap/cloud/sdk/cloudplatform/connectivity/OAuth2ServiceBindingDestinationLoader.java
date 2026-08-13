@@ -255,9 +255,10 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             destinationBuilder.headerProviders(headerProvider);
         }
 
-        if( oAuth2Options.getClientKeyStore() != null ) {
+        if( oAuth2Options.getClientKeyStoreSupplier() != null ) {
             log.debug("Securing communication to OAuth2 destination '{}' using mTLS.", idString);
-            destinationBuilder.keyStore(oAuth2Options.getClientKeyStore());
+            final var supplier = oAuth2Options.getClientKeyStoreSupplier();
+            destinationBuilder.keyStoreSupplier(() -> Option.of(supplier.get()));
         }
 
         return destinationBuilder.build();
@@ -292,12 +293,13 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             destinationBuilder.headerProviders(headerProvider);
         }
 
-        if( oAuth2Options.getClientKeyStore() != null ) {
+        if( oAuth2Options.getClientKeyStoreSupplier() != null ) {
             log
                 .debug(
                     "Securing communication to OAuth2 proxy server for proxied destination '{}' using mTLS.",
                     destinationName);
-            destinationBuilder.keyStore(oAuth2Options.getClientKeyStore());
+            final var supplier = oAuth2Options.getClientKeyStoreSupplier();
+            destinationBuilder.keyStoreSupplier(() -> Option.of(supplier.get()));
         }
 
         // don't override the proxy URL if it has been set explicitly/manually already
@@ -327,6 +329,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
                 .withAdditionalParameters(oAuth2Options.getAdditionalTokenRetrievalParameters())
                 .withTimeLimiter(oAuth2Options.getTimeLimiter())
                 .withTokenCacheParameters(oAuth2Options.getTokenCacheParameters())
+                .withBtpTenantApiUri(oAuth2Options.getBtpTenantApiBaseUri())
                 .build();
         return new OAuth2HeaderProvider(oAuth2Service, authHeader);
     }

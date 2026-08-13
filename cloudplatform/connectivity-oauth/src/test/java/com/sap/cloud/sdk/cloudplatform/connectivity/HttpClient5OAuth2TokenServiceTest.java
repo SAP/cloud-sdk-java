@@ -658,7 +658,7 @@ class HttpClient5OAuth2TokenServiceTest
     private static KeyStore createEmptyKeyStore()
         throws Exception
     {
-        final KeyStore keyStore = KeyStore.getInstance("JKS");
+        final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null, null);
         return keyStore;
     }

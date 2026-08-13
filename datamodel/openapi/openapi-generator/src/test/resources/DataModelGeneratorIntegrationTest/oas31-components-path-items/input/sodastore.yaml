@@ -1,0 +1,49 @@
+openapi: 3.1.0
+info:
+  title: OAS 3.1 components/pathItems schema references
+  version: 1.0.0
+
+paths:
+  /sodas:
+    get:
+      operationId: getSodas
+      responses:
+        '200':
+          description: A soda
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Soda'
+
+components:
+  # OAS 3.1 adds components/pathItems — schemas referenced here must not be removed
+  pathItems:
+    sodaItem:
+      get:
+        operationId: getSodaDetail
+        responses:
+          '200':
+            description: success
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/SodaDetail'
+
+  schemas:
+    Soda:
+      type: object
+      properties:
+        name:
+          type: string
+    # Only referenced from components/pathItems, not from paths
+    SodaDetail:
+      type: object
+      properties:
+        description:
+          type: string
+    # Not referenced anywhere — should be removed by removeUnusedComponents
+    UnusedSchema:
+      type: object
+      properties:
+        garbage:
+          type: string

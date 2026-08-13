@@ -389,4 +389,5 @@ class DataModelGeneratorUnitTest
         // assert output directory was created implicitly
         assertThat(outputDirectory.toFile().exists()).isTrue();
     }
+
 }

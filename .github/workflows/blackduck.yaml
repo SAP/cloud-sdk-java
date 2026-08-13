@@ -5,13 +5,17 @@ on:
   schedule:
     - cron: 0 23 * * *
 
+permissions: {}
+
 jobs:
   scan:
     name: "Blackduck Scan"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: "Scan With Black Duck"
         uses: ./.github/actions/scan-with-blackduck
         with:
@@ -19,11 +23,13 @@ jobs:
 
   notify-job:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [ scan ]
     if: ${{ failure() && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Notify
         run: python .pipeline/scripts/notify.py
         env:
