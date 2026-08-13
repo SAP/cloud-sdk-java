@@ -38,7 +38,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
 
 @WireMockTest
-@SuppressWarnings( "unchecked" )
 class CsrfTokenInterceptorTest
 {
     private static final String CSRF_TOKEN = "test-csrf-token";
@@ -263,5 +262,83 @@ class CsrfTokenInterceptorTest
     {
         assertThat(CsrfTokenInterceptor.deriveServiceRootUri(URI.create("http://host/a/b/c/Entity")))
             .isEqualTo(URI.create("http://host/a/b/c/"));
+    }
+
+    @Test
+    void deriveServiceRootUri_stripsKeyPredicateWithStringKey()
+    {
+        assertThat(
+            CsrfTokenInterceptor
+                .deriveServiceRootUri(URI.create("http://host/sap/opu/odata/sap/API_BP/BusinessPartner('123')")))
+            .isEqualTo(URI.create("http://host/sap/opu/odata/sap/API_BP/"));
+    }
+
+    @Test
+    void deriveServiceRootUri_stripsKeyPredicateWithIntegerKey()
+    {
+        assertThat(CsrfTokenInterceptor.deriveServiceRootUri(URI.create("http://host/service/Entity(42)")))
+            .isEqualTo(URI.create("http://host/service/"));
+    }
+
+    @Test
+    void deriveServiceRootUri_stripsKeyPredicateWithCompoundKey()
+    {
+        assertThat(
+            CsrfTokenInterceptor.deriveServiceRootUri(URI.create("http://host/service/Entity(key1='a',key2='b')")))
+            .isEqualTo(URI.create("http://host/service/"));
+    }
+
+    @Test
+    void deriveServiceRootUri_stripsNavigationPropertyAfterKeyPredicate()
+    {
+        // /service/Entity('key')/NavProp — the nav property has no key itself
+        assertThat(
+            CsrfTokenInterceptor
+                .deriveServiceRootUri(
+                    URI.create("http://host/sap/opu/odata/sap/API_BP/BusinessPartner('123')/to_Address")))
+            .isEqualTo(URI.create("http://host/sap/opu/odata/sap/API_BP/"));
+    }
+
+    @Test
+    void deriveServiceRootUri_stripsNavigationPropertyWithItsOwnKeyPredicate()
+    {
+        // /service/Entity('key')/NavProp(42) — nav property has its own key
+        assertThat(
+            CsrfTokenInterceptor
+                .deriveServiceRootUri(
+                    URI.create("http://host/sap/opu/odata/sap/API_BP/BusinessPartner('123')/to_Address(456)")))
+            .isEqualTo(URI.create("http://host/sap/opu/odata/sap/API_BP/"));
+    }
+
+    @Test
+    @SneakyThrows
+    void csrfTokenIsFetchedAtServiceRootForNavigationPropertyRequest( final WireMockRuntimeInfo wm )
+    {
+        // Verifies that for a mutating request on a navigation property path
+        // /sap/opu/odata/sap/API_BP/BusinessPartner('123')/to_Address
+        // the CSRF HEAD is sent to /sap/opu/odata/sap/API_BP/ (the service root),
+        // NOT to /sap/opu/odata/sap/API_BP/BusinessPartner('123')/ (wrong intermediate path).
+        final String serviceRoot = "/sap/opu/odata/sap/API_BP/";
+        final String navPropertyPath = "/sap/opu/odata/sap/API_BP/BusinessPartner('123')/to_Address";
+
+        wm
+            .getWireMock()
+            .register(
+                head(urlEqualTo(serviceRoot))
+                    .willReturn(ok().withHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, CSRF_TOKEN)));
+
+        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
+        final HttpClient realClient = new ApacheHttpClient5FactoryBuilder().build().createHttpClient(destination);
+        final CsrfTokenInterceptor interceptor = new CsrfTokenInterceptor(realClient);
+
+        final HttpPost request = new HttpPost(navPropertyPath);
+        interceptor.process(request, null, null);
+
+        // Token must have been fetched and attached
+        assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY).getValue())
+            .isEqualTo(CSRF_TOKEN);
+
+        // HEAD must have gone to the service root, not to the intermediate entity path
+        wm.getWireMock().verifyThat(headRequestedFor(urlEqualTo(serviceRoot)));
     }
 }

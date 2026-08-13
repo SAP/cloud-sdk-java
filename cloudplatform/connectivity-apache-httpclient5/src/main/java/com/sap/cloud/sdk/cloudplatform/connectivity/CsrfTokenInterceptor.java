@@ -90,25 +90,43 @@ class CsrfTokenInterceptor implements HttpRequestInterceptor
     }
 
     /**
-     * Derives the service root URI from the full request URI by truncating the path at the first OData resource
-     * segment. This matches the HC4 behavior where the CSRF token HEAD request was always sent to the service path root
-     * rather than the specific resource path.
+     * Derives the service root URI from the full request URI to send the CSRF token HEAD request.
      * <p>
-     * The service root is identified as the path up to and including the trailing slash before the first resource
-     * segment. Example: {@code http://host/service/$batch} → {@code http://host/service/},
-     * {@code http://host/service/Entity} → {@code http://host/service/}
+     * The service root is the path prefix up to and including the slash that precedes the first OData resource segment.
+     * A resource segment is identified by the presence of a key predicate ({@code (}) — the slash immediately before
+     * the first {@code (} marks the boundary between the service path and the first entity set name. For paths without
+     * a key predicate the last path segment is stripped instead.
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>{@code /service/Entity} → {@code /service/}
+     * <li>{@code /service/$batch} → {@code /service/}
+     * <li>{@code /service/Entity('key')} → {@code /service/}
+     * <li>{@code /service/Entity('key')/NavigationProperty} → {@code /service/}
+     * <li>{@code /service/Entity('key')/NavigationProperty(42)} → {@code /service/}
+     * </ul>
      */
     @Nonnull
     static URI deriveServiceRootUri( @Nonnull final URI requestUri )
     {
         final String path = requestUri.getRawPath();
-        // Service root is everything up to and including the trailing slash before the first resource segment.
-        // Find the last '/' that is followed by at least one more character (i.e., there is a resource segment).
-        final int lastSlash = path.lastIndexOf('/');
-        // If the path ends with '/' already (e.g. "/service/"), use it as-is.
-        // Otherwise, strip the last segment (e.g. "/service/Entity" -> "/service/", "/service/$batch" -> "/service/").
-        final String servicePath =
-            (lastSlash >= 0 && lastSlash < path.length() - 1) ? path.substring(0, lastSlash + 1) : path;
+        final String servicePath;
+
+        final int firstParen = path.indexOf('(');
+        if( firstParen > 0 ) {
+            // A key predicate is present. The service root ends at the slash immediately before the first '(',
+            // i.e. before the entity set name. This correctly handles navigation property paths such as
+            // /service/Entity('key')/NavProp and /service/Entity('key')/NavProp(42).
+            final int slashBeforeEntity = path.lastIndexOf('/', firstParen);
+            servicePath = slashBeforeEntity >= 0 ? path.substring(0, slashBeforeEntity + 1) : path;
+        } else {
+            // No key predicate — strip the last path segment.
+            // Handles /service/Entity -> /service/ and /service/$batch -> /service/.
+            // Also handles paths that already end with '/' (e.g. /service/) by leaving them unchanged.
+            final int lastSlash = path.lastIndexOf('/');
+            servicePath = (lastSlash >= 0 && lastSlash < path.length() - 1) ? path.substring(0, lastSlash + 1) : path;
+        }
+
         try {
             return new URI(requestUri.getScheme(), requestUri.getAuthority(), servicePath, null, null);
         }
