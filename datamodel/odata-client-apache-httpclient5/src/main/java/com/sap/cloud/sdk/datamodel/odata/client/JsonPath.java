@@ -13,7 +13,7 @@ import lombok.Value;
 /**
  * A simple JSON Path.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 @Value

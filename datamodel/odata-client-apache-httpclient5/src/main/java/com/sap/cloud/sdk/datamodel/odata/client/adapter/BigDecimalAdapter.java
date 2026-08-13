@@ -14,7 +14,7 @@ import com.google.gson.stream.JsonWriter;
 /**
  * GSON type adapter for parsing and serialization of {@link BigDecimal}.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public class BigDecimalAdapter extends TypeAdapter<BigDecimal>
 {

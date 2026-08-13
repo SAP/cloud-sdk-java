@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 /**
  * The result type of the OData Count request.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @EqualsAndHashCode( callSuper = true )
 public class ODataRequestCount extends ODataRequestRead

@@ -28,7 +28,7 @@ import lombok.Getter;
  * <p>
  * Of the result only the property {@code ResultProperty} is accessed.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @EqualsAndHashCode
 public final class ODataResourcePath

@@ -19,7 +19,7 @@ import lombok.Getter;
 /**
  * The result type of the OData Read request.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @Getter
 @EqualsAndHashCode( callSuper = true )

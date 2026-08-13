@@ -17,7 +17,7 @@ import org.apache.hc.core5.http.message.StatusLine;
 /**
  * Generic type of an OData request result.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface ODataRequestResult
 {

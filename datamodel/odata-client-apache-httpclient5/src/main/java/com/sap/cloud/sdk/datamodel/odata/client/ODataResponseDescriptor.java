@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 /**
  * Descriptor for protocol specific information on deserializing OData responses.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface ODataResponseDescriptor
 {

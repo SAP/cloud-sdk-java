@@ -26,7 +26,7 @@ import lombok.Getter;
  * If the response contains an OData error in the payload.</li>
  * </ul>
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @EqualsAndHashCode( callSuper = true )
 @Getter

@@ -22,7 +22,7 @@ import lombok.Getter;
  * The {@code ODataProtocol} defines all necessary information that is needed in order to differentiate between
  * different OData protocol versions.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface ODataProtocol extends ODataResponseDescriptor, ODataLiteralSerializer
 {

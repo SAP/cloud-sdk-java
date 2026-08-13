@@ -13,7 +13,7 @@ import lombok.Getter;
 /**
  * OData connection exception indicating errors when trying to establish a service connection.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @EqualsAndHashCode( callSuper = true )
 @Getter

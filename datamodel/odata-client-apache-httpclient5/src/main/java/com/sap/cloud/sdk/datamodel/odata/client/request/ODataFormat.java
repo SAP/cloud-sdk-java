@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * OData format for responses and requests.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @RequiredArgsConstructor
 enum ODataFormat

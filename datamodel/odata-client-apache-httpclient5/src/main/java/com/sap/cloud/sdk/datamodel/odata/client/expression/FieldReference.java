@@ -11,7 +11,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 /**
  * OData filter expression operand for a generic entity field reference.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface FieldReference extends Expressions.OperandSingle
 {

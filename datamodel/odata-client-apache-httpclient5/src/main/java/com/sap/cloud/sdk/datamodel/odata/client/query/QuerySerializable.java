@@ -7,7 +7,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.UriEncodingStrategy;
 /**
  * A serializable query interface to serve an encoded and not-encoded String representation.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface QuerySerializable
 {

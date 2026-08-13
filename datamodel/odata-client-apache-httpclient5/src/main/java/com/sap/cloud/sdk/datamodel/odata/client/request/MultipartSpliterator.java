@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
  *
  * @param <T>
  *            Generic type of produced items.
- * @since 5.31.0
+ * @since 5.34.0
  */
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
 class MultipartSpliterator<T> implements Spliterator<T>

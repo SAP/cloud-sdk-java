@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
  * Wrapper class for expression types. The types listed here are used to differentiate input and output parameters of
  * functions used in expressions of OData filters.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public class Expressions
 {

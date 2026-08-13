@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Fluent API class to build and hold entity keys. A key is comprised of one or multiple individual key-value pairs.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @Slf4j
 public class ODataEntityKey extends AbstractODataParameters

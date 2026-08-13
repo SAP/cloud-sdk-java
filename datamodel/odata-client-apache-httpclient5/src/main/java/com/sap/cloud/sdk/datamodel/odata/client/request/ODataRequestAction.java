@@ -18,7 +18,7 @@ import lombok.Getter;
 /**
  * The executable OData action request.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @Getter
 @EqualsAndHashCode( callSuper = true )

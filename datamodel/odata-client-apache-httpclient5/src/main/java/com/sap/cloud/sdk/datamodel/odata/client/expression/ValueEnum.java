@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 /**
  * OData filter expression operand of enumeration type
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface ValueEnum extends Expressions.OperandSingle, FilterableComparisonAbsolute
 {

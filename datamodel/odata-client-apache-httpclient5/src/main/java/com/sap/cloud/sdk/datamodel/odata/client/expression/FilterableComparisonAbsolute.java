@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 /**
  * Logical operations for generic OData filter expression operands.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface FilterableComparisonAbsolute extends Expressions.Operand
 {

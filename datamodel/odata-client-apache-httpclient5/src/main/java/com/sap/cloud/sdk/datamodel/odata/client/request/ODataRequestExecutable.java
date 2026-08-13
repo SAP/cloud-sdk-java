@@ -12,7 +12,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorExcep
 /**
  * General interface for executable OData Requests.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface ODataRequestExecutable
 {

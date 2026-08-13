@@ -8,7 +8,7 @@ import lombok.experimental.Delegate;
 /**
  * OData filter expression operand of type Edm.Boolean
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface ValueBoolean extends Expressions.OperandSingle, FilterableBoolean, FilterableComparisonAbsolute
 {

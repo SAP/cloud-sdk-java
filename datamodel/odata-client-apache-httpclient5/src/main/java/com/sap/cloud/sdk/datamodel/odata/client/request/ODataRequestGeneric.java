@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Generic OData request class to provide default features for service requests.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @EqualsAndHashCode
 @Slf4j

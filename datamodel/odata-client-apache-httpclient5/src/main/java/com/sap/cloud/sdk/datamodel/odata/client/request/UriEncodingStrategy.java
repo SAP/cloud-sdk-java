@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * Encoding strategy.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @RequiredArgsConstructor
 public enum UriEncodingStrategy

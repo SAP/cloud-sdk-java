@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Helper class to construct an HttpResponse object on behalf of serialized HTTP protocol content.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @Slf4j
 class MultipartHttpResponse extends BasicClassicHttpResponse

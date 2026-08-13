@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 /**
  * OData filter expression operand for an untyped entity field reference.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface FieldUntyped extends FieldReference, FilterableComparisonAbsolute, FilterableComparisonRelative
 {

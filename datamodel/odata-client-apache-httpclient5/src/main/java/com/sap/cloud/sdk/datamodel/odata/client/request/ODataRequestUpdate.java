@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * The executable OData patch update request.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @Getter
 @EqualsAndHashCode( callSuper = true )

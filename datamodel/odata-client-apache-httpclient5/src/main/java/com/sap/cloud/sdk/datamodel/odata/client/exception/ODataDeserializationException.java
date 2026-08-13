@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 /**
  * OData deserialization exception type to focus on deserialization errors when parsing the service response.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @EqualsAndHashCode( callSuper = true )
 public class ODataDeserializationException extends ODataResponseException

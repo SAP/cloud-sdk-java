@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
  * such as {@code $select, $filter, ...}. This API does not differentiate between OData versions. Only leveraging
  * features e.g. within filters that conform to the selected protocol version is the responsibility of the consumer.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 public final class StructuredQuery implements QuerySerializable

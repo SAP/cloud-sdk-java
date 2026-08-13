@@ -11,7 +11,7 @@ import lombok.Getter;
 /**
  * OData serialization exception type to focus on serialization errors when creating the service request.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @EqualsAndHashCode( callSuper = true )
 public class ODataSerializationException extends ODataRequestException

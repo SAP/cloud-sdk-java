@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * Number deserialization strategy to determine behavior for JSON numbers without target type references.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @RequiredArgsConstructor
 public enum NumberDeserializationStrategy

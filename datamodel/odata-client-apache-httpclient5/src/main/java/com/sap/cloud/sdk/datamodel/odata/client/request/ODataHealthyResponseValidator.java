@@ -23,7 +23,7 @@ import io.vavr.control.Try;
 /**
  * Utility class to enable a healthy response validation.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 class ODataHealthyResponseValidator
 {

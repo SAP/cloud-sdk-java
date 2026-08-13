@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 /**
  * Set of OData filter functions for collection types.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface FilterExpressionCollection
 {

@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * GSON type adapter for parsing and serialization of {@code byte[]}.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @Slf4j
 public class BinaryTypeAdapter extends TypeAdapter<byte[]>

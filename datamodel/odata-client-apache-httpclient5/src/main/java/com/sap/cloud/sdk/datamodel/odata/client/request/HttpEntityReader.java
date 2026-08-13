@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Utility class to leverage reading from an HTTP response.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @Slf4j
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )

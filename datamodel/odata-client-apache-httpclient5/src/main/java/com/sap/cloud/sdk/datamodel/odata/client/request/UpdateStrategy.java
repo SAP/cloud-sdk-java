@@ -5,7 +5,7 @@ import com.google.common.annotations.Beta;
 /**
  * The strategy to use when updating existing entities.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public enum UpdateStrategy
 {

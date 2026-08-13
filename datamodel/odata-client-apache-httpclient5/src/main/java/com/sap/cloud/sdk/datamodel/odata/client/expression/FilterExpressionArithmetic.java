@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 /**
  * Set of OData filter functions for arithmetic types.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 @SuppressWarnings( "overloads" )
 public interface FilterExpressionArithmetic

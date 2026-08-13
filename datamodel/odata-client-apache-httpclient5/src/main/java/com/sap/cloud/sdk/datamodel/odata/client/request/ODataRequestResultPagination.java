@@ -16,7 +16,7 @@ import io.vavr.control.Try;
  * memory-efficient exploration / parsing with continuous requests to the OData endpoint. It enables the consumption of
  * all data through server-driven pagination.
  *
- * @since 5.31.0
+ * @since 5.34.0
  */
 public interface ODataRequestResultPagination extends Iterable<ResultElement>
 {
