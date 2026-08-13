@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentMatchers;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -62,7 +63,7 @@ class CsrfTokenInterceptorTest
         final ClassicHttpResponse headResponse = new BasicClassicHttpResponse(200);
         headResponse.addHeader(new BasicHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, CSRF_TOKEN));
 
-        when(mockHttpClient.execute(any(HttpHead.class), any(HttpClientResponseHandler.class)))
+        when(mockHttpClient.execute(any(HttpHead.class), ArgumentMatchers.<HttpClientResponseHandler<String>> any()))
             .thenAnswer(inv -> ((HttpClientResponseHandler<?>) inv.getArgument(1)).handleResponse(headResponse));
 
         sut.process(request, null, null);
@@ -88,7 +89,7 @@ class CsrfTokenInterceptorTest
 
         sut.process(request, null, null);
 
-        verify(mockHttpClient, never()).execute(any(), any(HttpClientResponseHandler.class));
+        verify(mockHttpClient, never()).execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>> any());
         assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY)).isNull();
     }
 
@@ -100,7 +101,7 @@ class CsrfTokenInterceptorTest
 
         sut.process(request, null, null);
 
-        verify(mockHttpClient, never()).execute(any(), any(HttpClientResponseHandler.class));
+        verify(mockHttpClient, never()).execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>> any());
         assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY)).isNull();
     }
 
@@ -113,7 +114,7 @@ class CsrfTokenInterceptorTest
 
         sut.process(request, null, null);
 
-        verify(mockHttpClient, never()).execute(any(), any(HttpClientResponseHandler.class));
+        verify(mockHttpClient, never()).execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>> any());
         assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY).getValue())
             .isEqualTo("existing-token");
     }
@@ -140,7 +141,7 @@ class CsrfTokenInterceptorTest
     @SneakyThrows
     void requestProceedsWithoutTokenWhenHeadThrowsIOException()
     {
-        when(mockHttpClient.execute(any(HttpHead.class), any(HttpClientResponseHandler.class)))
+        when(mockHttpClient.execute(any(HttpHead.class), ArgumentMatchers.<HttpClientResponseHandler<String>>any()))
             .thenThrow(new IOException("Connection refused"));
 
         final HttpPost request = new HttpPost(REQUEST_PATH);
@@ -178,7 +179,7 @@ class CsrfTokenInterceptorTest
         final ClassicHttpResponse headResponse = new BasicClassicHttpResponse(200);
         headResponse.addHeader(new BasicHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, tokenWithNonPrintable));
 
-        when(mockHttpClient.execute(any(HttpHead.class), any(HttpClientResponseHandler.class)))
+        when(mockHttpClient.execute(any(HttpHead.class), ArgumentMatchers.<HttpClientResponseHandler<String>> any()))
             .thenAnswer(inv -> ((HttpClientResponseHandler<?>) inv.getArgument(1)).handleResponse(headResponse));
 
         final HttpPost request = new HttpPost(REQUEST_PATH);
@@ -196,7 +197,7 @@ class CsrfTokenInterceptorTest
         headResponse.addHeader(new BasicHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, "first-token"));
         headResponse.addHeader(new BasicHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, "second-token"));
 
-        when(mockHttpClient.execute(any(HttpHead.class), any(HttpClientResponseHandler.class)))
+        when(mockHttpClient.execute(any(HttpHead.class), ArgumentMatchers.<HttpClientResponseHandler<String>> any()))
             .thenAnswer(inv -> ((HttpClientResponseHandler<?>) inv.getArgument(1)).handleResponse(headResponse));
 
         final HttpPost request = new HttpPost(REQUEST_PATH);
