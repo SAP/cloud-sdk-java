@@ -81,7 +81,7 @@ class ODataHttpRequest
      * @param requestCreator
      *            The factory for HTTP requests.
      * @throws ODataRequestException
-     *             When the request URI could not constructed.
+     *             When the request URI could not be constructed.
      * @throws ODataConnectionException
      *             When an error occurred while handling the HTTP connection.
      * @return The HTTP response.

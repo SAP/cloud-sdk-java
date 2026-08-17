@@ -21,8 +21,8 @@ import lombok.Getter;
  * A class that assembles resource references into a URL path. References can be entity sets, entities by key,
  * properties, functions, actions and special endpoints like the metadata endpoint.
  *
- * E.g. the following resource path identifies a function invocation on the a navigational property of the entity
- * identified by {@code 'val'}:
+ * E.g. the following resource path identifies a function invocation on a navigational property of the entity identified
+ * by {@code 'val'}:
  * <p>
  * {@code Entity(key='val')/NavigationProperty/Model.Function(1)/ResultProperty}.
  * <p>
