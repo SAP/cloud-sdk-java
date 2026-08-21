@@ -1,0 +1,10 @@
+--batch_00000000-0000-0000-0000-000000000001
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 1
+
+GET Entity?$filter=Fieldname%20eq%20'hello' HTTP/1.1
+Accept: application/json
+
+
+--batch_00000000-0000-0000-0000-000000000001--

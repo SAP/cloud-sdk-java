@@ -1,0 +1,34 @@
+{
+  "@odata.context": "$metadata#Ticket",
+  "@odata.metadataEtag": "W/\"20200517142415\"",
+  "value": [
+    {
+      "Ticket" : "1000001",
+      "TicketCategory" : "2",
+      "TicketName" : "TESTSUPPLIER0111",
+      "TicketGrouping" : "BP02",
+      "TicketUUID" : "34c6020a-aaaa-1111-2222-af75a376b0f9",
+      "CorrespondenceLanguage" : "",
+      "CreatedByUser" : "ABC34c6020a",
+      "CreationDate" : "\/Date(1430784000000)\/",
+      "CreationTime" : "PT09H50M04S",
+      "TicketIsBlocked" : false,
+      "TicketType" : "",
+      "ETag" : "ABC20180116144654"
+    },
+    {
+      "Ticket" : "1000001",
+      "TicketCategory" : "1",
+      "TicketName" : "TESTSUPPLIER0222",
+      "TicketGrouping" : "BP03",
+      "TicketUUID" : "34c6020a-aaaa-1111-2222-af75a376b0f9",
+      "CorrespondenceLanguage" : "",
+      "CreatedByUser" : "ABC34c6020a",
+      "CreationDate" : "\/Date(1430784000000)\/",
+      "CreationTime" : "PT09H50M04S",
+      "TicketIsBlocked" : false,
+      "TicketType" : "",
+      "ETag" : "ABC20180116144654"
+    }
+  ]
+}
