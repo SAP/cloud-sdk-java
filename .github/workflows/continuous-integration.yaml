@@ -135,7 +135,11 @@ jobs:
 
       - name: "Build SDK"
         run: |
-          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} clean install -DskipTests -DskipFormatting"
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} clean install -DskipTests -DskipFormatting -pl '!archetypes,!archetypes/spring-boot3,!archetypes/spring-boot4'"
+          echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+          # Archetypes are built single-threaded to avoid a race condition on archetype-catalog.xml
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} install -DskipTests -DskipFormatting -pl archetypes,archetypes/spring-boot3,archetypes/spring-boot4"
           echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
           mvn $MVN_ARGS
 
