@@ -60,6 +60,17 @@ class DataModelGeneratorIntegrationTest
             6,
             Map.of(),
             Map.of()),
+        MULTIPART_BINARY_STRING(
+            "multipart-binary-string",
+            "sodastore.yaml",
+            "com.sap.cloud.sdk.datamodel.rest.test.api",
+            "com.sap.cloud.sdk.datamodel.rest.test.model",
+            ApiMaturity.RELEASED,
+            false,
+            true,
+            2,
+            Map.of(),
+            Map.of()),
         INLINEOBJECT_SCHEMA_NAME(
             "inlineobject-schemas-enabled",
             "sodastore.yaml",
@@ -257,7 +268,10 @@ class DataModelGeneratorIntegrationTest
     }
 
     @ParameterizedTest
-    @EnumSource( value = TestCase.class, mode = EnumSource.Mode.EXCLUDE, names = { "FILE_HANDLING" } )
+    @EnumSource(
+        value = TestCase.class,
+        mode = EnumSource.Mode.EXCLUDE,
+        names = { "FILE_HANDLING", "MULTIPART_BINARY_STRING" } )
     void integrationTests( final TestCase testCase, @TempDir final Path path )
         throws Throwable
     {

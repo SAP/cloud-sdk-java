@@ -1,0 +1,43 @@
+openapi: 3.1.0
+info:
+  title: String and File multipart body
+  version: 1.0.0
+
+paths:
+  /predict_parquet:
+    post:
+      summary: Make predictions from Parquet file
+      operationId: predict_parquet
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_predict_parquet'
+            encoding:
+              file:
+                contentType: application/vnd.apache.parquet
+        required: true
+
+components:
+  schemas:
+    Body_predict_parquet:
+      type: object
+      properties:
+        file:
+          type: string
+          contentMediaType: application/vnd.apache.parquet
+          title: File
+        prediction_config:
+          type: string
+          title: Prediction Config
+          description: JSON string containing the prediction configuration (see PredictionConfig schema).
+          example: { \"target_columns\": [ { \"name\": \"PRICE\",\"prediction_placeholder\": null,\"task_type\": \"regression\" } ] }
+          contentMediaType: application/json
+          contentSchema:
+            $ref: '#/components/schemas/PredictionConfig'
+    PredictionConfig:
+      type: object
+      properties:
+        test:
+          type: string
+          title: Test
