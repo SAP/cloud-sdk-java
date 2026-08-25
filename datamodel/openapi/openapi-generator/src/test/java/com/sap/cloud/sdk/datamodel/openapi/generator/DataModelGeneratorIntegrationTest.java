@@ -268,7 +268,10 @@ class DataModelGeneratorIntegrationTest
     }
 
     @ParameterizedTest
-    @EnumSource( value = TestCase.class, mode = EnumSource.Mode.EXCLUDE, names = { "FILE_HANDLING", "MULTIPART_BINARY_STRING" } )
+    @EnumSource(
+        value = TestCase.class,
+        mode = EnumSource.Mode.EXCLUDE,
+        names = { "FILE_HANDLING", "MULTIPART_BINARY_STRING" } )
     void integrationTests( final TestCase testCase, @TempDir final Path path )
         throws Throwable
     {
