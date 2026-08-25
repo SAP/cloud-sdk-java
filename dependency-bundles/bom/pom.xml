@@ -64,6 +64,7 @@
 		<!-- @Nonnull/@Nullable annotations -->
 		<vavr.version>1.0.1</vavr.version>
 		<guava.version>33.7.1-jre</guava.version>
+		<jspecify.version>1.0.1</jspecify.version>
 		<!-- collection utilities, @Beta annotation -->
 		<commons-io.version>2.22.0</commons-io.version>
 		<!-- Apache file utils for SOAP (deprecated, we do not maintain!) -->
@@ -137,6 +138,11 @@
 				<groupId>io.vavr</groupId>
 				<artifactId>vavr</artifactId>
 				<version>${vavr.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jspecify</groupId>
+				<artifactId>jspecify</artifactId>
+				<version>${jspecify.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.cache</groupId>
