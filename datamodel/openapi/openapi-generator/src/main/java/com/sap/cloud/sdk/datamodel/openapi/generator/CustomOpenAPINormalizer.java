@@ -137,7 +137,8 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
             } else if( schema.getContentEncoding() != null ) {
                 // Any other content encoding (e.g., "binary") → treat as binary
                 schema.setFormat("binary");
-            } else if( schema.getContentMediaType() != null ) {
+            } else if( schema.getContentMediaType() != null
+                && !"application/json".equalsIgnoreCase(schema.getContentMediaType()) ) {
                 // contentMediaType without contentEncoding → binary stream
                 schema.setFormat("binary");
             }
