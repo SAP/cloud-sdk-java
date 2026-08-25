@@ -330,6 +330,11 @@ jobs:
             "javaVersion": 17,
             "startCommand": "mvn spring-boot:run -B",
           }
+          - {
+            "archetype": "spring-boot4",
+            "javaVersion": 17,
+            "startCommand": "mvn spring-boot:run -B",
+          }
     name: "Test ${{ matrix.task.archetype }} Archetype"
     steps:
       - name: "Setup java"
