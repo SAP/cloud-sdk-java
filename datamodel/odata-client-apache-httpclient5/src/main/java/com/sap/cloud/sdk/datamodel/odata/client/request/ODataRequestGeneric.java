@@ -65,8 +65,19 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     /**
      * List of listeners to observe and react on OData actions.
      */
-    @Getter( AccessLevel.PROTECTED )
     private final List<ODataRequestListener> listeners = new ArrayList<>();
+
+    /**
+     * Get the list of listeners to observe and react on OData actions.
+     *
+     * @return The list of listeners.
+     * @since 5.35.0
+     */
+    @Nonnull
+    public List<ODataRequestListener> getListeners()
+    {
+        return listeners;
+    }
 
     /**
      * Map of HTTP header key-values which are added to the OData request.
