@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
+import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
@@ -49,6 +51,21 @@ class TestContextTest
             assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
             assertThat(PrincipalAccessor.tryGetCurrentPrincipal()).isEmpty();
             assertThat(AuthTokenAccessor.tryGetCurrentToken()).isEmpty();
+            assertThat(RequestHeaderAccessor.tryGetHeaderContainer()).isEmpty();
+        }
+
+        @Test
+        @DisplayName( "Request headers should be modifiable" )
+        void testRequestHeadersCanBeModified()
+        {
+            assertThat(RequestHeaderAccessor.tryGetHeaderContainer()).isEmpty();
+            final RequestHeaderContainer headers =
+                sut.setRequestHeaders(java.util.Collections.singletonMap("foo", "bar"));
+            assertThat(RequestHeaderAccessor.tryGetHeaderContainer()).contains(headers);
+            assertThat(RequestHeaderAccessor.getHeaderContainer().getHeaderValues("foo")).containsExactly("bar");
+
+            sut.clearRequestHeaders();
+            assertThat(RequestHeaderAccessor.tryGetHeaderContainer()).isEmpty();
         }
 
         @Test

@@ -43,7 +43,12 @@ interface ODataRequestResultFactory
             .onEmpty(() -> log.debug("HTTP response entity is empty: {}", status))
             .map(entity -> Try.run(() -> copy.setEntity(new BufferedHttpEntity(entity))))
             .peek(b -> b.onSuccess(v -> log.debug("Successfully buffered the HTTP response entity.")))
-            .peek(b -> b.onFailure(e -> log.warn("Failed to buffer HTTP response entity: {}", status, e)));
+            .peek(b -> b.onFailure(t -> {
+                log.warn("Failed to buffer HTTP response entity: {}", status, t);
+                if( t instanceof Exception ) {
+                    oDataRequest.getListeners().forEach(l -> l.listenOnParsingError((Exception) t));
+                }
+            }));
 
         Try.run(httpResponse::close).onFailure(e -> log.warn("Failed to close HTTP response: {}", status, e));
 
