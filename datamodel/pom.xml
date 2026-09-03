@@ -35,6 +35,7 @@
 		<module>odata-client</module>
 		<module>odata-client-apache-httpclient5</module>
 		<module>odata</module>
+		<module>odata-core-apache-httpclient5</module>
 		<module>odata-v4</module>
 		<!-- To be removed -->
 		<module>soap</module>

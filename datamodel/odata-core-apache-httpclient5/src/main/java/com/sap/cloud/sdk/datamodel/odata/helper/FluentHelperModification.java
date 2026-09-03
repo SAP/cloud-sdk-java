@@ -1,0 +1,31 @@
+package com.sap.cloud.sdk.datamodel.odata.helper;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+/**
+ * Representation of an OData modification request (Create, Update, Delete) as a fluent interface for further
+ * configuring the request and {@link #executeRequest(Destination) executing} it.
+ *
+ * @param <FluentHelperT>
+ *            The fluent helper type.
+ * @param <EntityT>
+ *            The type of the entity this OData request operates on, if any.
+ */
+public abstract class FluentHelperModification<FluentHelperT, EntityT extends VdmEntity<?>>
+    extends
+    FluentHelperBasic<FluentHelperT, EntityT, ModificationResponse<EntityT>>
+{
+    /**
+     * Instantiates this fluent helper using the given service path to send the requests.
+     *
+     * @param servicePath
+     *            The service path to direct the requests to.
+     * @param entityCollection
+     *            The entity collection to direct the requests to.
+     */
+    public FluentHelperModification( @Nonnull final String servicePath, @Nullable final String entityCollection )
+    {
+        super(servicePath, entityCollection);
+    }
+}
