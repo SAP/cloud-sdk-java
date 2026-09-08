@@ -114,8 +114,8 @@
 		<maven-plugin-testing.version>3.5.1</maven-plugin-testing.version>
 		<caffeine.version>3.2.4</caffeine.version>
 		<openapi-generator.version>7.25.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.54</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.47</io-swagger-parser-v3.version>
+		<io-swagger-core-v3.version>2.2.55</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.48</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.3.0</stax2-api.version>
@@ -128,7 +128,7 @@
 		<checkstyle.version>12.3.1</checkstyle.version>
 		<byte-buddy.version>1.18.12</byte-buddy.version>
 		<jspecify.version>1.0.1</jspecify.version>
-		<snakeyaml.version>2.6</snakeyaml.version>
+		<snakeyaml.version>2.7</snakeyaml.version>
 		<commons-codec.version>1.22.1</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
@@ -1006,7 +1006,7 @@
 								<dependency>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
-									<version>1.18.46</version>
+									<version>1.18.48</version>
 								</dependency>
 							</dependencies>
 							<executions>
