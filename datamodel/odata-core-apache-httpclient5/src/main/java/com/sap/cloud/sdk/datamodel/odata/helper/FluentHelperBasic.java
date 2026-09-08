@@ -43,8 +43,7 @@ public abstract class FluentHelperBasic<FluentHelperT, EntityT, ResultT> impleme
     protected String entityCollection = null;
 
     /**
-     * A map containing the headers to be used for all explicit and implicit requests that are part of this FluentHelper
-     * implementation (csrf).
+     * A map containing the headers to be used for all requests that are part of this FluentHelper implementation.
      */
     private final Map<String, String> headers = new LinkedHashMap<>();
 
@@ -96,9 +95,8 @@ public abstract class FluentHelperBasic<FluentHelperT, EntityT, ResultT> impleme
     /**
      * Get all headers for explicit and implicit requests.
      *
-     * @return a map containing the headers for actual request and implicit requests, e.g. csrf token request. A map
-     *         containing the headers to be used for all implicit requests that are part of this FluentHelper
-     *         implementation (csrf, ...).
+     * @return a map containing the headers to be used for all requests that are part of this FluentHelper
+     *         implementation.
      */
     protected Map<String, String> getHeaders()
     {
