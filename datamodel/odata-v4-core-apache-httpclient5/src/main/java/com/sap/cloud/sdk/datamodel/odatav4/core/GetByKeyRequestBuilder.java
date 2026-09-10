@@ -153,4 +153,20 @@ public class GetByKeyRequestBuilder<EntityT extends VdmEntity<?>>
         delegateQuery.select(fields);
         return this;
     }
+
+    /**
+     * Activates CSRF token retrieval for this OData request.
+     *
+     * @return The same request builder that will now fetch a CSRF token.
+     * @deprecated CSRF token handling is now performed automatically by the underlying HTTP client. This method is a
+     *             no-op retained only for source compatibility, as read requests never require a CSRF token. It is
+     *             scheduled for removal.
+     */
+    @Deprecated
+    @Override
+    @Nonnull
+    public GetByKeyRequestBuilder<EntityT> withCsrfToken()
+    {
+        return this;
+    }
 }

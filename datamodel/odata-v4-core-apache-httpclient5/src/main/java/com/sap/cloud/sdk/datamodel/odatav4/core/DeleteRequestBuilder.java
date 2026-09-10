@@ -160,4 +160,12 @@ public class DeleteRequestBuilder<EntityT extends VdmEntity<?>>
     {
         return (Class<EntityT>) entity.getClass();
     }
+
+    @Nonnull
+    @Override
+    public DeleteRequestBuilder<EntityT> withoutCsrfToken()
+    {
+        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        return this;
+    }
 }

@@ -131,6 +131,14 @@ public class BatchRequestBuilder extends AbstractRequestBuilder<BatchRequestBuil
         return super.toRequest(delegate);
     }
 
+    @Override
+    @Nonnull
+    public BatchRequestBuilder withoutCsrfToken()
+    {
+        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        return this;
+    }
+
     @Nonnull
     @Override
     public BatchResponse execute( @Nonnull final Destination destination )

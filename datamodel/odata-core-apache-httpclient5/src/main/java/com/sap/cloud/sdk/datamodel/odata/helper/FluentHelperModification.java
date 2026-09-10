@@ -3,6 +3,8 @@ package com.sap.cloud.sdk.datamodel.odata.helper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
+
 /**
  * Representation of an OData modification request (Create, Update, Delete) as a fluent interface for further
  * configuring the request and {@link #executeRequest(Destination) executing} it.
@@ -27,5 +29,18 @@ public abstract class FluentHelperModification<FluentHelperT, EntityT extends Vd
     public FluentHelperModification( @Nonnull final String servicePath, @Nullable final String entityCollection )
     {
         super(servicePath, entityCollection);
+    }
+
+    /**
+     * Deactivates the CSRF token retrieval for this OData request. This is useful if the server does not support or
+     * require CSRF tokens as part of the request.
+     *
+     * @return The same builder
+     */
+    @Nonnull
+    public FluentHelperT withoutCsrfToken()
+    {
+        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        return getThis();
     }
 }

@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.datamodel.odata.helper.batch;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToIgnoreCase;
 import static com.github.tomakehurst.wiremock.client.WireMock.head;
+import static com.github.tomakehurst.wiremock.client.WireMock.headRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.okForContentType;
@@ -298,6 +299,29 @@ class ODataV2BatchRequestUnitTest
                 .getResource(ODataV2BatchRequestUnitTest.class.getSimpleName() + "/" + resourceFileName);
         final String result = Resources.toString(resourceUrl, StandardCharsets.UTF_8);
         return result.replaceAll("(?<!\\r)\\n", "" + ((char) 13) + (char) 10);
+    }
+
+    // Test that withoutCsrfToken() disables the CSRF HEAD probe for the batch request and
+    // sends neither a CSRF token nor the internal skip marker on the outgoing $batch POST.
+    @Test
+    @SneakyThrows
+    void testBatchWithoutCsrfTokenSkipsHead()
+    {
+        final TestVdmEntity entity12 = TestVdmEntity.builder().integerValue(12).build();
+
+        new TestVdmEntityBatch("")
+            .withoutCsrfToken()
+            .beginChangeSet()
+            .create(entity12)
+            .endChangeSet()
+            .executeRequest(destination);
+
+        server.verify(0, headRequestedFor(urlEqualTo("/")));
+        server
+            .verify(
+                postRequestedFor(urlEqualTo(REQUEST_URL_BATCH))
+                    .withoutHeader(X_CSRF_TOKEN_HEADER_KEY)
+                    .withoutHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER));
     }
 
     @Test

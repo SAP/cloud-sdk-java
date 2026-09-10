@@ -213,4 +213,31 @@ public abstract class FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
     {
         return jsonElement;
     }
+
+    /**
+     * Activates CSRF token retrieval for this OData request.
+     *
+     * @return The same fluent helper that will now fetch a CSRF token.
+     * @deprecated CSRF token handling is now performed automatically by the underlying HTTP client. This method is a
+     *             no-op retained only for source compatibility. It is scheduled for removal.
+     */
+    @Deprecated
+    @Nonnull
+    public FluentHelperT withCsrfToken()
+    {
+        return getThis();
+    }
+
+    /**
+     * Deactivates the CSRF token retrieval for this OData request. This is useful if the server does not support or
+     * require CSRF tokens as part of the request.
+     *
+     * @return The same builder
+     */
+    @Nonnull
+    public FluentHelperT withoutCsrfToken()
+    {
+        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        return getThis();
+    }
 }

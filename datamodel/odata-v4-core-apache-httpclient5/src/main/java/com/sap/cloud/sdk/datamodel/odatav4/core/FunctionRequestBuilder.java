@@ -56,4 +56,19 @@ public abstract class FunctionRequestBuilder<BuilderT extends FunctionRequestBui
 
         return super.toRequest(request);
     }
+
+    /**
+     * Activates CSRF token retrieval for this OData request.
+     *
+     * @return The same request builder that will now fetch a CSRF token.
+     * @deprecated CSRF token handling is now performed automatically by the underlying HTTP client. This method is a
+     *             no-op retained only for source compatibility. It is scheduled for removal.
+     */
+    @Deprecated
+    @Override
+    @Nonnull
+    public BuilderT withCsrfToken()
+    {
+        return getThis();
+    }
 }

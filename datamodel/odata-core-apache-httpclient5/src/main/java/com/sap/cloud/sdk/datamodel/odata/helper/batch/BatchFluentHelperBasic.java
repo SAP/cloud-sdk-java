@@ -54,6 +54,8 @@ public abstract class BatchFluentHelperBasic<FluentHelperBatchT extends FluentHe
 
     Supplier<UUID> uuidProvider = UUID::randomUUID;
 
+    private boolean skipCsrfTokenRetrieval = false;
+
     /**
      * Get the OData service endpoint path for the current OData batch request. Usually it can be found as static member
      * <code>DEFAULT_SERVICE_PATH</code> in the service class.
@@ -98,7 +100,23 @@ public abstract class BatchFluentHelperBasic<FluentHelperBatchT extends FluentHe
         for( final BatchRequestOperation part : requestParts ) {
             part.addToRequestBuilder(requestBatch);
         }
+        if( skipCsrfTokenRetrieval ) {
+            requestBatch.addHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        }
         return requestBatch;
+    }
+
+    /**
+     * Deactivates the CSRF token retrieval for this OData request. This is useful if the server does not support or
+     * require CSRF tokens as part of the request.
+     *
+     * @return The same builder
+     */
+    @Nonnull
+    public FluentHelperBatchT withoutCsrfToken()
+    {
+        skipCsrfTokenRetrieval = true;
+        return getThis();
     }
 
     /**

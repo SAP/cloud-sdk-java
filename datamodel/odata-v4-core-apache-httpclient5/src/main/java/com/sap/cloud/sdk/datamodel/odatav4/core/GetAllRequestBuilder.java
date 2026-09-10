@@ -255,4 +255,20 @@ public class GetAllRequestBuilder<EntityT extends VdmEntity<?>>
         final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
         return toRequest().execute(httpClient).iteratePages(getEntityClass());
     }
+
+    /**
+     * Activates CSRF token retrieval for this OData request.
+     *
+     * @return The same request builder that will now fetch a CSRF token.
+     * @deprecated CSRF token handling is now performed automatically by the underlying HTTP client. This method is a
+     *             no-op retained only for source compatibility, as read requests never require a CSRF token. It is
+     *             scheduled for removal.
+     */
+    @Deprecated
+    @Override
+    @Nonnull
+    public GetAllRequestBuilder<EntityT> withCsrfToken()
+    {
+        return this;
+    }
 }

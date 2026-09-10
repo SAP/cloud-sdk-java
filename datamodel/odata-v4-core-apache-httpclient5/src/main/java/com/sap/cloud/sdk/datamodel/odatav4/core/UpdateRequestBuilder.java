@@ -285,4 +285,12 @@ public class UpdateRequestBuilder<EntityT extends VdmEntity<?>>
         eTagSubmissionStrategy = ETagSubmissionStrategy.SUBMIT_ANY_MATCH_ETAG;
         return this;
     }
+
+    @Override
+    @Nonnull
+    public UpdateRequestBuilder<EntityT> withoutCsrfToken()
+    {
+        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        return this;
+    }
 }

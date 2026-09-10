@@ -110,4 +110,19 @@ public abstract class FluentHelperByKey<FluentHelperT, EntityT extends VdmEntity
         result.attachToService(getServicePath(), destination);
         return result;
     }
+
+    /**
+     * Activates CSRF token retrieval for this OData request.
+     *
+     * @return The same fluent helper that will now fetch a CSRF token.
+     * @deprecated CSRF token handling is now performed automatically by the underlying HTTP client. This method is a
+     *             no-op retained only for source compatibility, as read requests never require a CSRF token. It is
+     *             scheduled for removal.
+     */
+    @Deprecated
+    @Nonnull
+    public FluentHelperT withCsrfToken()
+    {
+        return getThis();
+    }
 }

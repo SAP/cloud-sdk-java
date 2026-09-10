@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 
 @WireMockTest
@@ -141,6 +142,31 @@ class ODataHeaderTest
     }
 
     // fluent helpers
+
+    // Test that withoutCsrfToken() disables the CSRF HEAD probe and sends neither a
+    // CSRF token nor the internal skip marker on the actual write request.
+    @Test
+    void testUpdateWithoutCsrfTokenSkipsHead()
+    {
+        new TestEntityUpdateFluentHelper(entity).withoutCsrfToken().executeRequest(destination);
+
+        verify(0, headRequestedFor(CSRF));
+        verify(
+            patchRequestedFor(UPDATE)
+                .withoutHeader("x-csrf-token")
+                .withoutHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER));
+    }
+
+    // Test that the deprecated withCsrfToken() is a no-op on a read: no CSRF HEAD probe is fired.
+    @SuppressWarnings( "deprecation" )
+    @Test
+    void testReadWithCsrfTokenIsNoOp()
+    {
+        new TestEntityReadFluentHelper().withCsrfToken().executeRequest(destination);
+
+        verify(0, headRequestedFor(CSRF));
+        verify(getRequestedFor(GET_ALL).withoutHeader("x-csrf-token"));
+    }
 
     private static class TestEntityDeleteFluentHelper
         extends

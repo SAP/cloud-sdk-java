@@ -138,4 +138,18 @@ public class CreateRequestBuilder<EntityT extends VdmEntity<?>>
             throw new ODataSerializationException(request, entity, msg, e);
         }
     }
+
+    /**
+     * Deactivates the CSRF token retrieval for this OData request. This is useful if the server does not support or
+     * require CSRF tokens as part of the request.
+     *
+     * @return The same builder
+     */
+    @Override
+    @Nonnull
+    public CreateRequestBuilder<EntityT> withoutCsrfToken()
+    {
+        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        return this;
+    }
 }
