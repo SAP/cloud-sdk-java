@@ -5,6 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.head;
 import static com.github.tomakehurst.wiremock.client.WireMock.headRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.noContent;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
@@ -102,6 +103,24 @@ class CsrfTokenOptOutTest
         verify(0, headRequestedFor(anyUrl()));
         verify(
             postRequestedFor(urlPathEqualTo(SERVICE_PATH + "/$batch"))
+                .withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, absent()));
+    }
+
+    @Test
+    void actionWithoutCsrfTokenSkipsHeadProbe()
+    {
+        final String actionUrl = SERVICE_PATH + "/TestAction";
+        stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, "should-not-be-used")));
+        stubFor(post(urlPathEqualTo(actionUrl)).willReturn(noContent()));
+
+        new SingleValueActionRequestBuilder<>(SERVICE_PATH, "TestAction", Void.class)
+            .withoutCsrfToken()
+            .execute(destination);
+
+        verify(0, headRequestedFor(anyUrl()));
+        verify(
+            postRequestedFor(urlPathEqualTo(actionUrl))
+                .withHeader(X_CSRF_TOKEN_HEADER_KEY, absent())
                 .withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, absent()));
     }
 
