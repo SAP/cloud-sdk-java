@@ -75,6 +75,7 @@ public abstract class VdmMediaEntity<EntityT> extends VdmEntity<EntityT>
         }
         final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
         final ODataRequestResultGeneric result = request.execute(httpClient);
+        @SuppressWarnings( "PMD.CloseResource" ) // entity is intentionally not closed here because its content stream is returned to the caller
         final HttpEntity entity = result.getHttpResponse().getEntity();
         if( entity == null ) {
             throw new ODataResponseException(
