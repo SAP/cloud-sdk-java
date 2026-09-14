@@ -56,9 +56,9 @@
 		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
 		<scp-cf.xsuaa-client.version>4.1.2</scp-cf.xsuaa-client.version>
-		<java-jwt.version>4.6.0</java-jwt.version>
+		<java-jwt.version>4.6.1</java-jwt.version>
 		<!-- Utility stuff -->
-		<slf4j.version>2.0.18</slf4j.version>
+		<slf4j.version>2.0.19</slf4j.version>
 		<lombok.version>1.18.48</lombok.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<!-- @Nonnull/@Nullable annotations -->
