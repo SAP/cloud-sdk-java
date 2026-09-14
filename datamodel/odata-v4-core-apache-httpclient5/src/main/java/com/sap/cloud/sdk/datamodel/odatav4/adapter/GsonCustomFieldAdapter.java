@@ -33,7 +33,6 @@ public class GsonCustomFieldAdapter extends TypeAdapter<Object>
     @Override
     public void write( @Nonnull final JsonWriter out, @Nullable final Object value )
     {
-        // TODO missing implementation for array.
         if( value instanceof String ) {
             gson.toJson(new JsonPrimitive((String) value), out);
         }
@@ -51,7 +50,6 @@ public class GsonCustomFieldAdapter extends TypeAdapter<Object>
     public Object read( @Nonnull final JsonReader in )
         throws IOException
     {
-        // TODO missing implementation for array.
         if( JsonToken.STRING == in.peek() ) {
             return in.nextString();
         }
