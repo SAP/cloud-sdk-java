@@ -22,6 +22,17 @@ import lombok.NoArgsConstructor;
 public final class ApacheHttpClient5Accessor
 {
     /**
+     * Internal request-header marker that instructs the CSRF token interceptor to skip fetching a CSRF token for the
+     * request it is attached to. The interceptor strips this header before the request is sent, so it never reaches the
+     * target system.
+     * <p>
+     * This is an implementation detail used by the OData VDM layer to preserve the legacy {@code withoutCsrfToken()}
+     * opt-out behavior and is not intended for direct use by applications.
+     */
+    @Nonnull
+    public static final String SKIP_CSRF_TOKEN_HEADER = "x-sap-sdk-skip-csrf-token";
+
+    /**
      * Configures the {@code HttpClient5Cache} that is used by the {@code #getHttpClient(String)} and
      * {@code #getHttpClient(Destination)} methods.
      * <p>
