@@ -20,6 +20,7 @@ public class ApacheHttpClient5FactoryBuilder
     private TlsUpgrade tlsUpgrade = TlsUpgrade.AUTOMATIC;
     private int maxConnectionsTotal = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_TOTAL;
     private int maxConnectionsPerRoute = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
+    private boolean csrfTokenInterceptorEnabled = false;
 
     /**
      * Enum to control the automatic TLS upgrade feature for insecure connections.
@@ -146,6 +147,27 @@ public class ApacheHttpClient5FactoryBuilder
     }
 
     /**
+     * Enables the {@link CsrfTokenInterceptor} on {@link HttpClient} instances created by the to-be-built
+     * {@link ApacheHttpClient5Factory}.
+     * <p>
+     * When enabled, the interceptor automatically fetches a CSRF token via a HEAD request before every mutating HTTP
+     * request (POST, PUT, PATCH, DELETE) that does not already carry an {@code x-csrf-token} header. This is required
+     * when communicating with OData services that enforce CSRF protection.
+     * <p>
+     * By default, the CSRF token interceptor is <b>disabled</b>. Enable it when the built client will be used to call
+     * OData services. For general-purpose HTTP clients or REST/OpenAPI services that do not require CSRF protection,
+     * leave this disabled to avoid unnecessary HEAD requests.
+     *
+     * @return This builder.
+     */
+    @Nonnull
+    public ApacheHttpClient5FactoryBuilder withCsrfTokenInterceptor()
+    {
+        this.csrfTokenInterceptorEnabled = true;
+        return this;
+    }
+
+    /**
      * Builds a new {@link ApacheHttpClient5Factory} instance with the previously configured parameters.
      *
      * @return A new {@link ApacheHttpClient5Factory} instance.
@@ -158,6 +180,7 @@ public class ApacheHttpClient5FactoryBuilder
             maxConnectionsTotal,
             maxConnectionsPerRoute,
             null,
-            tlsUpgrade);
+            tlsUpgrade,
+            csrfTokenInterceptorEnabled);
     }
 }
