@@ -39,6 +39,12 @@ class CsrfTokenInterceptor implements HttpRequestInterceptor
             throws HttpException,
                 IOException
     {
+        if( request.containsHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER) ) {
+            request.removeHeaders(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER);
+            log.debug("CSRF token retrieval explicitly disabled for this request, skipping.");
+            return;
+        }
+
         if( !MUTATING_METHODS.contains(request.getMethod().toUpperCase()) ) {
             return;
         }
