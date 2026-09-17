@@ -33,9 +33,8 @@ import org.junit.jupiter.api.Test;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.common.io.Resources;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
@@ -56,7 +55,7 @@ class ODataClientQueryBatchUnitTest
     private static ODataRequestUpdate SAMPLE_REQUEST_UPDATE;
 
     private WireMockServer wireMockServer;
-    private Destination destination;
+    private DefaultHttpDestination destination;
     private final AtomicInteger uuidCounter = new AtomicInteger(0);
     private final Supplier<UUID> uuidProvider = () -> new UUID(0, uuidCounter.incrementAndGet());
 
@@ -117,7 +116,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient client = ODataApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         final ODataRequestResult result = request.execute(client);
@@ -146,7 +145,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient client = ODataApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         final ODataRequestResult result = request.execute(client);
@@ -175,7 +174,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient client = ODataApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         final ODataRequestResult result = request.execute(client);
@@ -205,7 +204,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient client = ODataApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         try {
@@ -243,7 +242,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient client = ODataApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         final ODataRequestResult result = request.execute(client);
