@@ -14,7 +14,6 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
@@ -202,7 +201,7 @@ public abstract class FluentHelperRead<FluentHelperT, EntityT extends VdmEntity<
     private Iterable<List<EntityT>> executeInternal( @Nonnull final Destination destination )
         throws com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException
     {
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient httpClient = getHttpClient(destination);
         final Iterable<List<EntityT>> result = toRequest().execute(httpClient).iteratePages(getEntityClass());
 
         // Refine lazy iterable to attach destination properties to individual entities in the page lists.

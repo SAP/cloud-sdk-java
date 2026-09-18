@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import org.apache.hc.client5.http.classic.HttpClient;
 
 import com.google.gson.Gson;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataSerializationException;
@@ -97,7 +96,7 @@ public class CreateRequestBuilder<EntityT extends VdmEntity<?>>
     @Override
     public ModificationResponse<EntityT> execute( @Nonnull final Destination destination )
     {
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient httpClient = getHttpClient(destination);
 
         final ODataRequestResultGeneric response = toRequest().execute(httpClient);
 
@@ -149,7 +148,7 @@ public class CreateRequestBuilder<EntityT extends VdmEntity<?>>
     @Nonnull
     public CreateRequestBuilder<EntityT> withoutCsrfToken()
     {
-        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        setSkipCsrfTokenRetrieval();
         return this;
     }
 }

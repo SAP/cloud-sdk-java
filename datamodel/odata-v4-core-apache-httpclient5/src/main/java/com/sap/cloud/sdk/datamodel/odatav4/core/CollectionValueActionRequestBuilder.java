@@ -6,7 +6,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultGeneric;
@@ -96,7 +95,7 @@ public class CollectionValueActionRequestBuilder<ResultT>
     @Override
     public ActionResponseCollection<ResultT> execute( @Nonnull final Destination destination )
     {
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient httpClient = getHttpClient(destination);
 
         final ODataRequestResultGeneric response = toRequest().execute(httpClient);
 

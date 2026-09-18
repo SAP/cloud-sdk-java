@@ -9,7 +9,10 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.hc.client5.http.classic.HttpClient;
+
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestListener;
@@ -59,6 +62,11 @@ abstract class AbstractRequestBuilder<BuilderT extends RequestBuilder<ResultT>, 
     @Getter( AccessLevel.PROTECTED )
     @Nonnull
     private final List<ODataRequestListener> listeners = new ArrayList<>();
+
+    /**
+     * Whether the CSRF token retrieval should be skipped for the actual request of this request builder.
+     */
+    private boolean skipCsrfTokenRetrieval = false;
 
     /**
      * Instantiates this request builder using the given service path to send the requests.
@@ -163,5 +171,30 @@ abstract class AbstractRequestBuilder<BuilderT extends RequestBuilder<ResultT>, 
         getListeners().forEach(request::addListener);
 
         return request;
+    }
+
+    /**
+     * Marks this request builder to skip CSRF token retrieval for its actual request, so the request is sent with an
+     * {@link HttpClient} that does not have the CSRF token interceptor enabled.
+     */
+    protected void setSkipCsrfTokenRetrieval()
+    {
+        skipCsrfTokenRetrieval = true;
+    }
+
+    /**
+     * Returns the {@link HttpClient} to be used for the actual request of this request builder. If CSRF token retrieval
+     * was disabled via {@code withoutCsrfToken()}, a client without the CSRF token interceptor is returned.
+     *
+     * @param destination
+     *            The destination to get the {@link HttpClient} for.
+     * @return An {@link HttpClient} for the given destination.
+     */
+    @Nonnull
+    protected HttpClient getHttpClient( @Nonnull final Destination destination )
+    {
+        return skipCsrfTokenRetrieval
+            ? ODataApacheHttpClient5Accessor.getHttpClientWithoutCsrf(destination)
+            : ODataApacheHttpClient5Accessor.getHttpClient(destination);
     }
 }

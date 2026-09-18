@@ -144,4 +144,18 @@ public abstract class ActionRequestBuilder<BuilderT extends ActionRequestBuilder
 
         return gson.toJson(o);
     }
+
+    /**
+     * Deactivates the CSRF token retrieval for this OData request. This is useful if the server does not support or
+     * require CSRF tokens as part of the request.
+     *
+     * @return The same builder
+     */
+    @Override
+    @Nonnull
+    public BuilderT withoutCsrfToken()
+    {
+        setSkipCsrfTokenRetrieval();
+        return getThis();
+    }
 }

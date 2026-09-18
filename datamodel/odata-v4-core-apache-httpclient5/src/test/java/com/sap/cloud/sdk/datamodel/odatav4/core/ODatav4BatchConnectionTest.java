@@ -26,9 +26,9 @@ import org.junit.jupiter.api.Timeout;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
 
@@ -56,7 +56,7 @@ class ODatav4BatchConnectionTest
         stubFor(head(UrlPattern.ANY).willReturn(noContent()));
         destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
-        ApacheHttpClient5Accessor
+        ODataApacheHttpClient5Accessor
             .setHttpClientFactory(
                 new ApacheHttpClient5FactoryBuilder()
                     .maxConnectionsTotal(MAX_PARALLEL_CONNECTIONS)
@@ -67,7 +67,7 @@ class ODatav4BatchConnectionTest
     @AfterEach
     void teardown()
     {
-        ApacheHttpClient5Accessor.setHttpClientFactory(null);
+        ODataApacheHttpClient5Accessor.setHttpClientFactory(null);
     }
 
     @Test
