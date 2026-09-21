@@ -43,6 +43,28 @@ class KeyStoreReaderTest
         assertThat(createdKeystore.getKey(ALIAS, new char[0])).isInstanceOf(RSAPrivateCrtKey.class); // no password
     }
 
+    // Regression test for DINC1028726: BTP Destination Service now issues PBES2/PBKDF2-encrypted private keys
+    // by default. Without explicitly passing BouncyCastleProvider to JcaPEMKeyConverter and
+    // JceOpenSSLPKCS8DecryptorProviderBuilder, the Sun JCE providers throw
+    // "PBKDF2with8BIT SecretKeyFactory not available".
+    @SneakyThrows
+    @Test
+    void testPbes2EncryptedPem()
+    {
+        final char[] password = "test-password".toCharArray();
+        final FileReader certs = new FileReader(RES + "/pbes2-client.crt");
+        final FileReader key = new FileReader(RES + "/pbes2-client.key");
+        final KeyStore createdKeystore = createKeyStore(ALIAS, password, certs, key);
+
+        assertThat(createdKeystore.getCertificateChain(ALIAS)).hasSize(1);
+        assertThat(createdKeystore.getCertificate(ALIAS))
+            .isInstanceOf(X509Certificate.class)
+            .extracting(c -> ((X509Certificate) c).getSubjectX500Principal())
+            .hasToString("EMAILADDRESS=cloudsdk@sap.com, CN=localhost, O=Potsdam, ST=Brandenburg, C=DE");
+
+        assertThat(createdKeystore.getKey(ALIAS, password)).isInstanceOf(RSAPrivateCrtKey.class);
+    }
+
     @SneakyThrows
     @Test
     void testKeyStoreSanity() // sanity checks

@@ -16,6 +16,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -90,20 +91,22 @@ class KeyStoreReader
             PKCSException
     {
         try( PEMParser pemParser = new PEMParser(keyReader) ) {
+            final BouncyCastleProvider provider = new BouncyCastleProvider();
             final Object raw = pemParser.readObject();
             if( raw instanceof PEMKeyPair ) {
-                return new JcaPEMKeyConverter().getKeyPair((PEMKeyPair) raw).getPrivate();
+                return new JcaPEMKeyConverter().setProvider(provider).getKeyPair((PEMKeyPair) raw).getPrivate();
             }
             if( raw instanceof PrivateKey ) {
                 return (PrivateKey) raw;
             }
             if( raw instanceof PKCS8EncryptedPrivateKeyInfo ) {
-                final InputDecryptorProvider c = new JceOpenSSLPKCS8DecryptorProviderBuilder().build(password);
+                final InputDecryptorProvider c =
+                    new JceOpenSSLPKCS8DecryptorProviderBuilder().setProvider(provider).build(password);
                 final PrivateKeyInfo privateKeyInfo = ((PKCS8EncryptedPrivateKeyInfo) raw).decryptPrivateKeyInfo(c);
-                return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
+                return new JcaPEMKeyConverter().setProvider(provider).getPrivateKey(privateKeyInfo);
             }
             if( raw instanceof PrivateKeyInfo ) {
-                return new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) raw);
+                return new JcaPEMKeyConverter().setProvider(provider).getPrivateKey((PrivateKeyInfo) raw);
             }
             throw new IllegalArgumentException("Provided key data did not contain a valid PEM key.");
         }
