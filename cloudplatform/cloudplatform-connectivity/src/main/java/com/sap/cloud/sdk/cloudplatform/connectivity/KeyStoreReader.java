@@ -7,6 +7,8 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Provider;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -16,7 +18,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -91,7 +92,7 @@ class KeyStoreReader
             PKCSException
     {
         try( PEMParser pemParser = new PEMParser(keyReader) ) {
-            final BouncyCastleProvider provider = new BouncyCastleProvider();
+            final Provider provider = getBouncyCastleProvider();
             final Object raw = pemParser.readObject();
             if( raw instanceof PEMKeyPair ) {
                 return new JcaPEMKeyConverter().setProvider(provider).getKeyPair((PEMKeyPair) raw).getPrivate();
@@ -109,6 +110,30 @@ class KeyStoreReader
                 return new JcaPEMKeyConverter().setProvider(provider).getPrivateKey((PrivateKeyInfo) raw);
             }
             throw new IllegalArgumentException("Provided key data did not contain a valid PEM key.");
+        }
+    }
+
+    // Prefer a BC provider already registered in JCE (e.g. BCFIPS in FIPS environments) to avoid
+    // loading the non-FIPS bcprov jar in environments where it is intentionally excluded.
+    // Falls back to instantiating BouncyCastleProvider via reflection so this class can be loaded
+    // even when bcprov is not on the classpath (e.g. FIPS modules that exclude it).
+    @Nonnull
+    private static Provider getBouncyCastleProvider()
+    {
+        for( final String name : new String[] { "BCFIPS", "BC" } ) {
+            final Provider registered = Security.getProvider(name);
+            if( registered != null ) {
+                return registered;
+            }
+        }
+        try {
+            return (Provider) Class
+                .forName("org.bouncycastle.jce.provider.BouncyCastleProvider")
+                .getConstructor()
+                .newInstance();
+        }
+        catch( final ReflectiveOperationException e ) {
+            throw new IllegalStateException("No BouncyCastle JCE provider available on the classpath", e);
         }
     }
 }
