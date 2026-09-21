@@ -23,10 +23,10 @@ import lombok.NoArgsConstructor;
  * <p>
  * Unlike the general-purpose {@link com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor}, the
  * clients returned by {@link #getHttpClient(HttpDestinationProperties)} have a CSRF token interceptor enabled (see
- * {@link com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder#withCsrfTokenInterceptor()}) by default. The
- * interceptor automatically fetches a CSRF token via a HEAD request before every mutating HTTP request (POST, PUT,
- * PATCH, DELETE) that does not already carry an {@code x-csrf-token} header, which is required for OData services that
- * enforce CSRF protection.
+ * {@link com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder#withCsrfTokenInterceptor()}) by
+ * default. The interceptor automatically fetches a CSRF token via a HEAD request before every mutating HTTP request
+ * (POST, PUT, PATCH, DELETE) that does not already carry an {@code x-csrf-token} header, which is required for OData
+ * services that enforce CSRF protection.
  * <p>
  * For OData requests that must opt out of CSRF token handling (e.g. against services that do not support it), use
  * {@link #getHttpClientWithoutCsrf(HttpDestinationProperties)}, which returns a client without the interceptor.
