@@ -44,6 +44,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuil
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestBatch;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
 
@@ -100,9 +101,10 @@ class ODataV4BatchRequestUnitTest
         final String contentType = "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
         stubFor(post(urlEqualTo(REQUEST_URL_BATCH)).willReturn(okForContentType(contentType, RESPONSE_BODY)));
 
-        ApacheHttpClient5Accessor
+        ODataApacheHttpClient5Accessor
             .setHttpClientFactory(
                 new ApacheHttpClient5FactoryBuilder()
+                    .withCsrfTokenInterceptor()
                     .maxConnectionsTotal(MAX_PARALLEL_CONNECTIONS)
                     .maxConnectionsPerRoute(MAX_PARALLEL_CONNECTIONS)
                     .build());
@@ -111,7 +113,7 @@ class ODataV4BatchRequestUnitTest
     @AfterEach
     void teardown()
     {
-        ApacheHttpClient5Accessor.setHttpClientFactory(null);
+        ODataApacheHttpClient5Accessor.setHttpClientFactory(null);
     }
 
     @Test
@@ -272,7 +274,7 @@ class ODataV4BatchRequestUnitTest
         });
 
         // configure test setup
-        ApacheHttpClient5Accessor.setHttpClientFactory(( anyDestination ) -> httpClient);
+        ODataApacheHttpClient5Accessor.setHttpClientFactory(( anyDestination ) -> httpClient);
 
         // TEST: invoke many batch request each spawning an InputStream
         for( int i = 0; i < N; i++ ) {
@@ -295,6 +297,6 @@ class ODataV4BatchRequestUnitTest
         Mockito.verify(inputStreams.get(N), times(1)).close();
 
         // reset test setup
-        ApacheHttpClient5Accessor.setHttpClientFactory(null);
+        ODataApacheHttpClient5Accessor.setHttpClientFactory(null);
     }
 }

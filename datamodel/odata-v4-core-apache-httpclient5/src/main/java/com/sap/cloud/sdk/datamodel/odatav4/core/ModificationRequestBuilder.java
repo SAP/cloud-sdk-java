@@ -2,8 +2,6 @@ package com.sap.cloud.sdk.datamodel.odatav4.core;
 
 import javax.annotation.Nonnull;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
-
 /**
  * Interface to mark OData request types as modifying operation.
  *
@@ -24,9 +22,5 @@ public interface ModificationRequestBuilder<ResultT> extends RequestBuilder<Resu
      * @return The same builder
      */
     @Nonnull
-    default ModificationRequestBuilder<ResultT> withoutCsrfToken()
-    {
-        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
-        return this;
-    }
+    ModificationRequestBuilder<ResultT> withoutCsrfToken();
 }

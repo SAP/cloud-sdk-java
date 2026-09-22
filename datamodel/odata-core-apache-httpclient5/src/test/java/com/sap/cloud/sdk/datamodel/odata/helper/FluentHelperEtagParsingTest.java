@@ -25,10 +25,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.annotations.JsonAdapter;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5CacheBuilder;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -51,9 +51,9 @@ class FluentHelperEtagParsingTest
     void setupConnectivity()
     {
         httpClient = mock(HttpClient.class);
-        ApacheHttpClient5Accessor
+        ODataApacheHttpClient5Accessor
             .setHttpClientCache(new ApacheHttpClient5CacheBuilder().durationInMilliseconds(0).build());
-        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> {
+        ODataApacheHttpClient5Accessor.setHttpClientFactory(dest -> {
             assertThat(dest).isSameAs(DESTINATION);
             return httpClient;
         });
@@ -62,9 +62,9 @@ class FluentHelperEtagParsingTest
     @AfterEach
     void teardownConnectivity()
     {
-        ApacheHttpClient5Accessor
+        ODataApacheHttpClient5Accessor
             .setHttpClientCache(new ApacheHttpClient5CacheBuilder().duration(Duration.ofMinutes(5)).build());
-        ApacheHttpClient5Accessor.setHttpClientFactory(null);
+        ODataApacheHttpClient5Accessor.setHttpClientFactory(null);
     }
 
     /**

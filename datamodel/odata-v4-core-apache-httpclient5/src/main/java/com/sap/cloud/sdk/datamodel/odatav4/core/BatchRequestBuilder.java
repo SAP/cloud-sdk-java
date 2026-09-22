@@ -9,7 +9,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -135,7 +134,7 @@ public class BatchRequestBuilder extends AbstractRequestBuilder<BatchRequestBuil
     @Nonnull
     public BatchRequestBuilder withoutCsrfToken()
     {
-        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        setSkipCsrfTokenRetrieval();
         return this;
     }
 
@@ -143,7 +142,7 @@ public class BatchRequestBuilder extends AbstractRequestBuilder<BatchRequestBuil
     @Override
     public BatchResponse execute( @Nonnull final Destination destination )
     {
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient httpClient = getHttpClient(destination);
 
         @SuppressWarnings( "PMD.CloseResource" ) // The ODataRequestResultMultipartGeneric is closed by BatchResponse
         final ODataRequestResultMultipartGeneric response = toRequest().execute(httpClient);

@@ -4,10 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestCount;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultGeneric;
@@ -46,7 +46,7 @@ public class FluentHelperCount
         final ODataRequestCount requestCount = toRequest();
 
         final ODataRequestResultGeneric result =
-            requestCount.execute(ApacheHttpClient5Accessor.getHttpClient(destination));
+            requestCount.execute(ODataApacheHttpClient5Accessor.getHttpClient(destination));
 
         return result.as(Long.class);
     }

@@ -121,33 +121,6 @@ class CsrfTokenInterceptorTest
 
     @Test
     @SneakyThrows
-    void tokenIsNotFetchedAndMarkerIsStrippedWhenSkipHeaderPresent()
-    {
-        final HttpPost request = new HttpPost(REQUEST_PATH);
-        request.addHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
-
-        sut.process(request, null, null);
-
-        verify(mockHttpClient, never()).execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>> any());
-        assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY)).isNull();
-        assertThat(request.containsHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER)).isFalse();
-    }
-
-    @Test
-    @SneakyThrows
-    void skipMarkerIsStrippedEvenOnGetRequest()
-    {
-        final HttpGet request = new HttpGet(REQUEST_PATH);
-        request.addHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
-
-        sut.process(request, null, null);
-
-        verify(mockHttpClient, never()).execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>> any());
-        assertThat(request.containsHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER)).isFalse();
-    }
-
-    @Test
-    @SneakyThrows
     void requestProceedsWithoutTokenWhenServerReturnsNoHeader( final WireMockRuntimeInfo wm )
     {
         wm.getWireMock().register(head(urlEqualTo(SERVICE_ROOT)).willReturn(ok()));

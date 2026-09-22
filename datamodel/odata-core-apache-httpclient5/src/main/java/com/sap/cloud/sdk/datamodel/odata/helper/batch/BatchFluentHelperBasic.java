@@ -11,8 +11,8 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestAction;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestBatch;
@@ -77,7 +77,10 @@ public abstract class BatchFluentHelperBasic<FluentHelperBatchT extends FluentHe
     @Override
     public BatchResponse executeRequest( @Nonnull final Destination destination )
     {
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient httpClient =
+            skipCsrfTokenRetrieval
+                ? ODataApacheHttpClient5Accessor.getHttpClientWithoutCsrf(destination)
+                : ODataApacheHttpClient5Accessor.getHttpClient(destination);
 
         @SuppressWarnings( "PMD.CloseResource" ) // The ODataRequestResultMultipartGeneric is closed by DefaultBatchResponseResult
         final ODataRequestResultMultipartGeneric result = toRequest().execute(httpClient);
@@ -98,9 +101,6 @@ public abstract class BatchFluentHelperBasic<FluentHelperBatchT extends FluentHe
 
         for( final BatchRequestOperation part : requestParts ) {
             part.addToRequestBuilder(requestBatch);
-        }
-        if( skipCsrfTokenRetrieval ) {
-            requestBatch.addHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
         }
         return requestBatch;
     }

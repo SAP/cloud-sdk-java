@@ -6,7 +6,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -135,7 +134,7 @@ public class GetByKeyRequestBuilder<EntityT extends VdmEntity<?>>
     @Nonnull
     public EntityT execute( @Nonnull final Destination destination )
     {
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient httpClient = getHttpClient(destination);
         final ODataRequestResultGeneric response = toRequest().execute(httpClient);
         final EntityT entity = response.as(getEntityClass());
 
