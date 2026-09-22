@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 
 @WireMockTest
@@ -151,10 +150,7 @@ class ODataHeaderTest
         new TestEntityUpdateFluentHelper(entity).withoutCsrfToken().executeRequest(destination);
 
         verify(0, headRequestedFor(CSRF));
-        verify(
-            patchRequestedFor(UPDATE)
-                .withoutHeader("x-csrf-token")
-                .withoutHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER));
+        verify(patchRequestedFor(UPDATE).withoutHeader("x-csrf-token"));
     }
 
     // Test that the deprecated withCsrfToken() is a no-op on a read: no CSRF HEAD probe is fired.

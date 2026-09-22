@@ -8,7 +8,10 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.hc.client5.http.classic.HttpClient;
+
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
@@ -46,6 +49,11 @@ public abstract class FluentHelperBasic<FluentHelperT, EntityT, ResultT> impleme
      * A map containing the headers to be used for all requests that are part of this FluentHelper implementation.
      */
     private final Map<String, String> headers = new LinkedHashMap<>();
+
+    /**
+     * Whether the CSRF token retrieval should be skipped for the actual request of this FluentHelper implementation.
+     */
+    private boolean skipCsrfTokenRetrieval = false;
 
     /**
      * A map containing the custom query parameters to be used only for the actual request of this FluentHelper
@@ -101,6 +109,31 @@ public abstract class FluentHelperBasic<FluentHelperT, EntityT, ResultT> impleme
     protected Map<String, String> getHeaders()
     {
         return headers;
+    }
+
+    /**
+     * Marks this fluent helper to skip CSRF token retrieval for its actual request, so the request is sent with an
+     * {@link HttpClient} that does not have the CSRF token interceptor enabled.
+     */
+    protected void setSkipCsrfTokenRetrieval()
+    {
+        skipCsrfTokenRetrieval = true;
+    }
+
+    /**
+     * Returns the {@link HttpClient} to be used for the actual request of this fluent helper. If CSRF token retrieval
+     * was disabled via {@code withoutCsrfToken()}, a client without the CSRF token interceptor is returned.
+     *
+     * @param destination
+     *            The destination to get the {@link HttpClient} for.
+     * @return An {@link HttpClient} for the given destination.
+     */
+    @Nonnull
+    protected HttpClient getHttpClient( @Nonnull final Destination destination )
+    {
+        return skipCsrfTokenRetrieval
+            ? ODataApacheHttpClient5Accessor.getHttpClientWithoutCsrf(destination)
+            : ODataApacheHttpClient5Accessor.getHttpClient(destination);
     }
 
     /**

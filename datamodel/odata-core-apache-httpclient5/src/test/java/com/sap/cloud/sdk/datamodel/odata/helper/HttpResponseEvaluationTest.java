@@ -28,9 +28,9 @@ import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 
 import lombok.SneakyThrows;
 
@@ -51,15 +51,15 @@ public class HttpResponseEvaluationTest
         httpEntity = spy(new InputStreamEntity(inputStream, contentType));
         httpResponse = spy(new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK"));
         httpResponse.setEntity(httpEntity);
-        ApacheHttpClient5Accessor.setHttpClientFactory(destination -> httpClient);
+        ODataApacheHttpClient5Accessor.setHttpClientFactory(destination -> httpClient);
         when(httpClient.executeOpen(isNull(), any(), isNull())).thenReturn(httpResponse);
     }
 
     @AfterEach
     void teardown()
     {
-        ApacheHttpClient5Accessor.setHttpClientFactory(null);
-        ApacheHttpClient5Accessor.setHttpClientCache(null);
+        ODataApacheHttpClient5Accessor.setHttpClientFactory(null);
+        ODataApacheHttpClient5Accessor.setHttpClientCache(null);
     }
 
     @SneakyThrows

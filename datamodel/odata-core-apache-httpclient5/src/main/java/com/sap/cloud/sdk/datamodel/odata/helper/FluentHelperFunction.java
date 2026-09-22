@@ -12,7 +12,6 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 
 import com.google.gson.JsonElement;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException;
@@ -196,8 +195,7 @@ public abstract class FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
         throws ODataException
     {
         final ODataRequestGeneric functionImportRequest = toRequest();
-        return (ODataRequestResultGeneric) functionImportRequest
-            .execute(ApacheHttpClient5Accessor.getHttpClient(destination));
+        return (ODataRequestResultGeneric) functionImportRequest.execute(getHttpClient(destination));
     }
 
     /**
@@ -237,7 +235,7 @@ public abstract class FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
     @Nonnull
     public FluentHelperT withoutCsrfToken()
     {
-        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        setSkipCsrfTokenRetrieval();
         return getThis();
     }
 }

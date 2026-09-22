@@ -3,8 +3,6 @@ package com.sap.cloud.sdk.datamodel.odata.helper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
-
 /**
  * Representation of an OData modification request (Create, Update, Delete) as a fluent interface for further
  * configuring the request and {@link #executeRequest(Destination) executing} it.
@@ -40,7 +38,7 @@ public abstract class FluentHelperModification<FluentHelperT, EntityT extends Vd
     @Nonnull
     public FluentHelperT withoutCsrfToken()
     {
-        withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, "true");
+        setSkipCsrfTokenRetrieval();
         return getThis();
     }
 }

@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 
@@ -63,10 +62,7 @@ class CsrfTokenOptOutTest
         // no CSRF HEAD probe was fired
         verify(0, headRequestedFor(anyUrl()));
         // the actual write carries neither a CSRF token nor the internal skip marker
-        verify(
-            patchRequestedFor(urlEqualTo(ENTITY_URL))
-                .withHeader(X_CSRF_TOKEN_HEADER_KEY, absent())
-                .withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, absent()));
+        verify(patchRequestedFor(urlEqualTo(ENTITY_URL)).withHeader(X_CSRF_TOKEN_HEADER_KEY, absent()));
     }
 
     @Test
@@ -81,9 +77,7 @@ class CsrfTokenOptOutTest
         new CreateRequestBuilder<>(SERVICE_PATH, person, "People").withoutCsrfToken().execute(destination);
 
         verify(0, headRequestedFor(anyUrl()));
-        verify(
-            postRequestedFor(urlPathEqualTo(PEOPLE_URL))
-                .withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, absent()));
+        verify(postRequestedFor(urlPathEqualTo(PEOPLE_URL)));
     }
 
     @Test
@@ -101,9 +95,7 @@ class CsrfTokenOptOutTest
             .execute(destination);
 
         verify(0, headRequestedFor(anyUrl()));
-        verify(
-            postRequestedFor(urlPathEqualTo(SERVICE_PATH + "/$batch"))
-                .withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, absent()));
+        verify(postRequestedFor(urlPathEqualTo(SERVICE_PATH + "/$batch")));
     }
 
     @Test
@@ -118,10 +110,7 @@ class CsrfTokenOptOutTest
             .execute(destination);
 
         verify(0, headRequestedFor(anyUrl()));
-        verify(
-            postRequestedFor(urlPathEqualTo(actionUrl))
-                .withHeader(X_CSRF_TOKEN_HEADER_KEY, absent())
-                .withHeader(ApacheHttpClient5Accessor.SKIP_CSRF_TOKEN_HEADER, absent()));
+        verify(postRequestedFor(urlPathEqualTo(actionUrl)).withHeader(X_CSRF_TOKEN_HEADER_KEY, absent()));
     }
 
     @Test

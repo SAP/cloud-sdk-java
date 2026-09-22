@@ -86,7 +86,8 @@ class DefaultApacheHttpClient5FactoryTest
                 MAX_CONNECTIONS,
                 MAX_CONNECTIONS_PER_ROUTE,
                 requestInterceptor,
-                AUTOMATIC);
+                AUTOMATIC,
+                false);
     }
 
     @Test
@@ -101,7 +102,8 @@ class DefaultApacheHttpClient5FactoryTest
                 MAX_CONNECTIONS,
                 MAX_CONNECTIONS_PER_ROUTE,
                 requestInterceptor,
-                AUTOMATIC);
+                AUTOMATIC,
+                false);
 
         final ApacheHttpClient5Factory factoryWithEnoughTimeout =
             new DefaultApacheHttpClient5Factory(
@@ -109,7 +111,8 @@ class DefaultApacheHttpClient5FactoryTest
                 MAX_CONNECTIONS,
                 MAX_CONNECTIONS_PER_ROUTE,
                 requestInterceptor,
-                AUTOMATIC);
+                AUTOMATIC,
+                false);
 
         final ClassicHttpRequest request = new HttpGet(WIRE_MOCK_SERVER.url("/timeout"));
 
@@ -138,7 +141,8 @@ class DefaultApacheHttpClient5FactoryTest
                 1,
                 MAX_CONNECTIONS_PER_ROUTE,
                 requestInterceptor,
-                AUTOMATIC);
+                AUTOMATIC,
+                false);
 
         final HttpClient client = sut.createHttpClient();
         final ClassicHttpRequest firstRequest = new HttpGet(WIRE_MOCK_SERVER.url("/max-connections-1"));
@@ -161,7 +165,8 @@ class DefaultApacheHttpClient5FactoryTest
                 MAX_CONNECTIONS,
                 1,
                 requestInterceptor,
-                AUTOMATIC);
+                AUTOMATIC,
+                false);
 
         final ClassicHttpRequest firstRequest = new HttpGet(WIRE_MOCK_SERVER.url("/max-connections-per-route"));
         final ClassicHttpRequest secondRequest = new HttpGet(SECOND_WIRE_MOCK_SERVER.url("/max-connections-per-route"));

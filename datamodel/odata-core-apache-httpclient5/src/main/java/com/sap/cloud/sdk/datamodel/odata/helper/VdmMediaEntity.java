@@ -8,8 +8,8 @@ import javax.annotation.Nonnull;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.HttpEntity;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
@@ -73,7 +73,7 @@ public abstract class VdmMediaEntity<EntityT> extends VdmEntity<EntityT>
                 new IllegalStateException(
                     "Unable to execute OData query. The entity was created locally without an assigned HttpDestination. This method is applicable only on entities which were retrieved or created using the OData VDM."));
         }
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient httpClient = ODataApacheHttpClient5Accessor.getHttpClient(destination);
         final ODataRequestResultGeneric result = request.execute(httpClient);
         @SuppressWarnings( "PMD.CloseResource" ) // entity is intentionally not closed here because its content stream is returned to the caller
         final HttpEntity entity = result.getHttpResponse().getEntity();

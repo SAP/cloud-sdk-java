@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 import com.google.gson.annotations.SerializedName;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -220,7 +220,7 @@ public abstract class VdmEntity<EntityT> extends VdmObject<EntityT>
                     + ": The entity was created locally without an assigned HttpDestination. This method is applicable only on entities which were retrieved or created using the OData VDM.",
                 null);
         }
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
+        final HttpClient httpClient = ODataApacheHttpClient5Accessor.getHttpClient(destination);
         return request.execute(httpClient);
     }
 }
