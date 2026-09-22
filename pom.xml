@@ -126,7 +126,7 @@
 		<handlebars.version>4.5.4</handlebars.version>
 		<commons-text.version>1.15.0</commons-text.version>
 		<checkstyle.version>12.3.1</checkstyle.version>
-		<byte-buddy.version>1.18.13</byte-buddy.version>
+		<byte-buddy.version>1.18.14</byte-buddy.version>
 		<jspecify.version>1.0.1</jspecify.version>
 		<snakeyaml.version>2.7</snakeyaml.version>
 		<commons-codec.version>1.22.1</commons-codec.version>
@@ -907,7 +907,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.6.1</version>
+				<version>3.6.2</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
