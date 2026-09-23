@@ -68,7 +68,6 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     /**
      * List of listeners to observe and react on OData actions.
      */
-    @Getter( AccessLevel.PROTECTED )
     private final List<ODataRequestListener> listeners = new ArrayList<>();
 
     /**
@@ -104,6 +103,18 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
         this.servicePath = servicePath;
         this.resourcePath = resourcePath;
         headers.putIfAbsent(HttpHeaders.ACCEPT, Lists.newArrayList(DEFAULT_FORMAT.getHttpAccept()));
+    }
+
+    /**
+     * Get the list of listeners to observe and react on OData actions.
+     *
+     * @return The list of listeners.
+     * @since 5.35.0
+     */
+    @Nonnull
+    public List<ODataRequestListener> getListeners()
+    {
+        return listeners;
     }
 
     /**
