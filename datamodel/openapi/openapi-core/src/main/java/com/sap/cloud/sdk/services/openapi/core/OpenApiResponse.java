@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.services.openapi.core;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +58,10 @@ public class OpenApiResponse
     @Nonnull
     public Map<String, List<String>> getHeaders()
     {
-        return headers;
+        final Map<String, List<String>> result = new LinkedHashMap<>();
+        for( final Map.Entry<String, List<String>> entry : headers.headerSet() ) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 }

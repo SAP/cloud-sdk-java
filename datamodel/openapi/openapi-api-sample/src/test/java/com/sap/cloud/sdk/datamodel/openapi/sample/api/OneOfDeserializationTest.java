@@ -305,6 +305,7 @@ class OneOfDeserializationTest
      * Taken from {@link com.sap.cloud.sdk.services.openapi.apiclient.ApiClient}
      */
     @Nonnull
+    @SuppressWarnings( "removal" ) // Jackson2ObjectMapperBuilder deprecated-for-removal in Spring 7; requires Jackson 3 migration
     private static ObjectMapper newDefaultObjectMapper()
     {
         return new Jackson2ObjectMapperBuilder()
