@@ -106,7 +106,7 @@ public final class ApiClient
     private Map<String, Authentication> authentications;
 
     private int statusCode;
-    private MultiValueMap<String, String> responseHeaders;
+    private HttpHeaders responseHeaders;
 
     private DateFormat dateFormat;
 
@@ -204,10 +204,10 @@ public final class ApiClient
     /**
      * Gets the response headers of the previous request
      *
-     * @return MultiValueMap a map of response headers
+     * @return HttpHeaders a map of response headers
      */
     @Nonnull
-    public MultiValueMap<String, String> getResponseHeaders()
+    public HttpHeaders getResponseHeaders()
     {
         return responseHeaders;
     }
