@@ -1,9 +1,12 @@
 package com.sap.cloud.sdk.services.openapi.core;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.MultiValueMap;
 
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 
@@ -20,12 +23,8 @@ public class OpenApiResponse
     @Getter
     private final int statusCode;
 
-    /**
-     * Http headers of this response.
-     */
     @Nonnull
-    @Getter
-    private final MultiValueMap<String, String> headers;
+    private final HttpHeaders headers;
 
     /**
      * Create a new {@code OpenApiResponse} from an {@link ApiClient}
@@ -49,5 +48,20 @@ public class OpenApiResponse
     {
         this.statusCode = statusCode;
         headers = new HttpHeaders();
+    }
+
+    /**
+     * Http headers of this response.
+     *
+     * @return Map of response headers
+     */
+    @Nonnull
+    public Map<String, List<String>> getHeaders()
+    {
+        final Map<String, List<String>> result = new LinkedHashMap<>();
+        for( final Map.Entry<String, List<String>> entry : headers.headerSet() ) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 }

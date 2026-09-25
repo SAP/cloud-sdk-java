@@ -106,7 +106,7 @@ public final class ApiClient
     private Map<String, Authentication> authentications;
 
     private int statusCode;
-    private MultiValueMap<String, String> responseHeaders;
+    private HttpHeaders responseHeaders;
 
     private DateFormat dateFormat;
 
@@ -204,10 +204,10 @@ public final class ApiClient
     /**
      * Gets the response headers of the previous request
      *
-     * @return MultiValueMap a map of response headers
+     * @return HttpHeaders a map of response headers
      */
     @Nonnull
-    public MultiValueMap<String, String> getResponseHeaders()
+    public HttpHeaders getResponseHeaders()
     {
         return responseHeaders;
     }
@@ -688,8 +688,7 @@ public final class ApiClient
         // auth headers are added automatically by the SDK
         // updateParamsForAuth(authNames, queryParams, headerParams);
 
-        @SuppressWarnings( "deprecation" ) // spring-web:6.2.0 and later, works until <7.0.0
-        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(basePath).path(path);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(basePath).path(path);
         if( queryParams != null ) {
             //encode the query parameters in case they contain unsafe characters
             for( final List<String> values : queryParams.values() ) {
@@ -748,7 +747,7 @@ public final class ApiClient
     private void addHeadersToRequest( @Nullable final HttpHeaders headers, final BodyBuilder requestBuilder )
     {
         if( headers != null ) {
-            for( final Entry<String, List<String>> entry : headers.entrySet() ) {
+            for( final Entry<String, List<String>> entry : headers.headerSet() ) {
                 final List<String> values = entry.getValue();
                 for( final String value : values ) {
                     if( value != null ) {
@@ -760,6 +759,7 @@ public final class ApiClient
     }
 
     @Nonnull
+    @SuppressWarnings( "removal" ) // MappingJackson2HttpMessageConverter and Jackson2ObjectMapperBuilder deprecated-for-removal in Spring 7; requires Jackson 3 migration
     private static RestTemplate newDefaultRestTemplate()
     {
         final RestTemplate restTemplate = new RestTemplate();
@@ -776,6 +776,7 @@ public final class ApiClient
     }
 
     @Nonnull
+    @SuppressWarnings( "removal" ) // Jackson2ObjectMapperBuilder deprecated-for-removal in Spring 7; requires Jackson 3 migration
     private static ObjectMapper newDefaultObjectMapper()
     {
         return new Jackson2ObjectMapperBuilder()
