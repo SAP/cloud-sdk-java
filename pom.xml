@@ -88,7 +88,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.22.2</jackson.version>
+		<jackson.version>2.22.3</jackson.version>
 		<jackson.annotations.version>2.22</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20260814</json.version>
@@ -100,10 +100,10 @@
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
 		<spring.version>6.2.19</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
-		<slf4j.version>2.0.19</slf4j.version>
+		<slf4j.version>2.0.20</slf4j.version>
 		<assertj-core.version>3.27.7</assertj-core.version>
 		<assertj-vavr.version>0.5.1</assertj-vavr.version>
-		<mockito.version>5.23.0</mockito.version>
+		<mockito.version>5.24.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
 		<junit.jupiter.version>6.1.3</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
@@ -112,7 +112,7 @@
 		<maven-plugin.version>3.9.16</maven-plugin.version>
 		<maven-plugin-annotations.version>3.16.0</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.5.1</maven-plugin-testing.version>
-		<caffeine.version>3.2.4</caffeine.version>
+		<caffeine.version>3.3.0</caffeine.version>
 		<openapi-generator.version>7.25.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.55</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.48</io-swagger-parser-v3.version>
