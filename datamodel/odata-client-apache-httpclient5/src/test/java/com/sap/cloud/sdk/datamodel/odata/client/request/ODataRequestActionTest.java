@@ -22,8 +22,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.google.gson.GsonBuilder;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
-import com.sap.cloud.sdk.datamodel.odata.client.ODataApacheHttpClient5Accessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
@@ -43,8 +44,8 @@ class ODataRequestActionTest
     @BeforeEach
     void setup()
     {
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
-        client = ODataApacheHttpClient5Accessor.getHttpClient(destination);
+        final Destination destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        client = ApacheHttpClient5Accessor.getHttpClient(destination);
     }
 
     @Test

@@ -59,22 +59,18 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     @Nonnull
     private final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade;
 
-    private final boolean csrfTokenInterceptorEnabled;
-
     DefaultApacheHttpClient5Factory(
         @Nonnull final Duration timeout,
         final int maxConnectionsTotal,
         final int maxConnectionsPerRoute,
         @Nullable final HttpRequestInterceptor requestInterceptor,
-        @Nonnull final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade,
-        final boolean csrfTokenInterceptorEnabled )
+        @Nonnull final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade )
     {
         this.timeout = toTimeout(timeout);
         this.maxConnectionsTotal = maxConnectionsTotal;
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
         this.requestInterceptor = requestInterceptor;
         this.tlsUpgrade = tlsUpgrade;
-        this.csrfTokenInterceptorEnabled = csrfTokenInterceptorEnabled;
     }
 
     @Nonnull
@@ -109,16 +105,12 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             builder.addRequestInterceptorFirst(requestInterceptor);
         }
 
-        if( csrfTokenInterceptorEnabled ) {
-            final AtomicReference<CloseableHttpClient> holder = new AtomicReference<>();
-            builder
-                .addRequestInterceptorLast(
-                    ( req, entity, ctx ) -> new CsrfTokenInterceptor(holder.get()).process(req, entity, ctx));
-            holder.set(builder.build());
-            return holder.get();
-        }
-
-        return builder.build();
+        final AtomicReference<CloseableHttpClient> holder = new AtomicReference<>();
+        builder
+            .addRequestInterceptorLast(
+                ( req, entity, ctx ) -> new CsrfTokenInterceptor(holder.get()).process(req, entity, ctx));
+        holder.set(builder.build());
+        return holder.get();
     }
 
     @Nonnull
