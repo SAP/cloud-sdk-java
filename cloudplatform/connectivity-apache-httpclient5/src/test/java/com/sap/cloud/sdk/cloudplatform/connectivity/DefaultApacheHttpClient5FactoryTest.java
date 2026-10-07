@@ -30,6 +30,10 @@ import javax.annotation.Nonnull;
 import org.apache.hc.client5.http.RouteInfo;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -41,6 +45,7 @@ import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.util.TimeValue;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +53,7 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 
@@ -211,6 +217,72 @@ class DefaultApacheHttpClient5FactoryTest
         try( final ClassicHttpResponse response = httpClient.execute(new HttpGet("/proxy"), r -> r) ) {
             WIRE_MOCK_SERVER.verify(getRequestedFor(urlEqualTo("/proxy")));
             assertThat(response.getCode()).isEqualTo(HttpStatus.SC_OK);
+        }
+    }
+
+    @Test
+    @Timeout( value = 10, unit = TimeUnit.SECONDS )
+    @SneakyThrows
+    void testStaleConnectionCausesRetry()
+    {
+        final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
+        server.start();
+        server.stubFor(get(urlEqualTo("/ping")).willReturn(ok()));
+
+        final DefaultApacheHttpClient5Factory factory =
+            new DefaultApacheHttpClient5Factory(Duration.ofSeconds(3), 10, 5, null, AUTOMATIC);
+        final HttpClient client = factory.createHttpClient();
+        final String url = server.baseUrl() + "/ping";
+
+        client.execute(new HttpGet(url), r -> r);
+
+        server.stop();
+        Thread.sleep(100);
+
+        assertThatThrownBy(() -> client.execute(new HttpGet(url), r -> r)).isInstanceOf(IOException.class);
+    }
+
+    @Test
+    @Timeout( value = 10, unit = TimeUnit.SECONDS )
+    @SneakyThrows
+    void testIdleTimeoutPreventsStaleConnectionReuse()
+    {
+        final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
+        server.start();
+        server.stubFor(get(urlEqualTo("/ping")).willReturn(ok()));
+        final int port = server.port();
+
+        final ApacheHttpClient5Factory factory = destination -> {
+            final ConnectionConfig connConfig =
+                ConnectionConfig
+                    .custom()
+                    .setConnectTimeout(org.apache.hc.core5.util.Timeout.ofSeconds(3))
+                    .setSocketTimeout(org.apache.hc.core5.util.Timeout.ofSeconds(3))
+                    .setIdleTimeout(org.apache.hc.core5.util.Timeout.ofMilliseconds(200))
+                    .setTimeToLive(TimeValue.ofMilliseconds(500))
+                    .build();
+            final PoolingHttpClientConnectionManager cm =
+                PoolingHttpClientConnectionManagerBuilder.create().setDefaultConnectionConfig(connConfig).build();
+            return HttpClients.custom().setConnectionManager(cm).build();
+        };
+        final HttpClient client = factory.createHttpClient(null);
+        final String url = "http://localhost:" + port + "/ping";
+
+        client.execute(new HttpGet(url), r -> r);
+
+        server.stop();
+        Thread.sleep(300);
+
+        final WireMockServer newServer = new WireMockServer(wireMockConfig().port(port));
+        newServer.start();
+        newServer.stubFor(get(urlEqualTo("/ping")).willReturn(ok()));
+
+        try {
+            final int status = client.execute(new HttpGet(url), r -> r.getCode());
+            assertThat(status).isEqualTo(200);
+        }
+        finally {
+            newServer.stop();
         }
     }
 
