@@ -52,6 +52,12 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     private final Timeout timeout;
     private final int maxConnectionsTotal;
     private final int maxConnectionsPerRoute;
+    @Nullable
+    private final Timeout idleTimeout;
+    @Nullable
+    private final TimeValue timeToLive;
+    @Nullable
+    private final TimeValue validateAfterInactivity;
 
     @Nullable
     private final HttpRequestInterceptor requestInterceptor;
@@ -66,11 +72,47 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
         @Nullable final HttpRequestInterceptor requestInterceptor,
         @Nonnull final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade )
     {
+        this(timeout, maxConnectionsTotal, maxConnectionsPerRoute, requestInterceptor, tlsUpgrade, null, null, null);
+    }
+
+    DefaultApacheHttpClient5Factory(
+        @Nonnull final Duration timeout,
+        final int maxConnectionsTotal,
+        final int maxConnectionsPerRoute,
+        @Nullable final HttpRequestInterceptor requestInterceptor,
+        @Nonnull final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade,
+        @Nullable final Duration idleTimeout )
+    {
+        this(
+            timeout,
+            maxConnectionsTotal,
+            maxConnectionsPerRoute,
+            requestInterceptor,
+            tlsUpgrade,
+            idleTimeout,
+            null,
+            null);
+    }
+
+    DefaultApacheHttpClient5Factory(
+        @Nonnull final Duration timeout,
+        final int maxConnectionsTotal,
+        final int maxConnectionsPerRoute,
+        @Nullable final HttpRequestInterceptor requestInterceptor,
+        @Nonnull final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade,
+        @Nullable final Duration idleTimeout,
+        @Nullable final Duration timeToLive,
+        @Nullable final Duration validateAfterInactivity )
+    {
         this.timeout = toTimeout(timeout);
         this.maxConnectionsTotal = maxConnectionsTotal;
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
         this.requestInterceptor = requestInterceptor;
         this.tlsUpgrade = tlsUpgrade;
+        this.idleTimeout = idleTimeout != null ? toTimeout(idleTimeout) : null;
+        this.timeToLive = timeToLive != null ? TimeValue.ofMilliseconds(timeToLive.toMillis()) : null;
+        this.validateAfterInactivity =
+            validateAfterInactivity != null ? TimeValue.ofMilliseconds(validateAfterInactivity.toMillis()) : null;
     }
 
     @Nonnull
@@ -121,8 +163,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
                 .create()
                 .setTlsSocketStrategy(getTlsSocketStrategy(destination))
                 .setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(timeout).build())
-                .setDefaultConnectionConfig(
-                    ConnectionConfig.custom().setConnectTimeout(timeout).setSocketTimeout(timeout).build())
+                .setDefaultConnectionConfig(buildConnectionConfig())
                 .setMaxConnTotal(maxConnectionsTotal)
                 .setMaxConnPerRoute(maxConnectionsPerRoute)
                 .build();
@@ -130,6 +171,25 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
         catch( final GeneralSecurityException | IOException e ) {
             throw new HttpClientInstantiationException("Failed to create HTTP client connection manager.", e);
         }
+    }
+
+    @Nonnull
+    private ConnectionConfig buildConnectionConfig()
+    {
+        final ConnectionConfig.Builder builder =
+            ConnectionConfig.custom().setConnectTimeout(timeout).setSocketTimeout(timeout);
+
+        if( idleTimeout != null ) {
+            builder.setIdleTimeout(idleTimeout);
+        }
+        if( timeToLive != null ) {
+            builder.setTimeToLive(timeToLive);
+        }
+        if( validateAfterInactivity != null ) {
+            builder.setValidateAfterInactivity(validateAfterInactivity);
+        }
+
+        return builder.build();
     }
 
     @Nonnull
