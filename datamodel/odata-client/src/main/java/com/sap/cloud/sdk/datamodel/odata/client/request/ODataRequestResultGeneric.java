@@ -163,21 +163,27 @@ public class ODataRequestResultGeneric
     {
         final GsonResultElementFactory resultElementFactory = getResultElementFactory();
 
-        final Integer numConsumedElements = HttpEntityReader.stream(this, reader -> {
-            deserializer.positionReaderToResultSet(reader);
+        try {
+            final Integer numConsumedElements = HttpEntityReader.stream(this, reader -> {
+                deserializer.positionReaderToResultSet(reader);
 
-            int count = 0;
-            while( reader.hasNext() && reader.peek() == JsonToken.BEGIN_OBJECT ) {
-                final JsonElement jsonElement = JsonParser.parseReader(reader);
-                final ResultElement resultElement = resultElementFactory.create(jsonElement);
-                handler.accept(resultElement);
-                count++;
-            }
-            reader.close();
-            return count;
-        });
+                int count = 0;
+                while( reader.hasNext() && reader.peek() == JsonToken.BEGIN_OBJECT ) {
+                    final JsonElement jsonElement = JsonParser.parseReader(reader);
+                    final ResultElement resultElement = resultElementFactory.create(jsonElement);
+                    handler.accept(resultElement);
+                    count++;
+                }
+                reader.close();
+                return count;
+            });
 
-        log.debug("Iterated {} elements.", numConsumedElements);
+            log.debug("Iterated {} elements.", numConsumedElements);
+        }
+        catch( final Exception e ) {
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
+        }
     }
 
     private GsonResultElementFactory getResultElementFactory()
@@ -202,22 +208,32 @@ public class ODataRequestResultGeneric
         @Nonnull final Function<JsonElement, JsonElement> jsonElementExtractor )
     {
         final GsonResultElementFactory elementFactory = getResultElementFactory();
-        final ResultPrimitive result = HttpEntityReader.read(this, element -> {
-            final Option<ResultPrimitive> single =
-                deserializer
-                    .getElementToResultPrimitiveSingle(element)
-                    .map(jsonElementExtractor)
-                    .map(elementFactory::create)
-                    .map(ResultElement::getAsPrimitive);
-            return single.getOrNull();
-        });
+        final ResultPrimitive result;
+        try {
+            result = HttpEntityReader.read(this, element -> {
+                final Option<ResultPrimitive> single =
+                    deserializer
+                        .getElementToResultPrimitiveSingle(element)
+                        .map(jsonElementExtractor)
+                        .map(elementFactory::create)
+                        .map(ResultElement::getAsPrimitive);
+                return single.getOrNull();
+            });
+        }
+        catch( final Exception e ) {
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
+        }
         if( result == null ) {
             log.debug("{} response cannot be read as a primitive value.", protocol);
-            throw new ODataDeserializationException(
-                getODataRequest(),
-                getHttpResponse(),
-                "Unable to read " + protocol + " response.",
-                null);
+            final ODataDeserializationException e =
+                new ODataDeserializationException(
+                    getODataRequest(),
+                    getHttpResponse(),
+                    "Unable to read " + protocol + " response.",
+                    null);
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
         }
         return result;
     }
@@ -227,21 +243,31 @@ public class ODataRequestResultGeneric
     {
         final GsonResultElementFactory elementFactory = getResultElementFactory();
 
-        final ResultCollection result = HttpEntityReader.read(this, element -> {
-            final Option<ResultCollection> set =
-                deserializer
-                    .getElementToResultPrimitiveSet(element)
-                    .map(elementFactory::create)
-                    .map(ResultElement::getAsCollection);
-            return set.getOrNull();
-        });
+        final ResultCollection result;
+        try {
+            result = HttpEntityReader.read(this, element -> {
+                final Option<ResultCollection> set =
+                    deserializer
+                        .getElementToResultPrimitiveSet(element)
+                        .map(elementFactory::create)
+                        .map(ResultElement::getAsCollection);
+                return set.getOrNull();
+            });
+        }
+        catch( final Exception e ) {
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
+        }
         if( result == null ) {
             log.debug("{} response cannot be read as set of primitive values.", protocol);
-            throw new ODataDeserializationException(
-                getODataRequest(),
-                getHttpResponse(),
-                "Unable to read " + protocol + " response.",
-                null);
+            final ODataDeserializationException e =
+                new ODataDeserializationException(
+                    getODataRequest(),
+                    getHttpResponse(),
+                    "Unable to read " + protocol + " response.",
+                    null);
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
         }
         return result;
     }
@@ -250,22 +276,32 @@ public class ODataRequestResultGeneric
     private ResultObject loadEntryFromResponse( @Nonnull final Function<JsonElement, JsonElement> jsonElementExtractor )
     {
         final GsonResultElementFactory elementFactory = getResultElementFactory();
-        final ResultObject result = HttpEntityReader.read(this, element -> {
-            final Option<ResultObject> single =
-                deserializer
-                    .getElementToResultSingle(element)
-                    .map(jsonElementExtractor)
-                    .map(elementFactory::create)
-                    .map(ResultElement::getAsObject);
-            return single.getOrNull();
-        });
+        final ResultObject result;
+        try {
+            result = HttpEntityReader.read(this, element -> {
+                final Option<ResultObject> single =
+                    deserializer
+                        .getElementToResultSingle(element)
+                        .map(jsonElementExtractor)
+                        .map(elementFactory::create)
+                        .map(ResultElement::getAsObject);
+                return single.getOrNull();
+            });
+        }
+        catch( final Exception e ) {
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
+        }
         if( result == null ) {
             log.debug("{} response cannot be read as a single entity.", protocol);
-            throw new ODataDeserializationException(
-                getODataRequest(),
-                getHttpResponse(),
-                "Unable to read " + protocol + " response.",
-                null);
+            final ODataDeserializationException e =
+                new ODataDeserializationException(
+                    getODataRequest(),
+                    getHttpResponse(),
+                    "Unable to read " + protocol + " response.",
+                    null);
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
         }
         return result;
     }
@@ -275,21 +311,31 @@ public class ODataRequestResultGeneric
     {
         final GsonResultElementFactory elementFactory = getResultElementFactory();
 
-        final ResultCollection result = HttpEntityReader.read(this, element -> {
-            final Option<ResultCollection> set =
-                deserializer
-                    .getElementToResultSet(element)
-                    .map(elementFactory::create)
-                    .map(ResultElement::getAsCollection);
-            return set.getOrNull();
-        });
+        final ResultCollection result;
+        try {
+            result = HttpEntityReader.read(this, element -> {
+                final Option<ResultCollection> set =
+                    deserializer
+                        .getElementToResultSet(element)
+                        .map(elementFactory::create)
+                        .map(ResultElement::getAsCollection);
+                return set.getOrNull();
+            });
+        }
+        catch( final Exception e ) {
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
+        }
         if( result == null ) {
             log.debug("{} response cannot be read as set of entities.", protocol);
-            throw new ODataDeserializationException(
-                getODataRequest(),
-                getHttpResponse(),
-                "Unable to read " + protocol + " response.",
-                null);
+            final ODataDeserializationException e =
+                new ODataDeserializationException(
+                    getODataRequest(),
+                    getHttpResponse(),
+                    "Unable to read " + protocol + " response.",
+                    null);
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
         }
         return result;
     }
@@ -687,11 +733,14 @@ public class ODataRequestResultGeneric
     private void assertNonEmptyPayload()
     {
         if( !hasPayload() ) {
-            throw new ODataDeserializationException(
-                getODataRequest(),
-                getHttpResponse(),
-                protocol + " response did not contain any payload.",
-                null);
+            final ODataDeserializationException e =
+                new ODataDeserializationException(
+                    getODataRequest(),
+                    getHttpResponse(),
+                    protocol + " response did not contain any payload.",
+                    null);
+            oDataRequest.getListeners().forEach(l -> l.listenOnParsingError(e));
+            throw e;
         }
     }
 
