@@ -1,0 +1,6 @@
+{
+  "complexEntity": {"@odata.type": "#com.sap.cloud.sdk.ComplexType",
+                      "City": "Stockholm",
+                      "Country": "Sweden"
+                    }
+}
