@@ -951,7 +951,7 @@
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>4.10.4.1</version>
+				<version>4.10.5.0</version>
 				<configuration>
 					<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 					<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
@@ -1109,7 +1109,7 @@
 						<plugin>
 							<groupId>org.sonatype.central</groupId>
 							<artifactId>central-publishing-maven-plugin</artifactId>
-							<version>0.11.0</version>
+							<version>0.12.0</version>
 							<extensions>true</extensions>
 							<configuration>
 								<deploymentName>SAP Cloud SDK ${project.version}</deploymentName>
