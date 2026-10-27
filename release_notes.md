@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- 
+- Introduced the `odata-core-apache-httpclient5` and `odata-v4-core-apache-httpclient5` modules, which run on top of Apache HttpClient 5. These are drop-in replacements for `odata-core` and `odata-v4-core` (same Java packages) for consumers moving off the end-of-life Apache HttpClient 4.x stack.
 
 ### 📈 Improvements
 

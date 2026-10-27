@@ -1,0 +1,130 @@
+package com.sap.cloud.sdk.datamodel.odatav4.referenceservice;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.Mockito.mock;
+
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import com.google.gson.Gson;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
+import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestBatch;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestCreate;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestRead;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
+import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
+
+@Disabled( "Test runs against a v4 reference service on odata.org. Use it only to manually verify behaviour." )
+class ODataClientBatchReferenceServiceIntegrationTest
+{
+    private Destination httpDestination;
+
+    @BeforeEach
+    void configure()
+        throws IOException,
+            ParseException
+    {
+        httpDestination = TripPinUtility.getDestination();
+    }
+
+    @Test
+    void testEmptyBatch()
+        throws IOException,
+            ParseException
+    {
+        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(httpDestination);
+
+        final ODataRequestResultMultipartGeneric batchResponse =
+            new ODataRequestBatch("/", ODataProtocol.V4).execute(httpClient);
+
+        // response object not null
+        assertThat(batchResponse).isNotNull();
+
+        // response HTTP code is healthy
+        final ClassicHttpResponse httpResponse = batchResponse.getHttpResponse();
+        assertThat(httpResponse.getCode()).isEqualTo(200);
+
+        // response payload can be extracted
+        final String response = EntityUtils.toString(batchResponse.getHttpResponse().getEntity());
+        assertThat(response).matches("^--batchresponse_[a-f0-9-]+--\r\n$");
+    }
+
+    @Test
+    void testBatchWithSingleRead()
+        throws IOException,
+            ParseException
+    {
+        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(httpDestination);
+
+        final ODataRequestResultMultipartGeneric batchResponse =
+            new ODataRequestBatch("/", ODataProtocol.V4)
+                .addRead(new ODataRequestRead("/", "People", "$top=1", ODataProtocol.V4))
+                .execute(httpClient);
+
+        // response object not null
+        assertThat(batchResponse).isNotNull();
+
+        // response HTTP code is healthy
+        final ClassicHttpResponse httpResponse = batchResponse.getHttpResponse();
+        assertThat(httpResponse.getCode()).isEqualTo(200);
+
+        // response payload can be extracted
+        final String response = EntityUtils.toString(batchResponse.getHttpResponse().getEntity());
+        assertThat(response).isNotEmpty();
+
+        // response payload contains expected JSON result
+        final Matcher matcher = Pattern.compile("\"value\":\\[(.*?)]}\r\n").matcher(response);
+        assertThat(matcher.find()).isTrue();
+
+        // response JSON contains a valid Person
+        final Person person = new Gson().fromJson(matcher.group(1), Person.class);
+        assertThat(person).isNotNull().matches(p -> p.getUserName() != null);
+    }
+
+    @Test
+    void testBatchWithReadWrite()
+    {
+        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(httpDestination);
+
+        final ODataRequestResultMultipartGeneric batchResponse =
+            new ODataRequestBatch("/", ODataProtocol.V4)
+                .addRead(new ODataRequestRead("/", "People", "$top=1", ODataProtocol.V4))
+                .beginChangeset()
+                .addCreate(new ODataRequestCreate("/", "People", "{\"UserName\":\"JohnDoe1\"}", ODataProtocol.V4))
+                .endChangeset()
+                .execute(httpClient);
+
+        // response object not null
+        assertThat(batchResponse).isNotNull();
+
+        // response HTTP code is healthy
+        final ClassicHttpResponse httpResponse = batchResponse.getHttpResponse();
+        assertThat(httpResponse.getCode()).isEqualTo(200);
+    }
+
+    @Test
+    void testBatchErrorWithDifferentServicePath()
+    {
+        final HttpClient httpClient = mock(HttpClient.class);
+
+        assertThatCode(
+            () -> new ODataRequestBatch("this/", ODataProtocol.V4)
+                .addRead(new ODataRequestRead("this/", "People", "$top=1", ODataProtocol.V4))
+                .addRead(new ODataRequestRead("other/", "People", "$top=2", ODataProtocol.V4))
+                .execute(httpClient))
+            .isInstanceOf(ODataRequestException.class);
+    }
+}
