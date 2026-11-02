@@ -123,7 +123,7 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.2</wiremock.version>
-		<handlebars.version>4.5.5</handlebars.version>
+		<handlebars.version>4.5.8</handlebars.version>
 		<commons-text.version>1.15.0</commons-text.version>
 		<checkstyle.version>12.3.1</checkstyle.version>
 		<byte-buddy.version>1.18.15</byte-buddy.version>
