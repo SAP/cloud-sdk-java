@@ -1,0 +1,164 @@
+package com.sap.cloud.sdk.datamodel.odatav4.core;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import static com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol.V4;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.gson.annotations.JsonAdapter;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataEntityKey;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultGeneric;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestUpdate;
+import com.sap.cloud.sdk.datamodel.odata.client.request.UpdateStrategy;
+import com.sap.cloud.sdk.result.ElementName;
+
+import io.vavr.control.Option;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.ToString;
+
+class ModificationResponseTest
+{
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString( doNotUseGetters = true, callSuper = true )
+    @EqualsAndHashCode( doNotUseGetters = true, callSuper = true )
+    @JsonAdapter( com.sap.cloud.sdk.datamodel.odatav4.adapter.GsonVdmAdapterFactory.class )
+    @JsonSerialize( using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectSerializer.class )
+    @JsonDeserialize( using = com.sap.cloud.sdk.datamodel.odatav4.adapter.JacksonVdmObjectDeserializer.class )
+    public static class TestObject extends VdmEntity<TestObject>
+    {
+        @Getter
+        private final String odataType = "TestObject";
+
+        @Getter
+        private final Class<TestObject> type = TestObject.class;
+
+        @ElementName( "foo" )
+        private String name;
+
+        @Nonnull
+        @Override
+        protected String getEntityCollection()
+        {
+            return odataType;
+        }
+    }
+
+    @Test
+    void testEntityResponse()
+    {
+        final TestObject inputObject = new TestObject();
+
+        final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
+        when(request.getProtocol()).thenReturn(V4);
+
+        final Header[] responseHeaders = { new BasicHeader("fizz", "buzz"), new BasicHeader("fizz", "fuzz, bizz=1") };
+
+        final ClassicHttpResponse response = mock(ClassicHttpResponse.class);
+        doReturn(responseHeaders).when(response).getHeaders();
+        doReturn(responseHeaders).when(response).getHeaders("ETag");
+        doReturn(new StringEntity("{\"foo\":\"bar\"}", UTF_8)).when(response).getEntity();
+        doReturn(HttpStatus.SC_OK).when(response).getCode();
+
+        final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
+        final ModificationResponse<TestObject> modification = ModificationResponse.of(result, inputObject);
+
+        assertThat(modification).isNotNull();
+        assertThat(modification.getResponseStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(modification.getRequestEntity()).isSameAs(inputObject);
+
+        assertThat(modification.getResponseEntity().get()).isNotSameAs(inputObject);
+        assertThat(modification.getResponseEntity().get()).isEqualTo(new TestObject("bar"));
+        assertThat(modification.getModifiedEntity()).isEqualTo(new TestObject("bar"));
+
+        assertThat(modification.getResponseHeaders()).containsOnlyKeys("fizz");
+        assertThat(modification.getResponseHeaders().get("fizz")).containsExactly("buzz", "fuzz, bizz=1");
+    }
+
+    @Test
+    void testEmptyResponse()
+    {
+        final TestObject inputObject = new TestObject();
+
+        final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
+        when(request.getProtocol()).thenReturn(V4);
+
+        final ClassicHttpResponse response = mock(ClassicHttpResponse.class);
+        doReturn(new Header[0]).when(response).getHeaders();
+        doReturn(new Header[0]).when(response).getHeaders("ETag");
+        doReturn(new StringEntity("", UTF_8)).when(response).getEntity();
+        doReturn(HttpStatus.SC_NO_CONTENT).when(response).getCode();
+
+        final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
+        final ModificationResponse<TestObject> modification = ModificationResponse.of(result, inputObject);
+
+        assertThat(modification).isNotNull();
+        assertThat(modification.getResponseStatusCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+        assertThat(modification.getRequestEntity()).isSameAs(inputObject);
+        assertThat(modification.getModifiedEntity()).isNotSameAs(inputObject);
+        assertThat(modification.getModifiedEntity()).isEqualTo(inputObject);
+        assertThat(modification.getResponseHeaders()).isEmpty();
+    }
+
+    @SneakyThrows
+    @Test
+    void testResponseIsOnlyEvaluatedOnce()
+    {
+        final TestObject inputObject = new TestObject();
+
+        final ClassicHttpResponse response = spy(new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK"));
+        response.setHeaders(new Header[0]);
+        response.setEntity(new StringEntity("{\"foo\":\"bar\"}", UTF_8));
+
+        final ODataEntityKey key = ODataEntityKey.of(Map.of("id", 42), V4);
+        final ODataRequestUpdate request =
+            new ODataRequestUpdate("service/path", "EntitySet", key, "{}", UpdateStrategy.REPLACE_WITH_PUT, null, V4);
+
+        final HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.executeOpen(isNull(), any(), isNull())).thenReturn(response);
+
+        final ODataRequestResultGeneric result = request.execute(httpClient);
+        final ModificationResponse<TestObject> modification = ModificationResponse.of(result, inputObject);
+
+        modification.getResponseEntity();
+        final Option<TestObject> responseEntity = modification.getResponseEntity();
+        assertThat(responseEntity).isNotNull();
+
+        modification.getModifiedEntity();
+        final TestObject modifiedEntity = modification.getModifiedEntity();
+        assertThat(modifiedEntity).isNotNull();
+
+        verify(response, times(1)).getEntity();
+        verify(httpClient, times(1)).executeOpen(isNull(), any(), isNull());
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "stringParameter" : "test",
+  "booleanParameter"  :  true,
+  "integerParameter"  :  9000,
+  "decimalParameter"  :  3.14,
+  "durationParameter" : "PT8H",
+  "dateTimeOffsetParameter":"2020-03-12T05:02:30Z",
+  "timeOfDayParameter":"13:03:39.999"
+}
