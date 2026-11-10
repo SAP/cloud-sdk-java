@@ -1,0 +1,4 @@
+{
+  "entityParameter": {"@odata.type": "#com.sap.cloud.sdk.TestEntity",
+                      "Name": "Tester"}
+}

@@ -1,0 +1,20 @@
+{
+  "value": [
+    {
+      "@context": "context",
+      "@type": "type",
+      "@etag": "W/\"123\"",
+      "UserName": "russellwhyte",
+      "FirstName": "Russell",
+      "LastName": "Whyte"
+    },
+    {
+      "@context": "context",
+      "@type": "type",
+      "@etag": "W/\"999\"",
+      "UserName": "scottketchum",
+      "FirstName": "Scott",
+      "LastName": "Ketchum"
+    }
+  ]
+}
