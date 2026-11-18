@@ -15,7 +15,9 @@ import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
+import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.x509svid.X509Svid;
 
 class ZeroTrustIdentityServiceTest
@@ -152,6 +155,25 @@ class ZeroTrustIdentityServiceTest
             .isInstanceOf(IllegalStateException.class);
     }
 
+    @Test
+    void testSvidPickerIsWiredAndSelectsMatchingSvid()
+    {
+        final SpiffeId expected = SpiffeId.parse("spiffe://example.org/my-app");
+        final X509Svid own = mockSvidWithSpiffeId(expected);
+        final X509Svid other = mockSvidWithSpiffeId(SpiffeId.parse("spiffe://example.org/other-app"));
+
+        final Function<List<X509Svid>, X509Svid> picker =
+            sut.buildX509SourceOptions("unix:///tmp/test.sock", expected).getSvidPicker();
+
+        assertThat(picker).isNotNull();
+        assertThat(picker.apply(List.of(own))).isSameAs(own);
+        assertThat(picker.apply(List.of(other, own))).isSameAs(own);
+        assertThatThrownBy(() -> picker.apply(List.of(other)))
+            .isInstanceOf(CloudPlatformException.class)
+            .hasMessageContaining("spiffe://example.org/my-app");
+        assertThatThrownBy(() -> picker.apply(List.of())).isInstanceOf(CloudPlatformException.class);
+    }
+
     private void mockSvid( Instant notAfter )
     {
         final X509Svid svid = mock(X509Svid.class);
@@ -160,6 +182,13 @@ class ZeroTrustIdentityServiceTest
         doReturn(certificate).when(svid).getLeaf();
         doReturn(svid).when(sut).getX509Svid();
         svidMock = svid;
+    }
+
+    private static X509Svid mockSvidWithSpiffeId( final SpiffeId spiffeId )
+    {
+        final X509Svid svid = mock(X509Svid.class);
+        doReturn(spiffeId).when(svid).getSpiffeId();
+        return svid;
     }
 
     private static ServiceBinding mockBinding()
