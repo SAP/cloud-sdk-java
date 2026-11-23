@@ -109,13 +109,13 @@
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.10.1</maven-plugin.version>
+		<maven-plugin.version>3.10.2</maven-plugin.version>
 		<maven-plugin-annotations.version>3.16.0</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.5.1</maven-plugin-testing.version>
 		<caffeine.version>3.3.1</caffeine.version>
 		<openapi-generator.version>7.27.0</openapi-generator.version>
 		<io-swagger-core-v3.version>3.0.0</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.48</io-swagger-parser-v3.version>
+		<io-swagger-parser-v3.version>2.1.49</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.3.2</stax2-api.version>
