@@ -4,6 +4,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -104,11 +106,15 @@ class ODataHttpRequest
 
         odataRequest.getListeners().forEach(v -> v.listenOnRequest(httpRequest));
 
+        final Instant start = Instant.now();
         try {
-            return httpClient.executeOpen(null, httpRequest, null);
+            final ClassicHttpResponse response = httpClient.executeOpen(null, httpRequest, null);
+            odataRequest.getListeners().forEach(v -> v.listenOnResponse(response));
+            return response;
         }
         catch( final ClientProtocolException e ) {
             log.debug("Connection could not be established.", e);
+            odataRequest.getListeners().forEach(v -> v.listenOnRequestError(e));
             throw new ODataConnectionException(
                 this.odataRequest,
                 httpRequest,
@@ -117,6 +123,7 @@ class ODataHttpRequest
         }
         catch( final ConnectionRequestTimeoutException e ) {
             log.debug("Connection pool timed out.", e);
+            odataRequest.getListeners().forEach(v -> v.listenOnRequestError(e));
             throw new ODataConnectionException(this.odataRequest, httpRequest, """
                 Time out occurred because of a probable connection leak. Please execute your request \
                 with try-with-resources to ensure resources are properly closed. \
@@ -127,11 +134,17 @@ class ODataHttpRequest
         }
         catch( final IOException e ) {
             log.debug("Connection was aborted.", e);
+            odataRequest.getListeners().forEach(v -> v.listenOnRequestError(e));
             throw new ODataConnectionException(this.odataRequest, httpRequest, "Connection was aborted.", e);
         }
         catch( final Exception e ) {
             log.debug("Connection failed.", e);
+            odataRequest.getListeners().forEach(v -> v.listenOnRequestError(e));
             throw new ODataConnectionException(this.odataRequest, httpRequest, "Connection failed.", e);
+        }
+        finally {
+            final Duration duration = Duration.between(start, Instant.now());
+            odataRequest.getListeners().forEach(v -> v.listenOnExecutionFinished(duration));
         }
     }
 

@@ -36,7 +36,8 @@ public final class TestContext
     InvocationInterceptor,
     TenantContext,
     PrincipalContext,
-    AuthTokenContext
+    AuthTokenContext,
+    RequestHeaderContext
 {
     private final ThreadContext context = new DefaultThreadContext();
 
