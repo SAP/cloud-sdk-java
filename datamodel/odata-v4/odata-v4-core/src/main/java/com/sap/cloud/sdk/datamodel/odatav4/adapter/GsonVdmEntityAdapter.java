@@ -139,6 +139,7 @@ public class GsonVdmEntityAdapter<T> extends TypeAdapter<VdmObject<T>>
                         ? entityField.getAnnotation(ElementName.class).value()
                         : entityField.getAnnotation(SerializedName.class).value();
 
+                entityField.setAccessible(true);
                 entityProperties.put(entityFieldKey, new PropertySerializationInfo(entityField, fieldAdapter));
             }
         }
@@ -197,11 +198,7 @@ public class GsonVdmEntityAdapter<T> extends TypeAdapter<VdmObject<T>>
                             if( fieldAdapter != null ) {
                                 final Object attributeValue = fieldAdapter.read(jsonReader);
 
-                                // To be safe/secure, since fields are declared private in the VDM.
-                                final boolean oldAccessibleValue = entityField.canAccess(entity);
-                                entityField.setAccessible(true);
                                 entityField.set(entity, attributeValue);
-                                entityField.setAccessible(oldAccessibleValue);
                             }
                         } else {
                             final Object customValue = customFieldAdapter.read(jsonReader);
@@ -302,12 +299,8 @@ public class GsonVdmEntityAdapter<T> extends TypeAdapter<VdmObject<T>>
                 try {
                     final PropertySerializationInfo serializationInfo = entityProperty.getValue();
 
-                    // To be safe/secure, since fields are declared private in the VDM.
                     final Field propertyField = serializationInfo.getJavaField();
-                    final boolean oldAccessibleValue = propertyField.canAccess(value);
-                    propertyField.setAccessible(true);
                     final Object propertyValue = propertyField.get(value);
-                    propertyField.setAccessible(oldAccessibleValue);
 
                     TypeAdapter<Object> fieldAdapter = (TypeAdapter<Object>) serializationInfo.getFieldAdapter();
 

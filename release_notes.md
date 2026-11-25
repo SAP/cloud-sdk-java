@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fixed an intermittent `IllegalAccessException` in `GsonVdmEntityAdapter` when OData V4 entities or complex types are serialized concurrently.
