@@ -17,7 +17,8 @@ import io.swagger.v3.oas.models.media.Schema;
 /**
  * Fix Api client methods with oneOf primitive param to stay simplified from OpenAPI generator 7.22.0. Also adds OAS
  * 3.1-aware normalisation: nullable warnings, example deprecation warnings, and contentEncoding/contentMediaType →
- * format mapping for binary file uploads.
+ * format mapping for binary file uploads. Object-only unions containing an unrestricted object alternative are
+ * represented as {@code Map<String, Object>} instead of competing model subtypes.
  */
 public class CustomOpenAPINormalizer extends OpenAPINormalizer
 {
@@ -118,6 +119,13 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
      * <li>warn on deprecated singular {@code example} keyword in OAS 3.1 schemas</li>
      * <li>map {@code contentEncoding}/{@code contentMediaType} to {@code format} for binary file uploads</li>
      * </ul>
+     * Also simplifies overlapping object unions using {@link #simplifyFreeFormObjectUnion(Schema)}.
+     *
+     * @param schema
+     *            The schema to normalize.
+     * @param visitedSchemas
+     *            Schemas already visited while traversing the document.
+     * @return The normalized schema, including the inherited OpenAPI normalization rules.
      */
     @Override
     @Nonnull
@@ -152,8 +160,30 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
     }
 
     /**
-     * Broaden overlapping object unions to a map when one alternative already accepts every object. For oneOf this
-     * deliberately relaxes exclusive validation for a usable client-side representation.
+     * Simplifies a {@code oneOf} or {@code anyOf} union of object schemas when one alternative accepts every object.
+     * The schema is changed in place to {@code type: object} with {@code additionalProperties: true}, which generates a
+     * {@code Map<String, Object>} property without a union model or subtype annotations.
+     *
+     * <p>
+     * For example, both alternatives below are represented by a single map:
+     *
+     * <pre>{@code
+     * oneOf:
+     *   - type: object
+     *     additionalProperties: true
+     *   - type: object
+     *     properties:
+     *       enabled:
+     *         type: boolean
+     * }</pre>
+     *
+     * <p>
+     * For {@code oneOf}, this deliberately broadens the client-side representation rather than preserving exactly-one
+     * validation. Unions containing non-object types, constrained references, or no unrestricted alternative are
+     * retained. Existing schema metadata, such as its description, is preserved.
+     *
+     * @param schema
+     *            The schema whose union alternatives are inspected and, when applicable, replaced.
      */
     @SuppressWarnings( { "rawtypes", "unchecked" } )
     private void simplifyFreeFormObjectUnion( final Schema schema )
@@ -175,6 +205,14 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
         schema.setAdditionalProperties(true);
     }
 
+    /**
+     * Checks whether the schema declares only the object type. A type set containing strings, numbers, or {@code null}
+     * must not be narrowed to a map. Property restrictions are checked separately.
+     *
+     * @param schema
+     *            The schema to inspect.
+     * @return Whether the declared type or type set contains only {@code object}.
+     */
     @SuppressWarnings( "rawtypes" )
     private boolean isObjectOnly( final Schema schema )
     {
@@ -182,6 +220,14 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
             && (schema.getTypes() == null || schema.getTypes().isEmpty() || Set.of("object").equals(schema.getTypes()));
     }
 
+    /**
+     * Follows unrestricted component {@code $ref} chains in the current OpenAPI document. A reference carrying property
+     * restrictions is returned unchanged so its sibling constraints are not discarded.
+     *
+     * @param schema
+     *            The schema or reference to resolve.
+     * @return The resolved schema, the original constrained reference, or {@code null} for a missing target or cycle.
+     */
     @Nullable
     @SuppressWarnings( "rawtypes" )
     private Schema resolveSchema( final Schema schema )
@@ -200,6 +246,19 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
         return current;
     }
 
+    /**
+     * Checks whether the inspected keywords allow arbitrary object properties with unrestricted values. Closed objects,
+     * declared or required properties, typed map values, and object validation constraints do not qualify. This check
+     * does not follow references or inspect the declared type; callers handle those separately.
+     *
+     * <p>
+     * For example, {@code type: object, additionalProperties: true} with no properties qualifies, whereas
+     * {@code additionalProperties: false} or an additional-properties schema of {@code type: string} does not.
+     *
+     * @param schema
+     *            The schema, or reference siblings, whose object constraints are inspected.
+     * @return Whether no inspected keyword restricts the contents of an arbitrary object.
+     */
     @SuppressWarnings( "rawtypes" )
     private boolean acceptsAnyObject( final Schema schema )
     {

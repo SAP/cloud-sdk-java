@@ -152,10 +152,18 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
   {{#isMap}}
 
   /**
-   * Put one {{nameInCamelCase}} instance to this {@link {{classname}}} instance.
-   * @param key The String key of this {{nameInCamelCase}} instance
-   * @param {{name}}Item The {{nameInCamelCase}} that should be added under the given key
-   * @return The same instance of type {@link {{classname}}}
+   * Adds an entry to the {{nameInCamelCase}} map and returns this {@link {{classname}}} instance.
+   * An existing entry with the same key is replaced.
+   * {{^required}}If the map is unset, it is initialized before insertion.{{/required}}
+   *
+   * <p>Example, where {@code model} is a {{classname}} instance and {@code value} has the map value type:
+   * <pre>{@code
+   * model.put{{nameInPascalCase}}Item("key", value);
+   * }</pre>
+   *
+   * @param key The key under which the value is stored.
+   * @param {{name}}Item The value to add to {{nameInCamelCase}}.
+   * @return This instance for fluent chaining.
    */
   @Nonnull public {{classname}} put{{nameInPascalCase}}Item( @Nonnull final String key, {{#items.isNullable}}@Nullable{{/items.isNullable}}{{^items.isNullable}}@Nonnull{{/items.isNullable}} final {{{items.datatypeWithEnum}}} {{name}}Item) {
     {{#vendorExtensions.x-is-jackson-optional-nullable}}
