@@ -157,7 +157,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
    * @param {{name}}Item The {{nameInCamelCase}} that should be added under the given key
    * @return The same instance of type {@link {{classname}}}
    */
-  @Nonnull public {{classname}} put{{nameInCamelCase}}Item( @Nonnull final String key, {{#items.isNullable}}@Nullable{{/items.isNullable}}{{^items.isNullable}}@Nonnull{{/items.isNullable}} final {{{items.datatypeWithEnum}}} {{name}}Item) {
+  @Nonnull public {{classname}} put{{nameInPascalCase}}Item( @Nonnull final String key, {{#items.isNullable}}@Nullable{{/items.isNullable}}{{^items.isNullable}}@Nonnull{{/items.isNullable}} final {{{items.datatypeWithEnum}}} {{name}}Item) {
     {{#vendorExtensions.x-is-jackson-optional-nullable}}
     if (this.{{name}} == null || !this.{{name}}.isPresent()) {
       this.{{name}} = JsonNullable.<{{{datatypeWithEnum}}}>of({{{defaultValue}}}{{^defaultValue}}new HashMap<>(){{/defaultValue}});

@@ -1,9 +1,12 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.openapitools.codegen.OpenAPINormalizer;
 import org.openapitools.codegen.utils.ModelUtils;
@@ -144,6 +147,84 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
             }
         }
 
+        simplifyFreeFormObjectUnion(schema);
         return super.normalizeSchema(schema, visitedSchemas);
+    }
+
+    /**
+     * Broaden overlapping object unions to a map when one alternative already accepts every object. For oneOf this
+     * deliberately relaxes exclusive validation for a usable client-side representation.
+     */
+    @SuppressWarnings( { "rawtypes", "unchecked" } )
+    private void simplifyFreeFormObjectUnion( final Schema schema )
+    {
+        final List<Schema> alternatives = schema.getOneOf() != null ? schema.getOneOf() : schema.getAnyOf();
+        if( alternatives == null || alternatives.isEmpty() || schema.getOneOf() != null && schema.getAnyOf() != null ) {
+            return;
+        }
+        final List<Schema> resolved = alternatives.stream().map(s -> resolveSchema(s)).toList();
+        if( resolved.stream().anyMatch(s -> s == null || !isObjectOnly(s))
+            || resolved.stream().noneMatch(this::acceptsAnyObject) ) {
+            return;
+        }
+        schema.setOneOf(null);
+        schema.setAnyOf(null);
+        schema.setDiscriminator(null);
+        schema.setType("object");
+        schema.setTypes(null);
+        schema.setAdditionalProperties(true);
+    }
+
+    @SuppressWarnings( "rawtypes" )
+    private boolean isObjectOnly( final Schema schema )
+    {
+        return ("object".equals(schema.getType()) || Set.of("object").equals(schema.getTypes()))
+            && (schema.getTypes() == null || schema.getTypes().isEmpty() || Set.of("object").equals(schema.getTypes()));
+    }
+
+    @Nullable
+    @SuppressWarnings( "rawtypes" )
+    private Schema resolveSchema( final Schema schema )
+    {
+        Schema current = schema;
+        final Set<Schema> visited = new HashSet<>();
+        while( current != null && current.get$ref() != null ) {
+            if( !acceptsAnyObject(current) ) {
+                return current;
+            }
+            if( !visited.add(current) ) {
+                return null;
+            }
+            current = ModelUtils.getReferencedSchema(openAPI, current);
+        }
+        return current;
+    }
+
+    @SuppressWarnings( "rawtypes" )
+    private boolean acceptsAnyObject( final Schema schema )
+    {
+        final Object additionalProperties = schema.getAdditionalProperties();
+        final boolean arbitraryValues =
+            additionalProperties == null
+                || Boolean.TRUE.equals(additionalProperties)
+                || new Schema<>().equals(additionalProperties);
+        return arbitraryValues
+            && (schema.getProperties() == null || schema.getProperties().isEmpty())
+            && (schema.getRequired() == null || schema.getRequired().isEmpty())
+            && !ModelUtils.isComposedSchema(schema)
+            && schema.getEnum() == null
+            && schema.getConst() == null
+            && schema.getNot() == null
+            && schema.getMaxProperties() == null
+            && (schema.getMinProperties() == null || schema.getMinProperties() == 0)
+            && (schema.getPatternProperties() == null || schema.getPatternProperties().isEmpty())
+            && schema.getPropertyNames() == null
+            && schema.getUnevaluatedProperties() == null
+            && (schema.getDependentSchemas() == null || schema.getDependentSchemas().isEmpty())
+            && (schema.getDependentRequired() == null || schema.getDependentRequired().isEmpty())
+            && schema.getIf() == null
+            && schema.getThen() == null
+            && schema.getElse() == null
+            && !Boolean.FALSE.equals(schema.getBooleanSchemaValue());
     }
 }
