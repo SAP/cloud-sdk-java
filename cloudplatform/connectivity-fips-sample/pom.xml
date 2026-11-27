@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.34.0-SNAPSHOT</version>
+		<version>5.36.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-fips-sample</artifactId>
 	<name>Connectivity - FIPS Sample</name>
@@ -30,7 +30,7 @@
 	</developers>
 	<properties>
 		<bc-fips.version>2.1.3</bc-fips.version>
-		<bcpkix-fips.version>2.1.12</bcpkix-fips.version>
+		<bcpkix-fips.version>2.1.13</bcpkix-fips.version>
 	</properties>
 	<dependencies>
 		<dependency>

@@ -20,8 +20,8 @@ All of these things will be linked in the Code PR, so that they can be found eas
 
 As the second to last step, you will trigger the [Perform Release Workflow](https://github.com/SAP/cloud-sdk-java/actions/workflows/perform-release.yml).
 
-This workflow will take care of merging the PRs and creates a **staging release** in [Sonatype](https://central.sonatype.com/publishing/deployments).
-As the very last step, once the _Perform Release_ workflow has finished successfully, you need to log into _Sonatype_ and publish the staging release using the `Technical User for Releases` account.
+This workflow will take care of merging the PRs and after that uploads and publishes the release artifacts on [Sonatype](https://central.sonatype.com/publishing/deployments).
+As the very last step, once the _Perform Release_ workflow has finished successfully, you can log into _Sonatype_ and confirm the successful release using the `Technical User for Releases` account.
 
 That's it!
 The new version should be available for consumers within a few hours.

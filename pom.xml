@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>5.34.0-SNAPSHOT</version>
+	<version>5.36.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -49,7 +49,7 @@
 	</distributionManagement>
 	<properties>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>5.34.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.36.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
@@ -88,8 +88,8 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.22.2</jackson.version>
-		<jackson.annotations.version>2.22</jackson.annotations.version>
+		<jackson.version>2.23.0</jackson.version>
+		<jackson.annotations.version>2.23</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20260814</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
@@ -100,39 +100,40 @@
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
 		<spring.version>6.2.19</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
-		<slf4j.version>2.0.18</slf4j.version>
+		<slf4j.version>2.0.20</slf4j.version>
 		<assertj-core.version>3.27.7</assertj-core.version>
 		<assertj-vavr.version>0.5.1</assertj-vavr.version>
-		<mockito.version>5.23.0</mockito.version>
+		<mockito.version>5.24.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
 		<junit.jupiter.version>6.1.3</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.16</maven-plugin.version>
-		<maven-plugin-annotations.version>3.15.2</maven-plugin-annotations.version>
+		<maven-plugin.version>3.10.2</maven-plugin.version>
+		<maven-plugin-annotations.version>3.16.0</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.5.1</maven-plugin-testing.version>
-		<caffeine.version>3.2.4</caffeine.version>
-		<openapi-generator.version>7.24.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.54</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.47</io-swagger-parser-v3.version>
+		<caffeine.version>3.3.1</caffeine.version>
+		<openapi-generator.version>7.27.0</openapi-generator.version>
+		<io-swagger-core-v3.version>3.0.0</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.49</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
-		<stax2-api.version>4.3.0</stax2-api.version>
-		<bouncycastle.version>1.85</bouncycastle.version>
+		<stax2-api.version>4.3.2</stax2-api.version>
+		<bouncycastle.version>1.87</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.2</wiremock.version>
-		<handlebars.version>4.5.4</handlebars.version>
+		<handlebars.version>4.5.8</handlebars.version>
 		<commons-text.version>1.15.0</commons-text.version>
 		<checkstyle.version>12.3.1</checkstyle.version>
-		<byte-buddy.version>1.18.11</byte-buddy.version>
-		<snakeyaml.version>2.6</snakeyaml.version>
-		<commons-codec.version>1.22.1</commons-codec.version>
+		<byte-buddy.version>1.18.17</byte-buddy.version>
+		<jspecify.version>1.0.1</jspecify.version>
+		<snakeyaml.version>2.7</snakeyaml.version>
+		<commons-codec.version>1.23.0</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<jsr305.optional>true</jsr305.optional>
-		<maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
 	</properties>
 	<dependencyManagement>
@@ -444,6 +445,13 @@
 				<version>${byte-buddy.version}</version>
 				<scope>test</scope>
 			</dependency>
+			<!--Transitive dependency of junit-jupiter-engine, pinned for dependency convergence-->
+			<dependency>
+				<groupId>org.jspecify</groupId>
+				<artifactId>jspecify</artifactId>
+				<version>${jspecify.version}</version>
+				<scope>test</scope>
+			</dependency>
 			<!-- Added to resolve dependency convergence between httpclient5, httpclient, and olingo-odata2-core -->
 			<dependency>
 				<groupId>commons-codec</groupId>
@@ -531,7 +539,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.15.2</version>
+					<version>3.16.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -554,7 +562,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.6.3</version>
+				<version>3.7.0</version>
 				<executions>
 					<execution>
 						<id>enforce-project-rules</id>
@@ -839,7 +847,7 @@
 				<!-- Needed because GitHub actions uses an old Maven version <3.9.0 -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.6</version>
+				<version>3.6.1</version>
 				<configuration>
 					<includes>
 						<include>${surefire.include}</include>
@@ -899,7 +907,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.6.1</version>
+				<version>3.8.0</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -918,7 +926,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.15</version>
+				<version>0.8.16</version>
 				<executions>
 					<execution>
 						<id>prepare-agent</id>
@@ -943,7 +951,7 @@
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>4.10.4.0</version>
+				<version>4.10.5.0</version>
 				<configuration>
 					<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 					<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
@@ -998,7 +1006,7 @@
 								<dependency>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
-									<version>1.18.46</version>
+									<version>1.18.48</version>
 								</dependency>
 							</dependencies>
 							<executions>
@@ -1070,7 +1078,7 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-install-plugin</artifactId>
-							<version>3.1.4</version>
+							<version>3.2.0</version>
 							<executions>
 								<execution>
 									<goals>
@@ -1093,7 +1101,7 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-deploy-plugin</artifactId>
-							<version>3.1.4</version>
+							<version>3.2.0</version>
 							<configuration>
 								<skip>true</skip>
 							</configuration>
@@ -1101,7 +1109,7 @@
 						<plugin>
 							<groupId>org.sonatype.central</groupId>
 							<artifactId>central-publishing-maven-plugin</artifactId>
-							<version>0.11.0</version>
+							<version>0.12.0</version>
 							<extensions>true</extensions>
 							<configuration>
 								<deploymentName>SAP Cloud SDK ${project.version}</deploymentName>
@@ -1113,7 +1121,7 @@
 						<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>flatten-maven-plugin</artifactId>
-							<version>1.8.0</version>
+							<version>1.9.0</version>
 							<executions>
 								<execution>
 									<id>flatten</id>
