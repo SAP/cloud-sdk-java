@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,7 +34,7 @@ import javax.annotation.Nullable;
  * EmptyObject
  */
 // CHECKSTYLE:OFF
-public class EmptyObject implements OneOfEmptyObject 
+public class EmptyObject implements Emptyobject1, OneOfEmptyObject 
 // CHECKSTYLE:ON
 {
   @JsonAnySetter

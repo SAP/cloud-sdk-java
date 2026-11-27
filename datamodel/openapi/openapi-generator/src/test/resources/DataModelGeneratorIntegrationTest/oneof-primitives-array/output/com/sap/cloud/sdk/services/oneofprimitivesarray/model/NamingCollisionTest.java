@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.sap.cloud.sdk.services.oneofprimitivesarray.model.Emptyobject;
+import com.sap.cloud.sdk.services.oneofprimitivesarray.model.Emptyobject1;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,7 +43,7 @@ public class NamingCollisionTest
 // CHECKSTYLE:ON
 {
   @JsonProperty("emtpyObject")
-  private Emptyobject emtpyObject;
+  private Emptyobject1 emtpyObject;
 
   @JsonAnySetter
   @JsonAnyGetter
@@ -55,7 +55,7 @@ public class NamingCollisionTest
    * @param emtpyObject  The emtpyObject of this {@link NamingCollisionTest}
    * @return The same instance of this {@link NamingCollisionTest} class
    */
-  @Nonnull public NamingCollisionTest emtpyObject( @Nullable final Emptyobject emtpyObject) {
+  @Nonnull public NamingCollisionTest emtpyObject( @Nullable final Emptyobject1 emtpyObject) {
     this.emtpyObject = emtpyObject;
     return this;
   }
@@ -65,7 +65,7 @@ public class NamingCollisionTest
    * @return emtpyObject  The emtpyObject of this {@link NamingCollisionTest} instance.
    */
   @Nonnull
-  public Emptyobject getEmtpyObject() {
+  public Emptyobject1 getEmtpyObject() {
     return emtpyObject;
   }
 
@@ -74,7 +74,7 @@ public class NamingCollisionTest
    *
    * @param emtpyObject  The emtpyObject of this {@link NamingCollisionTest}
    */
-  public void setEmtpyObject( @Nullable final Emptyobject emtpyObject) {
+  public void setEmtpyObject( @Nullable final Emptyobject1 emtpyObject) {
     this.emtpyObject = emtpyObject;
   }
 

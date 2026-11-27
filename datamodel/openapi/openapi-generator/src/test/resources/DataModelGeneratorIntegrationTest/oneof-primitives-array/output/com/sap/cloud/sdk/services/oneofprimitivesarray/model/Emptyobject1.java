@@ -21,6 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sap.cloud.sdk.services.oneofprimitivesarray.model.EmptyObject;
 import com.sap.cloud.sdk.services.oneofprimitivesarray.model.OneOfPrimitivesArray;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -34,14 +36,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Emptyobject
+ * Emptyobject1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = Object.class),
+    @JsonSubTypes.Type(value = EmptyObject.class),
     @JsonSubTypes.Type(value = OneOfPrimitivesArray.class),
 })
 
-public interface Emptyobject  {
+public interface Emptyobject1  {
 }
 

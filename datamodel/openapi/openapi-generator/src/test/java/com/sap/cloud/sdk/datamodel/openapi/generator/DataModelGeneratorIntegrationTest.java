@@ -262,7 +262,7 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             true,
             false,
-            3,
+            5,
             Map.of("useOneOfCreators", "true", "useOneOfInterfaces", "true"),
             Map.of());
 

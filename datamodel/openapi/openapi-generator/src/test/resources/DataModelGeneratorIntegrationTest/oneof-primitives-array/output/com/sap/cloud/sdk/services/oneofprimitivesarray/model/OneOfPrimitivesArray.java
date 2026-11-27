@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.List;
 import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * OneOfPrimitivesArray
  */
-public interface OneOfPrimitivesArray extends Emptyobject, OneOfEmptyObject {
+public interface OneOfPrimitivesArray extends Emptyobject1, OneOfEmptyObject {
     /**
      * Helper class to create {@code Map<String, Object> } that implements {@link OneOfPrimitivesArray}.
      */

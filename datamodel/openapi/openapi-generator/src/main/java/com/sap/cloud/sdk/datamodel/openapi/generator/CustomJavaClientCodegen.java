@@ -7,15 +7,19 @@ import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomPrope
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,12 +47,23 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     private final GenerationConfiguration config;
     private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
     private static final String GENERATE_ALIAS_AS_MODEL = "x-generate-alias-as-model";
+    private final Set<String> originalSchemaNames = new HashSet<>();
     // schemaName -> (propertyName -> sibling description) captured before normalization strips $ref context
     private final Map<String, Map<String, String>> siblingDescriptions = new HashMap<>();
 
     public CustomJavaClientCodegen( @Nonnull final GenerationConfiguration config )
     {
         this.config = config;
+    }
+
+    @Override
+    public void setOpenAPI( @Nonnull final OpenAPI openAPI )
+    {
+        if( this.openAPI != openAPI ) {
+            originalSchemaNames.clear();
+            originalSchemaNames.addAll(ModelUtils.getSchemas(openAPI).keySet());
+        }
+        super.setOpenAPI(openAPI);
     }
 
     @Override
@@ -80,11 +95,71 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             preserveFreeFormUnionModels(openAPI);
         }
 
+        resolveInlineModelNameCollisions(openAPI);
         super.preprocessOpenAPI(openAPI);
 
         if( FIX_REMOVE_UNUSED_COMPONENTS.isEnabled(config) ) {
             preprocessRemoveRedundancies(openAPI);
         }
+    }
+
+    private void resolveInlineModelNameCollisions( final OpenAPI openAPI )
+    {
+        final var schemas = ModelUtils.getSchemas(openAPI);
+        final Set<String> reservedNames =
+            schemas
+                .keySet()
+                .stream()
+                .map(this::toModelName)
+                .map(n -> n.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+        final Set<String> assignedNames =
+            schemas
+                .keySet()
+                .stream()
+                .filter(n -> originalSchemaNames.contains(n) || modelNameMapping.containsKey(n))
+                .map(this::toModelName)
+                .map(n -> n.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+
+        for( final String name : schemas.keySet().stream().sorted().toList() ) {
+            if( originalSchemaNames.contains(name) || modelNameMapping.containsKey(name) ) {
+                continue;
+            }
+            final String modelName = toModelName(name);
+            if( assignedNames.add(modelName.toLowerCase(Locale.ROOT)) ) {
+                continue;
+            }
+            int suffix = 1;
+            String uniqueName;
+            do {
+                uniqueName = toModelName(name + "_" + suffix++);
+            } while( !reservedNames.add(uniqueName.toLowerCase(Locale.ROOT)) );
+            assignedNames.add(uniqueName.toLowerCase(Locale.ROOT));
+            modelNameMapping.put(name, uniqueName);
+            log.warn("Renaming inline model '{}' to '{}' to avoid a Java model-name collision.", name, uniqueName);
+        }
+    }
+
+    @Override
+    @Nonnull
+    public String modelFilename( @Nonnull final String templateName, @Nonnull final String modelName )
+    {
+        return modelFilename(templateName, modelName, modelFileFolder());
+    }
+
+    @Override
+    @Nonnull
+    public String modelFilename(
+        @Nonnull final String templateName,
+        @Nonnull final String modelName,
+        @Nonnull final String outputDir )
+    {
+        if( modelNameMapping.containsKey(modelName) ) {
+            // Upstream uniquifies schema keys, which would discard the collision-free Java name mapping.
+            return outputDir + File.separator + toModelFilename(modelName) + modelTemplateFiles().get(templateName);
+        }
+        return super.modelFilename(templateName, modelName, outputDir);
     }
 
     @SuppressWarnings( "rawtypes" )
@@ -373,9 +448,11 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     @Override
     protected void updateModelForObject( @Nonnull final CodegenModel m, @Nonnull final Schema schema )
     {
-        // Disable additional attributes to prevent model classes from extending "HashMap"
-        // SAP Cloud SDK offers custom field APIs to handle additional attributes already
-        schema.setAdditionalProperties(Boolean.FALSE);
-        super.updateModelForObject(m, schema);
+        // Suppress map inheritance locally; custom-field APIs handle additional attributes.
+        final Schema<?> modelSchema = ModelUtils.cloneSchema(schema, OasVersionUtil.isOas31(openAPI));
+        // Preserve property identity for upstream processing and caching.
+        modelSchema.setProperties(((Schema<?>) schema).getProperties());
+        modelSchema.setAdditionalProperties(Boolean.FALSE);
+        super.updateModelForObject(m, modelSchema);
     }
 }
