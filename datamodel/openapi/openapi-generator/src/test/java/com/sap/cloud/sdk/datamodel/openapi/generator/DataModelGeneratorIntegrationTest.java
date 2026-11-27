@@ -253,7 +253,18 @@ class DataModelGeneratorIntegrationTest
             true,
             1,
             Map.of(),
-            Map.of("File", "byte[]"));
+            Map.of("File", "byte[]")),
+        ONEOF_PRIMITIVES_ARRAY(
+            "oneof-primitives-array",
+            "sodastore.yaml",
+            "com.sap.cloud.sdk.services.oneofprimitivesarray.api",
+            "com.sap.cloud.sdk.services.oneofprimitivesarray.model",
+            ApiMaturity.RELEASED,
+            true,
+            false,
+            5,
+            Map.of("useOneOfCreators", "true", "useOneOfInterfaces", "true"),
+            Map.of());
 
         final String testCaseName;
         final String inputSpecFileName;
@@ -310,9 +321,9 @@ class DataModelGeneratorIntegrationTest
     }
 
     // Add these annotations to regenerate all sources
-    // @ParameterizedTest
+    @ParameterizedTest
     // @EnumSource( TestCase.class ) // use this to regenerate all...
-    // @EnumSource( value = TestCase.class, names = { "API_CLASS_VENDOR_EXTENSION_YAML" } ) // ...and this one to only generate specific ones
+    @EnumSource( value = TestCase.class, names = { "ONEOF_PRIMITIVES_ARRAY" } ) // ...and this one to only generate specific ones
     void generateDataModelForComparison( final TestCase testCase )
     {
         final Path inputDirectory = getInputDirectory(testCase);

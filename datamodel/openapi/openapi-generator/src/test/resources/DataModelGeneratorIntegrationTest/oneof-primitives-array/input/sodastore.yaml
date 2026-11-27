@@ -1,0 +1,52 @@
+openapi: 3.0.0
+info:
+  title: Soda Store API
+  version: 1.0.0
+  description: API for managing sodas in a soda store
+
+paths:
+  /sodas/{sodaId}:
+    get:
+      summary: Get details of a specific soda
+      operationId: getSodaById
+      parameters:
+        - name: sodaId
+          in: path
+          description: ID of the soda to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The requested soda
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneOfPrimitivesArray'
+
+components:
+  schemas:
+    OneOfPrimitivesArray:
+      type: object
+      anyOf:
+        - type: string
+        - type: object
+          additionalProperties: true
+        - type: array
+          items: { }
+    OneOfEmptyObject:
+      oneOf:
+        - $ref: '#/components/schemas/EmptyObject'
+        - $ref: '#/components/schemas/OneOfPrimitivesArray'
+    EmptyObject:
+      properties: { }
+      additionalProperties: true
+      type: object
+    NamingCollisionTest:
+      properties:
+        emtpyObject:
+          title: Emptyobject
+          oneOf:
+            - $ref: '#/components/schemas/EmptyObject'
+            - $ref: '#/components/schemas/OneOfPrimitivesArray'

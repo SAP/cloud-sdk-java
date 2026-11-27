@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- [OpenAPI Generator] `String` properties with `contentMediaType: application/json` are not mistakenly generated as `File` anymore

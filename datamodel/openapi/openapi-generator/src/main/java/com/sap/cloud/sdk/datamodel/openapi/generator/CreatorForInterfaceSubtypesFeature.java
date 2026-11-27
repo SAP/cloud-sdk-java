@@ -68,7 +68,13 @@ class CreatorForInterfaceSubtypesFeature
     {
         if( candidate.startsWith("List<") ) {
             var targetType = candidate;
-            var wrapperType = candidate.replace("<", "Of").replaceFirst(">", "s").replace(">", "");
+            var wrapperType =
+                candidate
+                    .replace("<", "Of")
+                    .replaceFirst(">", "s")
+                    .replace(">", "")
+                    .replace(",", "And")
+                    .replace(" ", "");
 
             if( USE_FLOAT_ARRAYS.isEnabled(config) && candidate.contains("BigDecimal") ) {
                 targetType = candidate.replace("List<", "").replace("BigDecimal", "float").replace(">", "[]");
@@ -78,7 +84,8 @@ class CreatorForInterfaceSubtypesFeature
             return new CreatorDetails(wrapperType, targetType, true, false, false);
         }
         final var isPrimitive = PRIMITIVES.contains(candidate);
-        final var wrapperType = "Inner" + candidate;
+        final var wrapperType =
+            "Inner" + candidate.replace("<", "Of").replace(">", "").replace(",", "And").replace(" ", "");
         return new CreatorDetails(wrapperType, candidate, false, isPrimitive, !isPrimitive);
     }
 

@@ -2,15 +2,23 @@ package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.EmptyObject;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfEmptyObject;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfPrimitivesArray;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Order;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.SodaWithId;
 
@@ -94,6 +102,44 @@ class SerializationTest
         order.setCustomField("shoesize", 44);
         assertThat(new ObjectMapper().writeValueAsString(order)).isEqualToIgnoringWhitespace(expected);
         assertThat(new ObjectMapper().readValue(expected, Order.class)).isEqualTo(order);
+    }
+
+    @ParameterizedTest
+    @ValueSource( booleans = { false, true } )
+    void testSerializeNamedFreeFormUnionMember( final boolean populated )
+        throws JsonProcessingException
+    {
+        final Map<String, Object> fields = populated ? Map.of("key", "value", "nested", Map.of("count", 1)) : Map.of();
+        final EmptyObject value = EmptyObject.create();
+        fields.forEach(value::setCustomField);
+
+        assertFreeFormSerialization(value, fields);
+    }
+
+    @ParameterizedTest
+    @ValueSource( booleans = { false, true } )
+    void testSerializeWrappedMapUnionMember( final boolean populated )
+        throws JsonProcessingException
+    {
+        final Map<String, Object> fields = populated ? Map.of("key", "value", "nested", Map.of("count", 1)) : Map.of();
+        final OneOfPrimitivesArray value = OneOfPrimitivesArray.createInnerMapOfStringAndObject(fields);
+
+        assertFreeFormSerialization(value, fields);
+    }
+
+    private static void assertFreeFormSerialization( final OneOfEmptyObject value, final Map<String, Object> fields )
+        throws JsonProcessingException
+    {
+        final ObjectMapper mapper = new ObjectMapper();
+        final JsonNode expected = mapper.valueToTree(fields);
+        assertThat(mapper.readTree(mapper.writeValueAsString(value))).isEqualTo(expected);
+
+        final JsonNode expectedRequest = mapper.valueToTree(Map.of("strategyConfig", fields));
+        assertThat(mapper.readTree(mapper.writeValueAsString(new StrategyRequest(value)))).isEqualTo(expectedRequest);
+    }
+
+    private record StrategyRequest( OneOfEmptyObject strategyConfig )
+    {
     }
 
     private void verify( String requestBody )
