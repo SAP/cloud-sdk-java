@@ -139,6 +139,22 @@ components:
       oneOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
+    OneOfPrimitivesArray:
+      type: object
+      anyOf:
+        - type: string
+        - type: object
+          additionalProperties: true
+        - type: array
+          items: { }
+    OneOfEmptyObject:
+      oneOf:
+        - $ref: '#/components/schemas/EmptyObject'
+        - $ref: '#/components/schemas/OneOfPrimitivesArray'
+    EmptyObject:
+      properties: { }
+      additionalProperties: true
+      type: object
     AnyOf:
       anyOf:
         - $ref: '#/components/schemas/Cola'

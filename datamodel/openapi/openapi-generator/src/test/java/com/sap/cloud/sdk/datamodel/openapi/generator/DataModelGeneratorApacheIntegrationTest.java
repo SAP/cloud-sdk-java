@@ -36,7 +36,8 @@ class DataModelGeneratorApacheIntegrationTest extends DataModelGeneratorIntegrat
             "OAS31_REF_WITH_SIBLING",
             "OAS31_NULLABLE_REF",
             "OAS30_EXCLUSIVE_MIN_MAX",
-            "OAS31_COMPONENTS_PATH_ITEMS" } )
+            "OAS31_COMPONENTS_PATH_ITEMS",
+            "ONEOF_PRIMITIVES_ARRAY" } )
     void integrationTests( final TestCase testCase, @TempDir final Path path )
         throws Throwable
     {

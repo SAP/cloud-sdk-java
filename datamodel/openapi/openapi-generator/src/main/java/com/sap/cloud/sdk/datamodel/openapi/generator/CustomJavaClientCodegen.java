@@ -27,7 +27,9 @@ import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.model.OperationsMap;
+import org.openapitools.codegen.utils.ModelUtils;
 
+import com.sap.cloud.sdk.datamodel.openapi.generator.exception.OpenApiGeneratorException;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -40,6 +42,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 {
     private final GenerationConfiguration config;
     private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
+    private static final String GENERATE_ALIAS_AS_MODEL = "x-generate-alias-as-model";
     // schemaName -> (propertyName -> sibling description) captured before normalization strips $ref context
     private final Map<String, Map<String, String>> siblingDescriptions = new HashMap<>();
 
@@ -72,10 +75,47 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             }
         }
 
+        if( useOneOfInterfaces ) {
+            // A raw map alias cannot implement the generated union interface.
+            preserveFreeFormUnionModels(openAPI);
+        }
+
         super.preprocessOpenAPI(openAPI);
 
         if( FIX_REMOVE_UNUSED_COMPONENTS.isEnabled(config) ) {
             preprocessRemoveRedundancies(openAPI);
+        }
+    }
+
+    @SuppressWarnings( "rawtypes" )
+    private void preserveFreeFormUnionModels( final OpenAPI openAPI )
+    {
+        for( final Schema<?> schema : ModelUtils.getAllSchemas(openAPI) ) {
+            for( final List<Schema> alternatives : Arrays.asList(schema.getOneOf(), schema.getAnyOf()) ) {
+                if( alternatives == null ) {
+                    continue;
+                }
+                for( final Schema<?> alternative : alternatives ) {
+                    if( alternative.get$ref() == null || !alternative.get$ref().startsWith("#/components/schemas/") ) {
+                        continue;
+                    }
+                    final String name = ModelUtils.getSimpleRef(alternative.get$ref());
+                    if( schemaMapping.containsKey(name) || typeMapping.containsKey(name) ) {
+                        continue;
+                    }
+                    final Schema<?> target = ModelUtils.getReferencedSchema(openAPI, alternative);
+                    if( !ModelUtils.isFreeFormObject(target, openAPI) ) {
+                        continue;
+                    }
+                    if( target.getExtensions() != null
+                        && target.getExtensions().containsKey(GENERATE_ALIAS_AS_MODEL)
+                        && !Boolean.TRUE.equals(target.getExtensions().get(GENERATE_ALIAS_AS_MODEL)) ) {
+                        throw new OpenApiGeneratorException(
+                            "Free-form union member '" + name + "' requires " + GENERATE_ALIAS_AS_MODEL + ": true.");
+                    }
+                    target.addExtension(GENERATE_ALIAS_AS_MODEL, true);
+                }
+            }
         }
     }
 
